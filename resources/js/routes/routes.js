@@ -126,16 +126,16 @@ export default [
             },
 
             {
-                name: 'categories',
-                path: 'categories',
-                meta: { breadCrumb: 'Categories' },
+                name: 'posts',
+                path: 'posts',
+                meta: { breadCrumb: 'Posts' },
                 children: [
                     {
-                        name: 'categories.index',
+                        name: 'posts.index',
                         path: '',
-                        component: () => import('../views/admin/categories/Index.vue'),
+                        component: () => import('../views/admin/posts/index.vue'),
                         meta: {
-                            breadCrumb: 'View category',
+                            breadCrumb: 'View Posts',
                             hideBreadcrumb: true
                         }
                     },
