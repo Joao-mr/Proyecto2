@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateCategoriaRequest;
 use App\Models\Categoria;
 
 class CategoriaController extends Controller
-{
+{//holaa
     public function index()
     {
         $categorias = Categoria::with('salas')->paginate(10);
