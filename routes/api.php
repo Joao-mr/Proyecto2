@@ -45,5 +45,4 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 Route::get('category-list', [CategoryController::class, 'getList']);
 
 Route::apiResource('/posts', PostController::class);
-Route::apiResource('categorias', CategoriaController::class);
 Route::apiResource('salas', SalaController::class);
