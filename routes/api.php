@@ -6,9 +6,9 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\CategoriaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 
 Route::group(['middleware' => 'auth:sanctum'], function() {
 
@@ -43,9 +43,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
 Route::get('category-list', [CategoryController::class, 'getList']);
 
 Route::apiResource('/posts', PostController::class);
-//Route::get('/posts', [PostController::class, 'index']);
-//Route::get('/posts/{post}', [PostController::class, 'show']);
-//Route::DELETE('/posts/{post}', [PostController::class, 'destroy']);
+Route::apiResource('categorias', CategoriaController::class);
 
 
 
