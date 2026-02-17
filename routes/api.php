@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\SalaController;
+use App\Http\Controllers\Api\SalaCategoriaController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,11 @@ Route::get('category-list', [CategoryController::class, 'getList']);
 Route::apiResource('posts', PostController::class);
 Route::apiResource('categorias', CategoriaController::class);
 Route::apiResource('salas', SalaController::class);
+Route::get('sala-categorias', [SalaCategoriaController::class, 'index']);
+Route::post('sala-categorias', [SalaCategoriaController::class, 'store']);
+Route::get('sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'show']);
+Route::match(['put', 'patch'], 'sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'update']);
+Route::delete('sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'destroy']);
 
 
 
