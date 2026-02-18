@@ -266,6 +266,22 @@ export default [
                     }
                 ]
             },
+            {
+                name: 'imagenes-juego',
+                path: 'imagenes',
+                meta: { breadCrumb: 'Imágenes Juego' },
+                children: [
+                    {
+                        name: 'imagenes-juego.index',
+                        path: '',
+                        component: () => import('../views/admin/imagenes/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Imágenes Juego',
+                            hideBreadcrumb: true
+                        }
+                    }
+                ]
+            },
         ]
     },
     {
