@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\PartidaController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RoleController;
@@ -44,6 +45,7 @@ Route::get('category-list', [CategoryController::class, 'getList']);
 Route::apiResource('posts', PostController::class);
 Route::apiResource('categorias', CategoriaController::class);
 Route::apiResource('salas', SalaController::class);
+Route::apiResource('partidas', PartidaController::class);
 
 
 
