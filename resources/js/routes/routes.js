@@ -234,6 +234,22 @@ export default [
                     }
                 ]
             },
+            {
+                name: 'salas-juego',
+                path: 'salas',
+                meta: { breadCrumb: 'Salas Juego' },
+                children: [
+                    {
+                        name: 'salas-juego.index',
+                        path: '',
+                        component: () => import('../views/admin/salas/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Salas Juego',
+                            hideBreadcrumb: true
+                        }
+                    }
+                ]
+            },
         ]
     },
     {
