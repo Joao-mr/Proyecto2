@@ -12,4 +12,9 @@ class Sala extends Model
     {
         return $this->belongsToMany(Categoria::class, 'sala_categorias', 'id_sala', 'id_categoria');
     }
+
+    public function partidas()
+    {
+        return $this->hasMany(Partida::class, 'id_sala');
+    }
 }
