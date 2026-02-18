@@ -218,6 +218,22 @@ export default [
                     }
                 ]
             },
+            {
+                name: 'categorias-juego',
+                path: 'categorias',
+                meta: { breadCrumb: 'Categorías Juego' },
+                children: [
+                    {
+                        name: 'categorias-juego.index',
+                        path: '',
+                        component: () => import('../views/admin/categorias/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Categorías Juego',
+                            hideBreadcrumb: true
+                        }
+                    }
+                ]
+            },
         ]
     },
     {
