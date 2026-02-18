@@ -38,6 +38,11 @@ class CategoriaController extends Controller
         $categoria->delete();
         return response()->json(null, 204);
     }
+
+    public function getList()
+    {
+        return response()->json(Categoria::all());
+    }
 }
 
 

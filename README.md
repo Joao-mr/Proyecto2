@@ -105,6 +105,54 @@ npm run dev
 
 Accede a la aplicación en: `http://localhost:8000`
 
+## 🧪 Pruebas API `sala-categorias` (Thunder Client)
+
+Base URL: `http://127.0.0.1:8000/api`
+
+1. **Listar relaciones**
+	- Método: `GET`
+	- URL: `{{baseUrl}}/sala-categorias`
+	- Esperado: `200 OK`
+
+2. **Crear relación sala-categoría**
+	- Método: `POST`
+	- URL: `{{baseUrl}}/sala-categorias`
+	- Body JSON:
+	```json
+	{
+	  "id_sala": 1,
+	  "id_categoria": 1
+	}
+	```
+	- Esperado: `201 Created`
+
+3. **Consultar una relación específica (clave compuesta)**
+	- Método: `GET`
+	- URL: `{{baseUrl}}/sala-categorias/1/1`
+	- Esperado: `200 OK`
+
+4. **Actualizar relación (cambiar clave compuesta)**
+	- Método: `PUT`
+	- URL: `{{baseUrl}}/sala-categorias/1/1`
+	- Body JSON:
+	```json
+	{
+	  "id_sala": 2,
+	  "id_categoria": 2
+	}
+	```
+	- Esperado: `200 OK`
+
+5. **Eliminar relación**
+	- Método: `DELETE`
+	- URL: `{{baseUrl}}/sala-categorias/2/2`
+	- Esperado: `204 No Content`
+
+Notas rápidas:
+- Si intentas registrar una relación duplicada, el API responde `422`.
+- Asegúrate de que existan previamente registros en `salas` y `categorias`.
+- Puedes validar también con test automatizado: `vendor/bin/phpunit --filter SalaCategoriaApiTest`.
+
 ## 📂 Estructura del Proyecto
 
 ### Backend (`app/`)
