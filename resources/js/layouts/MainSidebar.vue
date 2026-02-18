@@ -129,8 +129,9 @@ const menuModel = computed(() => {
             label: 'Contenido',
             items: [
                 { label: 'Categorías', icon: 'pi pi-tags', route: '/admin/categories', permission: 'category-list' },
-                { label: 'Categorías Juego', icon: 'pi pi-th-large', route: '/admin/categorias' },
-                { label: 'Salas Juego', icon: 'pi pi-users', route: '/admin/salas' }
+                { label: 'Categorías', icon: 'pi pi-th-large', route: '/admin/categorias' },
+                { label: 'Salas', icon: 'pi pi-users', route: '/admin/salas' },
+                { label: 'Partidas', icon: 'pi pi-play-circle', route: '/admin/partidas' }
             ]
         }
     ];

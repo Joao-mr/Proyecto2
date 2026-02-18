@@ -250,6 +250,22 @@ export default [
                     }
                 ]
             },
+            {
+                name: 'partidas-juego',
+                path: 'partidas',
+                meta: { breadCrumb: 'Partidas Juego' },
+                children: [
+                    {
+                        name: 'partidas-juego.index',
+                        path: '',
+                        component: () => import('../views/admin/partidas/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Partidas Juego',
+                            hideBreadcrumb: true
+                        }
+                    }
+                ]
+            },
         ]
     },
     {
