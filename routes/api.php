@@ -13,21 +13,37 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
+    //usuarios
     Route::apiResource('users', UserController::class);
     Route::post('users/updateimg', [UserController::class, 'updateimg']);
 
-    Route::apiResource('categories', CategoryController::class);
+    //Route::apiResource('categories', CategoryController::class);
+
+    //categorias
+    Route::apiResource('categorias', CategoriaController::class);
+
+    //salas
+    Route::apiResource('salas', SalaController::class);
+
+    // Relación N:M Sala - Categoría
+    Route::apiResource('sala-categorias', SalaCategoriaController::class);
+
+    //roles y permisos
     Route::apiResource('roles', RoleController::class);
+    Route::apiResource('permissions', PermissionController::class);
 
     Route::get('role-list', [RoleController::class, 'getList']);
     Route::get('role-permissions/{id}', [PermissionController::class, 'getRolePermissions']);
     Route::put('role-permissions', [PermissionController::class, 'updateRolePermissions']);
-    Route::apiResource('permissions', PermissionController::class);
 
+
+    //perfil
     Route::get('user', [ProfileController::class, 'user']);
     Route::get('user/signin', [ProfileController::class, 'user']);
     Route::put('user', [ProfileController::class, 'update']);
 
+
+    //permiso
     Route::get('abilities', function (Request $request) {
         return $request->user()->roles()->with('permissions')
             ->get()
@@ -39,7 +55,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             ->toArray();
     });
 });
-
+/*
 Route::get('category-list', [CategoryController::class, 'getList']);
 
 Route::apiResource('posts', PostController::class);
@@ -52,4 +68,4 @@ Route::match(['put', 'patch'], 'sala-categorias/{id_sala}/{id_categoria}', [Sala
 Route::delete('sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'destroy']);
 
 
-
+*/
