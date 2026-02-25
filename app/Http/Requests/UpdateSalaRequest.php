@@ -18,7 +18,6 @@ class UpdateSalaRequest extends FormRequest
         return [
             'nombre' => ['sometimes', 'required', 'string', 'max:255'],
             'codigo' => ['sometimes', 'required', 'string', 'max:50', 'unique:salas,codigo,' . $salaId],
-            'id_creador' => ['sometimes', 'required', 'exists:users,id'],
             'categorias' => ['nullable', 'array'],
             'categorias.*' => ['exists:categorias,id'],
         ];
