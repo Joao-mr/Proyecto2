@@ -17,7 +17,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('users', UserController::class);
     Route::post('users/updateimg', [UserController::class, 'updateimg']);
 
-    //Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('categories', CategoryController::class);
 
     //categorias
     Route::apiResource('categorias', CategoriaController::class);
@@ -56,16 +56,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 });
 /*
-Route::get('category-list', [CategoryController::class, 'getList']);
-
-Route::apiResource('posts', PostController::class);
-Route::apiResource('categorias', CategoriaController::class);
-Route::apiResource('salas', SalaController::class);
-Route::get('sala-categorias', [SalaCategoriaController::class, 'index']);
-Route::post('sala-categorias', [SalaCategoriaController::class, 'store']);
-Route::get('sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'show']);
-Route::match(['put', 'patch'], 'sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'update']);
-Route::delete('sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'destroy']);
-
-
+// Eliminades rutes incorrectes: getCategories, deleteCategory, updateCategory, category-list
+// Route Model Binding ja aplicat a CategoryController per {category}
 */
