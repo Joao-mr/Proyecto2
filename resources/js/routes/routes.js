@@ -240,14 +240,23 @@ export default [
                 meta: { breadCrumb: 'Salas Juego' },
                 children: [
                     {
-                        name: 'salas-juego.index',
-                        path: '',
-                        component: () => import('../views/admin/salas/Index.vue'),
-                        meta: {
-                            breadCrumb: 'Salas Juego',
-                            hideBreadcrumb: true
+                            name: 'salas-juego.index',
+                            path: '',
+                            component: () => import('../views/admin/salas/Index.vue'),
+                            meta: {
+                                breadCrumb: 'Salas Juego',
+                                hideBreadcrumb: true
+                            }
+                        },
+                        {
+                            name: 'salas-juego.edit',
+                            path: 'edit/:id',
+                            component: () => import('../views/admin/salas/Edit.vue'),
+                            meta: {
+                                breadCrumb: 'Editar Sala',
+                                linked: false
+                            }
                         }
-                    }
                 ]
             },
         ]
