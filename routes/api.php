@@ -18,6 +18,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('users/updateimg', [UserController::class, 'updateimg']);
 
     Route::apiResource('categories', CategoryController::class);
+   
+    // Eliminades rutes incorrectes: getCategories, deleteCategory, updateCategory, category-list
+    // Route Model Binding ja aplicat a CategoryController per {category}
 
     //categorias
     Route::apiResource('categorias', CategoriaController::class);

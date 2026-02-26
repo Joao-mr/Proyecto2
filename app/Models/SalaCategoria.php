@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class SalaCategoria extends Model
+class SalaCategoria extends Model implements HasMedia
 {
     protected $table = 'sala_categorias';
 
@@ -13,6 +15,8 @@ class SalaCategoria extends Model
     public $incrementing = false;
 
     protected $fillable = ['id_sala', 'id_categoria'];
+
+    use InteractsWithMedia;
 
     public function sala()
     {
