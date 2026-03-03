@@ -19,7 +19,7 @@
                             icon="pi pi-plus"
                             size="small"
                             severity="primary"
-                            @click="openCreateDialog"
+                            @click="goToCreateCategoria"
                         />
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                                     text
                                     severity="secondary"
                                     size="small"
-                                    @click="openEditDialog(slotProps.data)"
+                                    @click="goToEditCategoria(slotProps.data.id)"
                                 />
                                 <Button
                                     v-tooltip.top="'Eliminar categoría'"
@@ -182,16 +182,16 @@ const categoriaDialog = reactive({
 
 const isSubmitting = computed(() => isLoading.value);
 
-const openCreateDialog = () => {
-    resetCategoria();
-    categoriaDialog.type = 'create';
-    categoriaDialog.open = true;
+
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
+const goToCreateCategoria = () => {
+    router.push('/admin/categorias/create');
 };
 
-const openEditDialog = (currentCategoria) => {
-    setCategoria(currentCategoria);
-    categoriaDialog.type = 'edit';
-    categoriaDialog.open = true;
+const goToEditCategoria = (id) => {
+    router.push(`/admin/categorias/edit/${id}`);
 };
 
 const closeDialog = () => {

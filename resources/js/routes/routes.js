@@ -231,6 +231,24 @@ export default [
                             breadCrumb: 'Categorías Juego',
                             hideBreadcrumb: true
                         }
+                    },
+                    {
+                        name: 'categorias-juego.create',
+                        path: 'create',
+                        component: () => import('../views/admin/categorias/Create.vue'),
+                        meta: {
+                            breadCrumb: 'Crear Categoría',
+                            linked: false
+                        }
+                    },
+                    {
+                        name: 'categorias-juego.edit',
+                        path: 'edit/:id',
+                        component: () => import('../views/admin/categorias/Edit.vue'),
+                        meta: {
+                            breadCrumb: 'Editar Categoría',
+                            linked: false
+                        }
                     }
                 ]
             },
