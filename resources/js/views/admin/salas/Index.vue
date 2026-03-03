@@ -19,7 +19,7 @@
                             icon="pi pi-plus"
                             size="small"
                             severity="primary"
-                            @click="openCreateDialog"
+                            @click="goToCreateSala"
                         />
                     </div>
                 </div>
@@ -177,10 +177,9 @@ const salaDialog = reactive({
 
 const isSubmitting = computed(() => isLoading.value);
 
-const openCreateDialog = () => {
-    resetSala();
-    salaDialog.type = 'create';
-    salaDialog.open = true;
+
+const goToCreateSala = () => {
+    router.push('/admin/salas/create');
 };
 
 const openEditDialog = (currentSala) => {
