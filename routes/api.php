@@ -44,6 +44,7 @@ Route::get('category-list', [CategoryController::class, 'getList']);
 
 Route::apiResource('posts', PostController::class);
 Route::apiResource('categorias', CategoriaController::class);
+Route::get('categorias-list', [CategoriaController::class, 'getList']);
 Route::apiResource('salas', SalaController::class);
 Route::get('sala-categorias', [SalaCategoriaController::class, 'index']);
 Route::post('sala-categorias', [SalaCategoriaController::class, 'store']);

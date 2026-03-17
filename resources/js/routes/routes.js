@@ -252,6 +252,40 @@ export default [
                     }
                 ]
             },
+            {
+                name: 'salas-juego',
+                path: 'salas',
+                meta: { breadCrumb: 'Salas Juego' },
+                children: [
+                    {
+                        name: 'salas-juego.index',
+                        path: '',
+                        component: () => import('../views/admin/salas/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Salas Juego',
+                            hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'salas-juego.create',
+                        path: 'create',
+                        component: () => import('../views/admin/salas/Create.vue'),
+                        meta: {
+                            breadCrumb: 'Crear Sala',
+                            linked: false
+                        }
+                    },
+                    {
+                        name: 'salas-juego.edit',
+                        path: 'edit/:id',
+                        component: () => import('../views/admin/salas/Edit.vue'),
+                        meta: {
+                            breadCrumb: 'Editar Sala',
+                            linked: false
+                        }
+                    }
+                ]
+            },
         ]
     },
     {
