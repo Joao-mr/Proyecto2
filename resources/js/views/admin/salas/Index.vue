@@ -19,7 +19,7 @@
                             icon="pi pi-plus"
                             size="small"
                             severity="primary"
-                            @click="openCreateDialog"
+                            @click="goToCreateSala"
                         />
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                                     text
                                     severity="secondary"
                                     size="small"
-                                    @click="openEditDialog(slotProps.data)"
+                                    @click="goToEditSala(slotProps.data.id)"
                                 />
                                 <Button
                                     v-tooltip.top="'Eliminar sala'"
@@ -129,83 +129,17 @@
             </template>
         </Card>
 
-        <Dialog
-            v-model:visible="salaDialog.open"
-            modal
-            :header="salaDialog.type === 'create' ? 'Crear Sala' : 'Editar Sala'"
-            :style="{ width: '600px' }"
-            class="sala-dialog"
-        >
-            <div class="flex flex-col gap-4">
-                <div>
-                    <label for="sala-nombre" class="dialog-label">Nombre de la sala</label>
-                    <InputText
-                        v-model="sala.nombre"
-                        id="sala-nombre"
-                        class="w-full"
-                        :class="{ 'p-invalid': hasError('nombre') }"
-                        placeholder="Ej: Sala Trivia Pop"
-                    />
-                    <small v-if="hasError('nombre')" class="dialog-error">
-                        {{ getError('nombre') }}
-                    </small>
-                </div>
-
-                <div>
-                    <label for="sala-codigo" class="dialog-label">Código</label>
-                    <InputText
-                        v-model="sala.codigo"
-                        id="sala-codigo"
-                        class="w-full"
-                        :class="{ 'p-invalid': hasError('codigo') }"
-                        placeholder="Ej: ABC123"
-                    />
-                    <small v-if="hasError('codigo')" class="dialog-error">
-                        {{ getError('codigo') }}
-                    </small>
-                </div>
-
-                <div>
-                    <label for="sala-categorias" class="dialog-label">Categorías</label>
-                    <MultiSelect
-                        v-model="sala.categorias"
-                        input-id="sala-categorias"
-                        :options="categoriasDisponibles"
-                        option-label="nombre"
-                        option-value="id"
-                        placeholder="Selecciona categorías"
-                        class="w-full"
-                        display="chip"
-                    />
-                </div>
-            </div>
-            <template #footer>
-                <Button
-                    severity="secondary"
-                    label="Cancelar"
-                    @click="closeDialog"
-                    :disabled="isSubmitting"
-                />
-                <Button
-                    v-if="salaDialog.type === 'create'"
-                    label="Crear"
-                    @click="submitCreate"
-                    :loading="isSubmitting"
-                    :disabled="isSubmitting"
-                />
-                <Button
-                    v-else
-                    label="Guardar"
-                    @click="submitUpdate"
-                    :loading="isSubmitting"
-                    :disabled="isSubmitting"
-                />
-            </template>
-        </Dialog>
+        <!-- Diálogo eliminado: edición y creación ahora son navegación clásica -->
     </div>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
+const goToEditSala = (id) => {
+    router.push(`/admin/salas/edit/${id}`);
+};
 import { ref, reactive, computed, onMounted, inject } from "vue";
 import useSalas from "@/composables/salas";
 import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
@@ -243,10 +177,9 @@ const salaDialog = reactive({
 
 const isSubmitting = computed(() => isLoading.value);
 
-const openCreateDialog = () => {
-    resetSala();
-    salaDialog.type = 'create';
-    salaDialog.open = true;
+
+const goToCreateSala = () => {
+    router.push('/admin/salas/create');
 };
 
 const openEditDialog = (currentSala) => {
