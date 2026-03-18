@@ -63,17 +63,24 @@
                         <p class="text-sm text-center text-gray-600 mt-2">{{ uploadProgress }}% completado</p>
                     </div>
 
-                    <!-- Respuesta Correcta Checkbox -->
-                    <div class="flex items-center gap-2">
-                        <Checkbox
-                            v-model="respuestaCorrecta"
-                            input-id="respuesta"
-                            :binary="true"
-                            :disabled="isLoading || uploadProgress > 0"
-                        />
-                        <label for="respuesta" class="cursor-pointer">
-                            Marcar como respuesta correcta
+                    <!-- Respuesta Correcta Input -->
+                    <div>
+                        <label for="respuesta" class="block text-sm font-medium text-gray-700 mb-2">
+                            Respuesta Correcta
+                            <span class="text-red-500">*</span>
                         </label>
+                        <InputText
+                            v-model="respuestaCorrecta"
+                            id="respuesta"
+                            type="text"
+                            placeholder="Ej: Manzana, Gato, Capital de Francia"
+                            class="w-full"
+                            :disabled="isLoading || uploadProgress > 0"
+                            maxlength="255"
+                        />
+                        <small class="text-gray-500 block mt-1">
+                            Ingresa la respuesta correcta asociada a esta imagen
+                        </small>
                     </div>
 
                     <!-- Action Buttons -->
@@ -112,7 +119,7 @@
                         class="imagen-thumbnail"
                     >
                         <img
-                            v-if="imagen.url || (imagen.media && imagen.media[0])"
+                            v-if="getImageUrl(imagen, 'thumb')"
                             :src="getImageUrl(imagen, 'thumb')"
                             :alt="`Imagen ${imagen.id}`"
                             class="thumbnail-image"
@@ -147,8 +154,8 @@
         >
             <img
                 v-if="selectedImageToView"
-                :src="getImageUrl(selectedImageToView)"
-                :alt="selectedImageToView.id"
+                :src="getImageUrl(selectedImageToView, 'preview')"
+                :alt="`Imagen ${selectedImageToView.id}`"
                 class="w-full"
             />
         </Dialog>
@@ -157,12 +164,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import useImagen from '@/composables/imagen'
+import useImagen from '@/composables/useImagen'
 
 const fileInput = ref(null)
 const selectedFile = ref(null)
 const previewUrl = ref(null)
-const respuestaCorrecta = ref(false)
+const respuestaCorrecta = ref('')
 const viewDialogVisible = ref(false)
 const selectedImageToView = ref(null)
 
@@ -207,13 +214,13 @@ const generatePreview = (file) => {
 const handleUpload = async () => {
     if (!selectedFile.value) return
 
-    try {
-        await uploadImagenNew(selectedFile.value, respuestaCorrecta.value)
+    const result = await uploadImagenNew(selectedFile.value, respuestaCorrecta.value)
+
+    if (result) {
         resetForm()
-        await getImagenes()
-    } catch (error) {
-        console.error('Error en subida:', error)
     }
+
+    await getImagenes()
 }
 
 /**
@@ -222,7 +229,7 @@ const handleUpload = async () => {
 const resetForm = () => {
     selectedFile.value = null
     previewUrl.value = null
-    respuestaCorrecta.value = false
+    respuestaCorrecta.value = ''
     if (fileInput.value) {
         fileInput.value.value = ''
     }

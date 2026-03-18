@@ -9,12 +9,13 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Imagen extends Model implements HasMedia
 {
-    use InteractsWithMedia;
+    use InteractsWithMedia; //permite usar media library
 
     protected $table = 'imagenes';
 
     //que datos guardara la tabla imagenes
     protected $fillable = [
+        'url',
         'respuesta_correcta',
     ];
 

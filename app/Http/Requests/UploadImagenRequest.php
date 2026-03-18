@@ -11,11 +11,7 @@ class UploadImagenRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+    //obtener las reglas de validacion para subir una imagen
     public function rules(): array
     {
         return [
@@ -27,17 +23,14 @@ class UploadImagenRequest extends FormRequest
                 'max:5120' // 5MB max
             ],
             'respuesta_correcta' => [
-                'sometimes',
-                'boolean'
+                'nullable',
+                'string',
+                'max:255'
             ]
         ];
     }
 
-    /**
-     * Get custom error messages for validation.
-     *
-     * @return array<string, string>
-     */
+    //obtener los mensajes de error personalizados para la validacion
     public function messages(): array
     {
         return [
@@ -46,7 +39,8 @@ class UploadImagenRequest extends FormRequest
             'image.image' => 'El archivo debe ser una imagen.',
             'image.mimes' => 'La imagen debe ser de tipo: jpeg, jpg, png, gif, webp o svg.',
             'image.max' => 'La imagen no debe exceder los 5MB.',
-            'respuesta_correcta.boolean' => 'El campo respuesta_correcta debe ser true o false.'
+            'respuesta_correcta.string' => 'La respuesta correcta debe ser un texto.',
+            'respuesta_correcta.max' => 'La respuesta correcta no debe exceder 255 caracteres.'
         ];
     }
 }

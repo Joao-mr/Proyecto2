@@ -7,9 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ImagenResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     */
+    //transforma el recurso a un array para la respuesta JSON
     public function toArray(Request $request): array
     {
         return [
