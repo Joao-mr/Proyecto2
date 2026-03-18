@@ -186,6 +186,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, inject } from 'vue';
+import { useRouter } from 'vue-router';
 import useImagenes from '@/composables/imagenes';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 
@@ -220,10 +221,10 @@ const imagenDialog = reactive({
 
 const isSubmitting = computed(() => isLoading.value);
 
+const router = useRouter();
+
 const openCreateDialog = () => {
-    resetImagen();
-    imagenDialog.type = 'create';
-    imagenDialog.open = true;
+    router.push({ name: 'imagenes-juego.upload' });
 };
 
 const openEditDialog = (currentImagen) => {

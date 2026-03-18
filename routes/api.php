@@ -48,7 +48,15 @@ Route::apiResource('posts', PostController::class);
 Route::apiResource('categorias', CategoriaController::class);
 Route::get('categorias-list', [CategoriaController::class, 'getList']);
 Route::apiResource('imagenes', ImagenController::class)->parameters(['imagenes' => 'imagen']);
+
+// Image upload endpoints
+Route::post('imagenes/{imagen}/upload', [ImagenController::class, 'uploadImage'])->name('imagenes.upload');
+Route::post('imagenes/store-with-upload', [ImagenController::class, 'storeWithUpload'])->name('imagenes.store-upload');
 Route::get('imagenes-list', [ImagenController::class, 'getList']);
+
+// Image media info endpoints
+Route::get('imagenes/{imagen}/media-info', [ImagenController::class, 'getMediaInfo'])->name('imagenes.media-info');
+Route::get('imagenes/{imagen}/all-media', [ImagenController::class, 'getAllMedia'])->name('imagenes.all-media');
 Route::apiResource('salas', SalaController::class);
 Route::apiResource('partidas', PartidaController::class);
 Route::get('sala-categorias', [SalaCategoriaController::class, 'index']);
