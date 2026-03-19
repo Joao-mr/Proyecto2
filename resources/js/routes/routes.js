@@ -289,15 +289,33 @@ export default [
             {
                 name: 'partidas-juego',
                 path: 'partidas',
-                meta: { breadCrumb: 'Partidas Juego' },
+                meta: { breadCrumb: 'Partidas' },
                 children: [
                     {
                         name: 'partidas-juego.index',
                         path: '',
                         component: () => import('../views/admin/partidas/Index.vue'),
                         meta: {
-                            breadCrumb: 'Partidas Juego',
+                            breadCrumb: 'Partidas',
                             hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'partidas-juego.create',
+                        path: 'partidas/create',
+                        component: () => import('../views/admin/partidas/Create.vue'),
+                        meta: {
+                            breadCrumb: 'Crear Partida',
+                            linked: false
+                        }
+                    },
+                    {
+                        name: 'partidas-juego.edit',
+                        path: 'partidas/:id/edit',
+                        component: () => import('../views/admin/partidas/Edit.vue'),
+                        meta: {
+                            breadCrumb: 'Editar Partida',
+                            linked: false
                         }
                     }
                 ]
