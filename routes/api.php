@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CategoriaController;
+use App\Http\Controllers\Api\ImagenController;
 use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\PartidaController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RoleController;
@@ -61,7 +63,10 @@ Route::get('category-list', [CategoryController::class, 'getList']);
 Route::apiResource('posts', PostController::class);
 Route::apiResource('categorias', CategoriaController::class);
 Route::get('categorias-list', [CategoriaController::class, 'getList']);
+Route::apiResource('imagenes', ImagenController::class)->parameters(['imagenes' => 'imagen']);
+Route::get('imagenes-list', [ImagenController::class, 'getList']);
 Route::apiResource('salas', SalaController::class);
+Route::apiResource('partidas', PartidaController::class);
 Route::get('sala-categorias', [SalaCategoriaController::class, 'index']);
 Route::post('sala-categorias', [SalaCategoriaController::class, 'store']);
 Route::get('sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'show']);

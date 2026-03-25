@@ -231,6 +231,24 @@ export default [
                             breadCrumb: 'Categorías Juego',
                             hideBreadcrumb: true
                         }
+                    },
+                    {
+                        name: 'categorias-juego.create',
+                        path: 'create',
+                        component: () => import('../views/admin/categorias/Create.vue'),
+                        meta: {
+                            breadCrumb: 'Crear Categoría',
+                            linked: false
+                        }
+                    },
+                    {
+                        name: 'categorias-juego.edit',
+                        path: 'edit/:id',
+                        component: () => import('../views/admin/categorias/Edit.vue'),
+                        meta: {
+                            breadCrumb: 'Editar Categoría',
+                            linked: false
+                        }
                     }
                 ]
             },
@@ -245,6 +263,74 @@ export default [
                         component: () => import('../views/admin/salas/Index.vue'),
                         meta: {
                             breadCrumb: 'Salas Juego',
+                            hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'salas-juego.create',
+                        path: 'create',
+                        component: () => import('../views/admin/salas/Create.vue'),
+                        meta: {
+                            breadCrumb: 'Crear Sala',
+                            linked: false
+                        }
+                    },
+                    {
+                        name: 'salas-juego.edit',
+                        path: 'edit/:id',
+                        component: () => import('../views/admin/salas/Edit.vue'),
+                        meta: {
+                            breadCrumb: 'Editar Sala',
+                            linked: false
+                        }
+                    }
+                ]
+            },
+            {
+                name: 'partidas-juego',
+                path: 'partidas',
+                meta: { breadCrumb: 'Partidas' },
+                children: [
+                    {
+                        name: 'partidas-juego.index',
+                        path: '',
+                        component: () => import('../views/admin/partidas/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Partidas',
+                            hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'partidas-juego.create',
+                        path: 'partidas/create',
+                        component: () => import('../views/admin/partidas/Create.vue'),
+                        meta: {
+                            breadCrumb: 'Crear Partida',
+                            linked: false
+                        }
+                    },
+                    {
+                        name: 'partidas-juego.edit',
+                        path: 'partidas/:id/edit',
+                        component: () => import('../views/admin/partidas/Edit.vue'),
+                        meta: {
+                            breadCrumb: 'Editar Partida',
+                            linked: false
+                        }
+                    }
+                ]
+            },
+            {
+                name: 'imagenes-juego',
+                path: 'imagenes',
+                meta: { breadCrumb: 'Imágenes Juego' },
+                children: [
+                    {
+                        name: 'imagenes-juego.index',
+                        path: '',
+                        component: () => import('../views/admin/imagenes/Index.vue'),
+                        meta: {
+                            breadCrumb: 'Imágenes Juego',
                             hideBreadcrumb: true
                         }
                     }
