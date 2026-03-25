@@ -1,22 +1,7 @@
 <template>
   <div class="categorias-page">
     <!-- Header Navigation -->
-    <header class="header-nav">
-      <div class="nav-container">
-        <router-link to="/" class="logo-wrap-header">
-          <span class="logo-letter wh">W</span><span class="logo-letter wh">H</span><span class="logo-letter wh">A</span><span class="logo-letter wh">T</span><span class="logo-letter or">I</span><span class="logo-letter or">Z</span><span class="logo-letter or">I</span><span class="logo-letter or">T</span>
-        </router-link>
-        <nav class="nav-menu">
-          <router-link to="/categorias" class="nav-link">JUGAR</router-link>
-          <a href="#" class="nav-link">TIENDA</a>
-          <a href="#" class="nav-link">GLOBAL</a>
-        </nav>
-        <div class="nav-actions">
-          <router-link to="/login" class="nav-login-btn">Login</router-link>
-          <router-link to="/register" class="nav-register-btn">Registrarse ›</router-link>
-        </div>
-      </div>
-    </header>
+    <HomeNavbar />
 
     <!-- Main Content -->
     <main class="main-content">
@@ -55,8 +40,11 @@
 </template>
 
 <script>
+import HomeNavbar from '@/layouts/HomeNavbar.vue';
+
 export default {
   name: "CategoriasView",
+  components: { HomeNavbar },
   data() {
     return {
       categorias: [
@@ -100,108 +88,6 @@ export default {
   min-height: 100vh;
   background: linear-gradient(135deg, #505c84 0%, #3f4968 50%, #2e3548 100%);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-}
-
-/* Header Navigation */
-.header-nav {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1rem 0;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-
-.nav-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 3rem;
-}
-
-.logo-wrap-header {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.logo-letter {
-  font-size: 1.5rem;
-  font-weight: 900;
-  letter-spacing: 2px;
-}
-
-.logo-letter.wh {
-  color: #ffffff;
-}
-
-.logo-letter.or {
-  color: #FACB99;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 2rem;
-  flex: 1;
-  justify-content: center;
-}
-
-.nav-link {
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 1px;
-  transition: color 0.2s;
-}
-
-.nav-link:hover {
-  color: #FACB99;
-}
-
-.nav-actions {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.nav-login-btn {
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  transition: background 0.2s, color 0.2s;
-}
-
-.nav-login-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.nav-register-btn {
-  background: linear-gradient(135deg, #FF8C42 0%, #FF7A30 100%);
-  color: white;
-  text-decoration: none;
-  padding: 0.5rem 1.1rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.nav-register-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 140, 66, 0.3);
 }
 
 /* Main Content */
@@ -357,26 +243,6 @@ export default {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .nav-container {
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .nav-menu {
-    order: 3;
-    width: 100%;
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .logo-wrap-header {
-    order: 1;
-  }
-
-  .nav-actions {
-    order: 2;
-  }
-
   .main-content {
     padding: 2rem 1rem;
   }
@@ -389,23 +255,9 @@ export default {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1.5rem;
   }
-
-  .nav-login-btn,
-  .nav-register-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-  }
 }
 
 @media (max-width: 480px) {
-  .nav-menu {
-    gap: 0.5rem;
-  }
-
-  .nav-link {
-    font-size: 0.75rem;
-  }
-
   .categorias-title {
     font-size: 1.5rem;
   }
