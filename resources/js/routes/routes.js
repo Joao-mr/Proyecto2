@@ -47,6 +47,11 @@ async function requireAdmin(to, from, next) {
 
 export default [
     {
+        path: '/categorias',
+        name: 'categorias',
+        component: () => import('../views/CategoriasView.vue'),
+    },
+    {
         path: '/',
         component: GuestLayout,
         children: [
