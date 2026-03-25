@@ -1,0 +1,138 @@
+.home-page {
+  background: linear-gradient(180deg, #5f74b7 0%, #a6aec5 100%);
+  min-height: 100vh;
+}
+
+.container-home {
+  width: min(1200px, 92%);
+  margin: 0 auto;
+}
+
+.home-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 1.2rem 0;
+  background: #5f74b7; /* fondo del navbar */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.home-header__inner {
+  width: min(1200px, 92%);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.home-logo {
+  text-decoration: none;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.home-logo span { color: #f3b566; }
+
+.home-nav {
+  display: flex;
+  gap: 2rem;
+  padding: 30px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 0 0 2px rgba(244, 244, 244, 0.074) inset,
+    0 0px 10px rgba(255, 255, 255, 0.426);
+}
+
+.home-nav a {
+  color: #eef2ff;
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+  opacity: 0.95;
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.home-nav a:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.home-nav-item {
+  position: relative;
+  color: #eef2ff;
+  text-decoration: none;
+  font-weight: 600;
+  padding-left: 1.25rem;   /* espacio para el punto */
+  padding-right: 0.9rem;   /* espacio para la flecha */
+  line-height: 1;
+}
+
+/* Punto naranja */
+.home-nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  transform: translateY(-50%);
+  background: #ff8a4d;
+  border: 2px solid #ffe1c8;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Flecha */
+.home-nav-item::after {
+  content: '▾';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-52%);
+  font-size: 0.85rem;
+  color: #e7edff;
+  opacity: 0.95;
+}
+
+.home-nav-item:hover {
+  opacity: 1;
+}
+
+.home-auth {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.home-link {
+  color: #eef2ff;
+  text-decoration: none;
+  font-weight: 600;
+  opacity: .95;
+}
+.home-link:hover { opacity: 1; }
+
+.home-btn-register {
+  background: linear-gradient(90deg, #ff764f 0%, #ff6a45 70%);
+  color: #fff;
+  text-decoration: none;
+  padding: .62rem 1rem;
+  border-radius: 10px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+
+@media (max-width: 960px) {
+  .home-header__inner { flex-direction: column; align-items: flex-start; }
+  .home-nav { width: 100%; justify-content: space-between; }
+}
+
