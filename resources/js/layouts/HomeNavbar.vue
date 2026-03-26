@@ -2,7 +2,7 @@
 <template>
   <header class="home-header">
     <div class="container-home home-header__inner">
-      <RouterLink to="/" class="home-logo">WHAT<span>IZIT</span></RouterLink>
+      <router-link to="/" class="home-logo">WHAT<span>IZIT</span></router-link>
 
       <nav class="home-nav">
         <a href="#" class="home-nav-item">Juegos</a>
@@ -11,9 +11,58 @@
       </nav>
 
       <div class="home-auth">
-        <RouterLink to="/login" class="home-link">Login</RouterLink>
-        <RouterLink to="/register" class="home-btn-register">Registrarse <span>&gt;</span></RouterLink>
+        <template v-if="!store.authenticated">
+          <router-link :to="{ name: 'auth.login' }" class="home-link">Login</router-link>
+          <router-link :to="{ name: 'auth.register' }" class="home-btn-register">Registrarse <span>&gt;</span></router-link>
+        </template>
+        <template v-else>
+          <span class="home-username">{{ store.user?.name }}</span>
+          <button class="home-btn-logout" @click="handleLogout">Cerrar sesión</button>
+        </template>
       </div>
     </div>
   </header>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router';
+import { authStore } from '@/store/auth';
+import useAuth from '@/composables/auth';
+
+const store = authStore();
+const router = useRouter();
+const { logout } = useAuth();
+
+const handleLogout = () => {
+  logout();
+};
+</script>
+
+<style scoped>
+.home-username {
+  color: #eef2ff;
+  font-weight: 700;
+  opacity: 0.95;
+  font-size: 0.97rem;
+  letter-spacing: 0.2px;
+}
+
+.home-btn-logout {
+  background: transparent;
+  color: #eef2ff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+  font-family: inherit;
+}
+
+.home-btn-logout:hover {
+  background: rgba(255, 100, 60, 0.25);
+  border-color: #ff764f;
+  color: #fff;
+}
+</style>

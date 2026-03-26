@@ -39,10 +39,10 @@
                     </button>
 
                     <template v-if="!authStore().user?.name">
-                        <router-link to="/login">
+                        <router-link :to="{ name: 'auth.login' }">
                             <Button label="Login" text size="small" />
                         </router-link>
-                        <router-link to="/register">
+                        <router-link :to="{ name: 'auth.register' }">
                             <Button label="Registro" severity="primary" size="small" />
                         </router-link>
                     </template>
@@ -105,10 +105,10 @@
                     <!-- Auth -->
                     <div class="flex flex-col gap-3">
                         <template v-if="!authStore().user?.name">
-                            <router-link to="/login" @click="visibleMobileMenu = false">
+                            <router-link :to="{ name: 'auth.login' }" @click="visibleMobileMenu = false">
                                 <Button label="Iniciar Sesión" outlined class="w-full" />
                             </router-link>
-                            <router-link to="/register" @click="visibleMobileMenu = false">
+                            <router-link :to="{ name: 'auth.register' }" @click="visibleMobileMenu = false">
                                 <Button label="Registrarse" class="w-full" />
                             </router-link>
                         </template>

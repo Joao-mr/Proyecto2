@@ -86,7 +86,7 @@ export default {
 
 .categorias-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #505c84 0%, #3f4968 50%, #2e3548 100%);
+  background: #505c84;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
