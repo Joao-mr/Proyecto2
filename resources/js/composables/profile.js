@@ -3,8 +3,10 @@ import * as yup from 'yup'
 import axios from 'axios'
 import { useToast } from './useToast'
 import { useValidation } from './useValidation'
+import { authStore } from '../store/auth'
 
 export default function useProfile() {
+  const auth = authStore()
   const initialProfile = {
     name: '',
     email: ''
@@ -17,7 +19,7 @@ export default function useProfile() {
   const { errors, validate, clearErrors, hasError, getError, setFieldError } = useValidation()
 
   const profileSchema = yup.object({
-    name: yup.string().trim().required('El nombre es obligatorio').min(3, 'Debe tener al menos 3 caracteres')
+    name: yup.string().trim().required('El nombre es obligatorio').min(5, 'Debe tener al menos 5 caracteres')
   })
 
   const withLoading = async (fn) => {
@@ -45,8 +47,8 @@ export default function useProfile() {
 
   const getProfile = async () => {
     setProfile({
-      name: auth.user?.value?.name,
-      email: auth.user?.value?.email
+      name: auth.user?.name,
+      email: auth.user?.email
     })
   }
 
@@ -60,6 +62,9 @@ export default function useProfile() {
     try {
       const response = await withLoading(() => axios.put(`/api/user`, { name: profile.value.name }))
       const data = response.data?.data ?? response.data
+      if (auth.user) {
+        auth.user.name = profile.value.name
+      }
       toast.crud.updated('Usuario')
       return data
     } catch (error) {

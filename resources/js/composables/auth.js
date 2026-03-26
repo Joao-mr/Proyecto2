@@ -55,13 +55,7 @@ export default function useAuth() {
                 await auth.getUser()
                 //await store.dispatch('auth/getUser')
                 await loginUser()
-                swal({
-                    icon: 'success',
-                    title: 'Login correcto',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                await router.push({ name: 'admin.index' })
+                await router.push({ name: 'home' })
             })
             .catch(error => {
                 if (error.response?.data) {

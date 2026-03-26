@@ -16,7 +16,7 @@
           <router-link :to="{ name: 'auth.register' }" class="home-btn-register">Registrarse <span>&gt;</span></router-link>
         </template>
         <template v-else>
-          <span class="home-username">{{ store.user?.name }}</span>
+          <router-link :to="{ name: userPanelRoute }" class="home-username">{{ store.user?.name }}</router-link>
           <button class="home-btn-logout" @click="handleLogout">Cerrar sesión</button>
         </template>
       </div>
@@ -25,6 +25,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { authStore } from '@/store/auth';
 import useAuth from '@/composables/auth';
@@ -32,6 +33,12 @@ import useAuth from '@/composables/auth';
 const store = authStore();
 const router = useRouter();
 const { logout } = useAuth();
+
+const userPanelRoute = computed(() => {
+  const roles = store.user?.roles ?? [];
+  const isAdmin = roles.some(role => role?.name?.toLowerCase().includes('admin'));
+  return isAdmin ? 'admin.index' : 'app';
+});
 
 const handleLogout = () => {
   logout();
@@ -45,6 +52,14 @@ const handleLogout = () => {
   opacity: 0.95;
   font-size: 0.97rem;
   letter-spacing: 0.2px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.home-username:hover {
+  opacity: 0.75;
+  text-decoration: underline;
 }
 
 .home-btn-logout {
