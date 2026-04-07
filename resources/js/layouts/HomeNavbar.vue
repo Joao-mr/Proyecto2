@@ -48,39 +48,3 @@ const handleLogout = () => {
 };
 </script>
 
-<style scoped>
-.home-username {
-  color: #eef2ff;
-  font-weight: 700;
-  opacity: 0.95;
-  font-size: 0.97rem;
-  letter-spacing: 0.2px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.home-username:hover {
-  opacity: 0.75;
-  text-decoration: underline;
-}
-
-.home-btn-logout {
-  background: transparent;
-  color: #eef2ff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  padding: 0.55rem 1rem;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, opacity 0.2s;
-  font-family: inherit;
-}
-
-.home-btn-logout:hover {
-  background: rgba(255, 100, 60, 0.25);
-  border-color: #ff764f;
-  color: #fff;
-}
-</style>
