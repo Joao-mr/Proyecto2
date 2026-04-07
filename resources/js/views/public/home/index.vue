@@ -1,18 +1,15 @@
-<!-- filepath: c:\xampp\htdocs\Proyecto2\Laravel-VUE-API-Base-Clase\resources\js\views\public\home\index.vue -->
 <template>
   <div class="home-page">
-    
-
-    <section class="container-home py-10">
-      <h1>Home</h1>
-    </section>
+    <HomeNavbar />
+    <HeroSection />
+    <HowToSection />
+    <RankingSection />
+    <CategoriesSection />
+    <HomeFooter />
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { authStore } from '@/store/auth'
-
-const store = authStore()
-const isLogged = computed(() => !!store.user?.id)
+import HomeNavbar from '@/layouts/HomeNavbar.vue'
+import HeroSection from '@/components/home/HeroSection.vue'
 </script>
