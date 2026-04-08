@@ -1,9 +1,7 @@
 <template>
   <div class="categorias-page">
-    <!-- Header Navigation -->
     <HomeNavbar />
 
-    <!-- Main Content -->
     <main class="main-content">
       <div class="categorias-header">
         <h1 class="categorias-title">Categorías</h1>
@@ -11,8 +9,15 @@
       </div>
 
       <div class="categorias-grid">
-        <!-- Categoria Card v-for -->
-        <div class="categoria-card" v-for="categoria in categorias" :key="categoria.id">
+        <div
+          class="categoria-card"
+          v-for="categoria in categorias"
+          :key="categoria.id"
+          @click="jugarCategoria(categoria.id)"
+          role="button"
+          tabindex="0"
+          @keydown.enter="jugarCategoria(categoria.id)"
+        >
           <div class="card-image-wrapper">
             <div class="card-image placeholder">
               <img v-if="categoria.imagen" :src="categoria.imagen" :alt="categoria.nombre" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
@@ -21,12 +26,12 @@
           </div>
           <div class="card-content">
             <h3 class="card-title">{{ categoria.nombre }}</h3>
-            <button class="card-play-btn" @click="jugarCategoria(categoria.id)">Jugar</button>
+          </div>
+          <div class="card-overlay">
+            <span class="card-overlay-text">Jugar</span>
           </div>
         </div>
       </div>
-
-      <!-- Bottom Info Cards -->
       <div class="info-section">
         <div class="info-card ranking-card">
           <h4 class="info-title">Ranking Individual</h4>
@@ -84,19 +89,22 @@ export default {
   box-sizing: border-box;
 }
 
+/* ── Página: mismo gradiente que home ── */
 .categorias-page {
   min-height: 100vh;
-  background: #505c84;
+  background: linear-gradient(190deg, #5f74b7 25%, #a6aec5 100%);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  padding-top: 96px; /* mismo offset que .home-page */
 }
 
-/* Main Content */
+/* ── Contenedor: mismo ancho que container-home ── */
 .main-content {
-  max-width: 1400px;
+  width: min(1200px, 92%);
   margin: 0 auto;
-  padding: 3rem 2rem;
+  padding: 3rem 0;
 }
 
+/* ── Cabecera de sección ── */
 .categorias-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -105,18 +113,19 @@ export default {
 .categorias-title {
   font-size: 3rem;
   font-weight: 900;
-  color: white;
-  margin: 0 0 1rem 0;
+  color: #eef2ff;
+  margin: 0 0 0.75rem 0;
   letter-spacing: 1px;
 }
 
 .categorias-subtitle {
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(238, 242, 255, 0.7);
+  font-weight: 500;
   margin: 0;
 }
 
-/* Categorias Grid */
+/* ── Grid de categorías ── */
 .categorias-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -124,20 +133,55 @@ export default {
   margin-bottom: 3rem;
 }
 
+/* ── Cards: glass card igual que el estilo del home ── */
 .categoria-card {
-  background: linear-gradient(180deg, #dce4ef 0%, #c9d6e8 50%, #b8c9de 100%);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  position: relative;
 }
 
 .categoria-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+  background: rgba(255, 255, 255, 0.17);
+}
+
+.categoria-card:hover .card-overlay {
+  opacity: 1;
+}
+
+/* Overlay que aparece al hover */
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(95, 116, 183, 0.72);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  border-radius: 16px;
+}
+
+.card-overlay-text {
+  background: #ff724f;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.6rem 2rem;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 
 .card-image-wrapper {
@@ -145,8 +189,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
-  background: transparent;
+  padding: 1.75rem 1.5rem 1rem;
   min-height: 150px;
 }
 
@@ -154,11 +197,12 @@ export default {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: rgba(100, 120, 150, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #505c84;
+  color: #eef2ff;
   font-weight: 600;
   text-align: center;
 }
@@ -168,43 +212,18 @@ export default {
 }
 
 .card-content {
-  padding: 1.5rem;
+  padding: 1rem 1.5rem 1.5rem;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  background: transparent;
 }
 
 .card-title {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #1f2937;
+  color: #eef2ff;
 }
 
-.card-play-btn {
-  background: linear-gradient(135deg, #35C3FF 0%, #1BA8DE 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card-play-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(53, 195, 255, 0.3);
-}
-
-.card-play-btn:active {
-  transform: translateY(0);
-}
-
-/* Info Section */
+/* ── Info section (ranking / recompensas) ── */
 .info-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -212,41 +231,43 @@ export default {
 }
 
 .info-card {
-  background: rgba(114, 112, 112, 0.1);
+  background: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 70px;
-  max-width: 500px;
   transition: background 0.3s;
 }
 
 .info-card:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.17);
 }
 
 .ranking-card,
 .rewards-card {
-  background: linear-gradient(135deg, #35C3FF 0%, #1BA8DE 100%);
+  background: rgba(255, 114, 79, 0.55); /* mismo naranja del home con transparencia */
+  border: 1px solid rgba(255, 180, 120, 0.35);
+}
+
+.ranking-card:hover,
+.rewards-card:hover {
+  background: rgba(255, 114, 79, 0.70);
 }
 
 .info-title {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: white;
+  color: #eef2ff;
   letter-spacing: 0.5px;
 }
 
-/* Responsive */
+/* ── Responsive ── */
 @media (max-width: 768px) {
-  .main-content {
-    padding: 2rem 1rem;
-  }
-
   .categorias-title {
     font-size: 2rem;
   }
@@ -263,7 +284,7 @@ export default {
   }
 
   .categorias-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
 }
