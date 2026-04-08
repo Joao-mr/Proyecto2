@@ -15,5 +15,5 @@ import HeroSection from '@/components/home/HeroSection.vue'
 import InfoSection from '@/components/home/InfoSection.vue'
 import RankingSection from '@/components/home/RankingSection.vue'
 import CategorySection from '@/components/home/CategorySection.vue'
-//import HomeFooter from '@/components/home/HomeFooter.vue'
+import HomeFooter from '@/layouts/HomeFooter.vue'
 </script>
