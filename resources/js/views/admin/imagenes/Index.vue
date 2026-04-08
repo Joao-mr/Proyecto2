@@ -1,9 +1,9 @@
-<template>
+﻿<template>
     <div class="imagenes-page">
         <Card>
             <template #title>
                 <div class="flex items-center justify-between w-full">
-                    <span>Gestión de Imágenes (Juego)</span>
+                    <span>Gesti├│n de Im├ígenes (Juego)</span>
                     <div class="flex items-center gap-2">
                         <Button
                             label="Actualizar"
@@ -26,7 +26,7 @@
             </template>
 
             <template #subtitle>
-                Administra las imágenes y su respuesta correcta.
+                Administra las im├ígenes y su respuesta correcta.
             </template>
 
             <template #content>
@@ -42,12 +42,12 @@
                     :loading="isLoading"
                     filter-display="menu"
                     :filter-delay="300"
-                    :global-filter-fields="['id', 'url', 'respuesta_correcta', 'created_at']"
+                    :global-filter-fields="['id', 'respuesta_correcta', 'created_at']"
                 >
                     <template #empty>
                         <div class="table-empty-state">
                             <i class="pi pi-inbox empty-state-icon"></i>
-                            <p class="empty-state-text">No se encontraron imágenes</p>
+                            <p class="empty-state-text">No se encontraron im├ígenes</p>
                         </div>
                     </template>
 
@@ -60,19 +60,17 @@
                         </template>
                     </Column>
 
-                    <Column field="url" header="URL" sortable filter class="min-w-[320px]">
+                    <Column header="Imagen" class="w-[120px]">
                         <template #body="slotProps">
-                            <a
-                                :href="slotProps.data.url"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="text-blue-600 hover:underline break-all"
-                            >
-                                {{ slotProps.data.url || '-' }}
-                            </a>
-                        </template>
-                        <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" placeholder="Buscar por URL" />
+                            <img
+                                v-if="slotProps.data.urls?.thumb || slotProps.data.urls?.original"
+                                :src="slotProps.data.urls.thumb || slotProps.data.urls.original"
+                                :alt="`Imagen #${slotProps.data.id}`"
+                                class="w-16 h-16 object-cover rounded border"
+                            />
+                            <div v-else class="w-16 h-16 bg-gray-100 rounded border flex items-center justify-center">
+                                <i class="pi pi-image text-gray-400 text-xl"></i>
+                            </div>
                         </template>
                     </Column>
 
@@ -85,7 +83,7 @@
                         </template>
                     </Column>
 
-                    <Column field="created_at" header="Fecha de Creación" sortable class="min-w-[180px]">
+                    <Column field="created_at" header="Fecha de Creaci├│n" sortable class="min-w-[180px]">
                         <template #body="slotProps">
                             <span class="text-sm table-cell-date">
                                 <i class="pi pi-calendar mr-2 text-xs opacity-70"></i>
@@ -131,20 +129,6 @@
         >
             <div class="flex flex-col gap-4">
                 <div>
-                    <label for="imagen-url" class="dialog-label">URL de la imagen</label>
-                    <InputText
-                        v-model="imagen.url"
-                        id="imagen-url"
-                        class="w-full"
-                        :class="{ 'p-invalid': hasError('url') }"
-                        placeholder="Ej: https://example.com/imagen.jpg"
-                    />
-                    <small v-if="hasError('url')" class="dialog-error">
-                        {{ getError('url') }}
-                    </small>
-                </div>
-
-                <div>
                     <label for="imagen-respuesta" class="dialog-label">Respuesta correcta</label>
                     <InputText
                         v-model="imagen.respuesta_correcta"
@@ -186,7 +170,8 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, inject } from 'vue';
-import useImagenes from '@/composables/imagenes';
+import { useRouter } from 'vue-router';
+import useImagen from '@/composables/useImagen';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 
 const {
@@ -202,14 +187,13 @@ const {
     getError,
     upsertImagenRecord,
     isLoading
-} = useImagenes();
+} = useImagen();
 
 const swal = inject('$swal');
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    url: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
     respuesta_correcta: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
 });
 
@@ -220,10 +204,10 @@ const imagenDialog = reactive({
 
 const isSubmitting = computed(() => isLoading.value);
 
+const router = useRouter();
+
 const openCreateDialog = () => {
-    resetImagen();
-    imagenDialog.type = 'create';
-    imagenDialog.open = true;
+    router.push({ name: 'imagenes-juego.upload' });
 };
 
 const openEditDialog = (currentImagen) => {
@@ -273,10 +257,10 @@ const confirmDeleteImagen = (currentImagen) => {
 
     swal({
         icon: 'warning',
-        title: '¿Eliminar imagen?',
-        text: `La imagen #${currentImagen.id} se eliminará de forma permanente.`,
+        title: '┬┐Eliminar imagen?',
+        text: `La imagen #${currentImagen.id} se eliminar├í de forma permanente.`,
         showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'S├¡, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
     }).then((result) => {

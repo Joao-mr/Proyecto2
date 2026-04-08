@@ -338,6 +338,15 @@ export default [
                             breadCrumb: 'Imágenes Juego',
                             hideBreadcrumb: true
                         }
+                    },
+                    {
+                        name: 'imagenes-juego.upload',
+                        path: 'upload',
+                        component: () => import('../views/admin/imagenes/Upload.vue'),
+                        meta: {
+                            breadCrumb: 'Subir Imagen',
+                            linked: false
+                        }
                     }
                 ]
             },
