@@ -34,10 +34,18 @@
       </div>
       <div class="info-section">
         <div class="info-card ranking-card">
-          <h4 class="info-title">Ranking Individual</h4>
+          <span class="info-card-icon">🏆</span>
+          <div>
+            <h4 class="info-title">Ranking Individual</h4>
+            <p class="info-subtitle">Compite y escala posiciones globalmente</p>
+          </div>
         </div>
         <div class="info-card rewards-card">
-          <h4 class="info-title">Recompensas</h4>
+          <span class="info-card-icon">🎁</span>
+          <div>
+            <h4 class="info-title">Recompensas</h4>
+            <p class="info-subtitle">Gana premios por tus logros en el juego</p>
+          </div>
         </div>
       </div>
     </main>
@@ -238,8 +246,9 @@ export default {
   border-radius: 14px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 70px;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  min-height: 80px;
   transition: background 0.3s;
 }
 
@@ -259,11 +268,24 @@ export default {
 }
 
 .info-title {
-  margin: 0;
-  font-size: 1.05rem;
+  margin: 0 0 0.2rem 0;
+  font-size: 1rem;
   font-weight: 700;
   color: #eef2ff;
   letter-spacing: 0.5px;
+}
+
+.info-subtitle {
+  margin: 0;
+  font-size: 0.83rem;
+  color: rgba(238, 242, 255, 0.72);
+  font-weight: 400;
+}
+
+.info-card-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
 /* ── Responsive ── */

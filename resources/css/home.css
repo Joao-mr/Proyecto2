@@ -60,7 +60,7 @@
 }
 
 .home-nav-item {
-  position: relative; 
+  position: relative;
   display: inline-flex;
   align-items: center;
   color: #eef2ff;
@@ -70,6 +70,8 @@
   padding-right: 0.9rem;
   line-height: 1;
   white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
 }
 
 .home-nav-item::before {
@@ -121,6 +123,8 @@
   justify-content: space-between;
   overflow: hidden;
   font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
 }
 
 .home-btn-register {
@@ -144,64 +148,38 @@
   font-weight: 800;
 }
 
-.hero-row-flex {
-  display: flex;
-  align-items: center;
-  min-height: 560px;
-}
-
-.hero-col {
-  display: flex;
-  align-items: center;
-}
-
-.hero-col-content {
-  justify-content: flex-start;
-}
-
-.hero-col-image {
-  justify-content: flex-end;
-  overflow: visible;
-}
-
-.hero-image-box {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
+/* hero vars — definición única, limpia */
 .home-hero-logo {
-  width: min(720px, 92%);
+  width: min(480px, 90%);
   height: auto;
   display: block;
+  margin-bottom: 1.5rem;
 }
 
 .home-hero-subtitle {
   color: #eef2ff;
-  font-size: 23px;
+  font-size: 1.35rem;
   font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  line-height: 1.4;
 }
 
 .home-hero-text {
-  color: #eef2ff;
-  font-size: 20px;
-  line-height: 1.45;
-  max-width: 680px;
+  color: rgba(238, 242, 255, 0.88);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 500px;
   font-weight: 500;
-}
-
-.hero-image-box {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  margin-top: 0;
+  margin-bottom: 1.75rem;
 }
 
 .home-hero-image {
-  width: 600px;
-  max-width: none;
+  width: 480px;
+  max-width: 100%;
   height: auto;
+  display: block;
 }
 
 @media (min-width: 992px) {
@@ -234,14 +212,41 @@
     min-height: auto;
   }
 
-  .hero-col-content,
-  .hero-col-image,
-  .hero-image-box {
-    justify-content: center;
+  .hero-inner {
+    flex-direction: column;
+    min-height: auto;
+    text-align: center;
+    gap: 2rem;
   }
 
   .hero-content-box {
     margin-right: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-image-box {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .home-hero-logo {
+    margin-inline: auto;
+  }
+
+  .home-hero-text {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .home-btn-play {
+    margin-inline: auto;
+  }
+
+  .home-hero-image {
+    width: min(380px, 85vw);
   }
 }
 
@@ -592,7 +597,7 @@
 
 /* Ajuste para que el bloque se vea integrado sobre el fondo */
 .game-container {
-  margin: 0 auto;
+  margin: 0 auto 4rem;
 }
 
 .ranking-section {
@@ -924,7 +929,7 @@
   margin-top: 3rem;
   padding: 2.2rem 0;
   background: #626f96;
-  border-top: 2px solid #2f8ef5;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .home-footer__inner {
@@ -1008,4 +1013,62 @@
     justify-content: center;
     gap: 1rem 1.25rem;
   }
+}
+
+/* ============================================================
+   HERO LAYOUT — dos columnas: contenido izq · imagen dcha
+   ============================================================ */
+.hero-section {
+  padding: 3.5rem 0 5rem;
+}
+
+.hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  min-height: 460px;
+}
+
+.hero-content-box {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.hero-image-box {
+  flex: 0 0 auto;
+  width: auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* ============================================================
+   RANKING SECTION — cursor en botones de switch
+   ============================================================ */
+.ranking-switch__btn {
+  cursor: pointer;
+}
+
+/* ============================================================
+   CATEGORIES SECTION — cursor en botones
+   ============================================================ */
+.categories-btn {
+  cursor: pointer;
+}
+
+.categories-arrow {
+  cursor: pointer;
+}
+
+/* ============================================================
+   HOVER EFFECT en dropdown items del footer
+   ============================================================ */
+.home-footer__social-btn:hover {
+  background: #cdd3e8;
+  transition: background 0.15s;
+}
+
+.home-footer__link:hover {
+  opacity: 0.8;
+  transition: opacity 0.15s;
 }
