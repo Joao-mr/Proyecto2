@@ -12,5 +12,7 @@
 <script setup>
 import HomeNavbar from '@/layouts/HomeNavbar.vue'
 import HeroSection from '@/components/home/HeroSection.vue'
-import InfoSection from '../../../components/home/InfoSection.vue';
+import InfoSection from '@/components/home/InfoSection.vue'
+import RankingSection from '@/components/home/RankingSection.vue'
+
 </script>

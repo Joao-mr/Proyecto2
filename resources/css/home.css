@@ -451,3 +451,114 @@
 .game-container {
   margin: 0 auto;
 }
+
+.ranking-section {
+  padding: 4rem 0;
+}
+
+.ranking-title {
+  text-align: center;
+  color: #f2f5ff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 1.6rem;
+}
+
+.ranking-switch {
+  width: fit-content;
+  margin: 0 auto 1.6rem;
+  background: #5f6f99;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 0.6rem;
+  display: flex;
+  gap: 0.5rem;
+  box-shadow: 0 8px 16px rgba(24, 33, 68, 0.28);
+}
+
+.ranking-switch__btn {
+  border: 0;
+  background: transparent;
+  color: #f2f5ff;
+  font-weight: 700;
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+}
+
+.ranking-switch__btn.is-active {
+  background: #f3f6ff;
+  color: #586894;
+}
+
+.ranking-card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #7382ab;
+  box-shadow: 0 10px 22px rgba(23, 33, 68, 0.24);
+}
+
+.ranking-head,
+.ranking-row {
+  display: grid;
+  grid-template-columns: 1.35fr 0.8fr 0.8fr 0.9fr;
+  align-items: center;
+}
+
+.ranking-head {
+  background: #5f6d96;
+  color: #ff6f4e;
+  font-weight: 800;
+  padding: 1.1rem 1.4rem;
+}
+
+.ranking-row {
+  color: #f2f5ff;
+  font-weight: 700;
+  padding: 1rem 1.4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ranking-player {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.ranking-pos {
+  width: 26px;
+  text-align: right;
+}
+
+.ranking-avatar {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.ranking-elo {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.ranking-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #ff955b;
+  border: 2px solid #ffe0c7;
+}
+
+.ranking-rank {
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 767.98px) {
+  .ranking-card {
+    overflow-x: auto;
+  }
+
+  .ranking-head,
+  .ranking-row {
+    min-width: 680px;
+  }
+}
