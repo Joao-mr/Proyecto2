@@ -1,4 +1,5 @@
 .home-page {
+  font-family: var(--font-main);
   background: linear-gradient(190deg, #5f74b7 25%, #a6aec5 100%);
   min-height: 100vh;
   padding-top: 96px;
@@ -268,3 +269,185 @@
   }
 }
 
+
+/* CONTENEDOR PRINCIPAL */
+.game-container {
+  max-width: 950px;
+  margin: 0 auto;
+  font-family: 'Roboto Mono', monospace;
+  color: #ffffff;
+  border-radius: 20px;
+  overflow: hidden; 
+}
+
+/* --- SECCIÓN SUPERIOR --- */
+.top-section {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .top-section {
+    flex-direction: row;
+  }
+}
+
+.panel {
+  flex: 1;
+  padding: 50px 40px;
+  box-sizing: border-box;
+}
+
+.panel-left {
+  background-color: #5B627D; 
+}
+
+.panel-right {
+  background-color: #727D9C; /* Azul grisáceo claro */
+  border-top-left-radius: 24px;
+}
+
+/* TIPOGRAFÍA */
+.badge-text {
+  color: #FF6B52;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+}
+
+.instructions-list {
+  padding-left: 20px;
+  margin-bottom: 35px;
+  font-size: 0.95rem;
+  line-height: 2;
+}
+
+.description {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 35px;
+}
+
+/* BOTONES */
+.action-btn {
+  background: linear-gradient(135deg, #FF6B52, #FF8365);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: 'Roboto Mono', monospace;
+  transition: transform 0.2s ease, opacity 0.2s;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* --- SECCIÓN INFERIOR --- */
+.bottom-section {
+  background-color: #828DAB; 
+  position: relative;
+  border-top: 1px solid #4A516D;
+}
+
+/* LA LÍNEA HORIZONTAL CRUZADA */
+.horizontal-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #4A516D; 
+  transform: translateY(-50%);
+  z-index: 1; 
+}
+
+/* CUADRÍCULA DE ÍCONOS */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  position: relative;
+  z-index: 2;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 35px 15px;
+  border-right: 1px solid #4A516D; 
+}
+
+/* Quitamos el borde derecho al último elemento */
+.feature-item.no-border {
+  border-right: none;
+}
+
+/* CÍRCULOS DE LOS ÍCONOS */
+.icon-wrapper {
+  width: 65px;
+  height: 65px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #4A516D;
+  margin-bottom: 15px;
+  position: relative; 
+  z-index: 3; 
+  color: #000;
+  font-size: 1.5rem;
+}
+
+/* Sombra suave tipo "halo" alrededor de los círculos como en la imagen */
+.shadow-effect {
+  box-shadow: 0 0 0 4px rgba(74, 81, 109, 0.3), 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.feature-item p {
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0;
+  font-weight: 700;
+}
+
+/* RESPONSIVO BÁSICO */
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .feature-item {
+    border-bottom: 1px solid #4A516D;
+  }
+  .feature-item:nth-child(even) {
+    border-right: none;
+  }
+}
+
+/* Fondo de la sección Info (como en la captura) */
+.info-section-bg {
+  background: linear-gradient(180deg, #6675a5 0%, #6b7aaa 100%);
+  padding: 2.5rem 0 3.5rem;
+  margin-top: 1rem;
+}
+
+/* Ajuste para que el bloque se vea integrado sobre el fondo */
+.game-container {
+  margin: 0 auto;
+}

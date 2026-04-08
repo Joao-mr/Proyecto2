@@ -1488,3 +1488,25 @@ aside.sidebar-container a:hover img {
 
 /* Prism CSS - Solo importar si existe */
 /* @import "./prism-vsc-dark-plus.css"; */
+
+/* ============================================
+   Font Awesome - Estilos globales
+   ============================================ */
+@import "font-awesome";
+@import "font-awesome/css/all.css";
+
+/* ============================================
+   Google Fonts - Estilos globales
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --font-main: 'Roboto Mono', monospace;
+  --bs-body-font-family: var(--font-main); /* Bootstrap */
+}
+
+html,
+body,
+#app {
+  font-family: var(--font-main);
+}
