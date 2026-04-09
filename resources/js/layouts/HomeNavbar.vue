@@ -6,6 +6,7 @@
         <img src="/images/logowhatizit.svg" alt="Whatizit" class="home-logo-img" />
       </RouterLink>
 
+      <!-- NAV DESKTOP (solo visible en desktop) -->
       <nav class="home-nav" :class="{ 'home-nav--open': mobileMenuOpen }">
         <div
           v-for="item in navItems"
@@ -27,6 +28,7 @@
         </div>
       </nav>
 
+      <!-- AUTH DESKTOP (solo visible en desktop) -->
       <div class="home-auth" :class="{ 'home-auth--open': mobileMenuOpen }">
         <template v-if="!store.authenticated">
           <router-link :to="{ name: 'auth.login' }" class="home-link" @click="closeMobileMenu">Login</router-link>
@@ -50,6 +52,55 @@
             </div>
           </div>
         </template>
+      </div>
+
+      <!-- MOBILE NAV MENU (solo visible en móvil) -->
+      <nav class="home-nav-mobile" v-show="mobileMenuOpen">
+        <div v-for="item in navItems" :key="`mobile-${item.label}`" class="home-nav-mobile__item">
+          <button
+            class="home-nav-mobile__toggle"
+            @click="toggleMobileDropdown(item.label)"
+            :class="{ 'is-active': activeMobileDropdown === item.label }"
+          >
+            <span class="home-nav-mobile__label">{{ item.label }}</span>
+            <span class="home-nav-mobile__icon">‹</span>
+          </button>
+          <transition name="expand">
+            <div v-if="activeMobileDropdown === item.label" class="home-nav-mobile__submenu">
+              <router-link
+                v-for="sub in item.children"
+                :key="`sub-${sub.label}`"
+                :to="sub.route"
+                class="home-nav-mobile__subitem"
+                @click="closeMobileMenu"
+              >{{ sub.label }}</router-link>
+            </div>
+          </transition>
+        </div>
+      </nav>
+
+      <!-- MOBILE AUTH MENU (solo visible en móvil cuando está autenticado) -->
+      <div v-if="mobileMenuOpen && store.authenticated" class="home-auth-mobile">
+        <div class="home-auth-mobile__user">
+          <span class="home-auth-mobile__avatar">{{ store.user?.name?.[0]?.toUpperCase() }}</span>
+          <span class="home-auth-mobile__name">{{ store.user?.name }}</span>
+        </div>
+        <router-link :to="{ name: userPanelRoute }" class="home-auth-mobile__link" @click="closeMobileMenu">
+          <span>👤</span> Mi perfil
+        </router-link>
+        <button class="home-auth-mobile__link home-auth-mobile__logout" @click="handleLogout">
+          <span>🚪</span> Cerrar sesión
+        </button>
+      </div>
+
+      <!-- MOBILE AUTH BUTTONS (solo visible en móvil cuando NO está autenticado) -->
+      <div v-if="mobileMenuOpen && !store.authenticated" class="home-auth-mobile-buttons">
+        <router-link :to="{ name: 'auth.login' }" class="home-auth-mobile-btn home-auth-mobile-btn--login" @click="closeMobileMenu">
+          Login
+        </router-link>
+        <router-link :to="{ name: 'auth.register' }" class="home-auth-mobile-btn home-auth-mobile-btn--register" @click="closeMobileMenu">
+          Registrarse ›
+        </router-link>
       </div>
 
       <!-- Hamburger (solo móvil) -->
@@ -80,6 +131,7 @@ const route = useRoute();
 const { logout } = useAuth();
 
 const activeDropdown = ref(null);
+const activeMobileDropdown = ref(null);
 const userMenuOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const scrolled = ref(false);
@@ -88,6 +140,7 @@ const scrolled = ref(false);
 watch(() => route.path, () => {
   mobileMenuOpen.value = false;
   activeDropdown.value = null;
+  activeMobileDropdown.value = null;
 });
 
 // Scroll-aware navbar
@@ -106,7 +159,12 @@ onUnmounted(() => {
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false;
   activeDropdown.value = null;
+  activeMobileDropdown.value = null;
   userMenuOpen.value = false;
+};
+
+const toggleMobileDropdown = (label) => {
+  activeMobileDropdown.value = activeMobileDropdown.value === label ? null : label;
 };
 
 const navItems = [

@@ -10,6 +10,33 @@
   margin: 0 auto;
 }
 
+/* ============================================================
+   VUE TRANSITIONS
+   ============================================================ */
+.expand-enter-active,
+.expand-leave-active {
+  transition: all 0.28s ease;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.expand-enter-from,
+.expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+@keyframes slideDownSmooth {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* NAVBAR */
 .home-header {
   position: fixed;
@@ -200,6 +227,30 @@
   max-width: 100%;
   height: auto;
   display: block;
+
+  /* Sombra proyectada (hace que parezca que flota sobre el fondo) */
+  filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.25));
+
+  /* Aplicación de la animación */
+  /* 6s = duración (lento es mejor para PC), ease-in-out = suavidad, infinite = no para */
+  animation: floatAnim 6s ease-in-out infinite;
+
+  /* Mejora del renderizado en monitores de alta resolución */
+  transform-origin: center center;
+  will-change: transform;
+}
+
+@keyframes floatAnim {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    /* Sube 25 píxeles y rota 2 grados a la derecha */
+    transform: translateY(-25px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
 }
 
 @media (min-width: 992px) {
@@ -216,60 +267,253 @@
     justify-content: flex-start;
   }
 
+  /* Ocultar nav y auth de desktop en móvil */
+  .home-nav,
+  .home-auth {
+    display: none !important;
+  }
+
   .home-hamburger {
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
     margin-left: auto;
+    transition: background 0.2s ease;
+    z-index: 10000;
   }
 
-  .home-nav {
-    display: none;
+  .home-hamburger:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .home-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #eef2ff;
+    border-radius: 2px;
+    transition: transform 0.28s ease, opacity 0.22s ease;
+    transform-origin: center;
+  }
+
+  .home-hamburger[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .home-hamburger[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .home-hamburger[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* ============================================================
+     MOBILE MENU — Accordion estilo desplegable
+     ============================================================ */
+  .home-nav-mobile {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     order: 3;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.25rem;
-    padding: 0.5rem 0 1rem;
-    background: transparent;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
     border-top: 1px solid rgba(255, 255, 255, 0.14);
     margin-top: 0.5rem;
+    animation: slideDownSmooth 0.28s ease-out;
   }
 
-  .home-nav--open {
+  .home-nav-mobile__item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .home-nav-mobile__toggle {
     display: flex;
-  }
-
-  .home-auth {
-    display: none;
-    order: 4;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
-    padding: 0.75rem 0;
+    padding: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #eef2ff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: background 0.18s ease;
+    position: relative;
+  }
+
+  .home-nav-mobile__toggle:active {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .home-nav-mobile__label {
+    flex: 1;
+    text-align: left;
+  }
+
+  .home-nav-mobile__icon {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 24px;
+    height: 24px;
+    font-size: 1.2rem;
+    transition: transform 0.28s ease;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
   }
 
-  .home-auth--open {
-    display: flex;
+  .home-nav-mobile__toggle.is-active .home-nav-mobile__icon {
+    transform: rotate(-90deg);
   }
 
-  .home-nav-item {
-    padding: 0.65rem 1rem;
-    border-radius: 8px;
+  .home-nav-mobile__submenu {
+    background: rgba(0, 0, 0, 0.15);
+    border-left: 3px solid #ff724f;
+    overflow: hidden;
+  }
+
+  .home-nav-mobile__subitem {
     display: block;
+    padding: 0.85rem 1rem 0.85rem 2rem;
+    color: #eef2ff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.15s ease, padding-left 0.15s ease;
   }
 
-  .home-nav-item:hover {
+  .home-nav-mobile__subitem:last-child {
+    border-bottom: none;
+  }
+
+  .home-nav-mobile__subitem:active {
+    background: rgba(255, 255, 255, 0.08);
+    padding-left: 2.25rem;
+  }
+
+  /* ============================================================
+     MOBILE AUTH MENU — cuando usuario está autenticado
+     ============================================================ */
+  .home-auth-mobile {
+    width: 100%;
+    order: 4;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    animation: slideDownSmooth 0.28s ease-out 0.05s both;
+  }
+
+  .home-auth-mobile__user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .home-auth-mobile__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ff724f;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .home-auth-mobile__name {
+    color: #eef2ff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .home-auth-mobile__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    color: #eef2ff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s ease;
+    margin-bottom: 0.25rem;
+  }
+
+  .home-auth-mobile__link:active {
     background: rgba(255, 255, 255, 0.08);
   }
 
-  .home-nav-dropdown-menu {
-    position: static;
-    transform: none;
+  .home-auth-mobile__logout {
+    color: #ff9e87;
+  }
+
+  /* ============================================================
+     MOBILE AUTH BUTTONS — cuando usuario NO está autenticado
+     ============================================================ */
+  .home-auth-mobile-buttons {
+    width: 100%;
+    order: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideDownSmooth 0.28s ease-out 0.05s both;
+  }
+
+  .home-auth-mobile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1rem;
+    border: none;
     border-radius: 8px;
-    margin: 0.2rem 0 0.5rem 1rem;
-    animation: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.22s ease;
+  }
+
+  .home-auth-mobile-btn--login {
+    background: transparent;
+    color: #eef2ff;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .home-auth-mobile-btn--login:active {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .home-auth-mobile-btn--register {
+    background: #ff724f;
+    color: #fff;
+  }
+
+  .home-auth-mobile-btn--register:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(255, 114, 79, 0.4);
   }
 
   .home-hero-text {
@@ -1187,50 +1431,7 @@
 }
 
 /* ============================================================
-   HAMBURGER BUTTON — oculto en desktop, visible en móvil
-   ============================================================ */
-.home-hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
-  transition: background 0.2s ease;
-}
-
-.home-hamburger:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.home-hamburger span {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: #eef2ff;
-  border-radius: 2px;
-  transition: transform 0.28s ease, opacity 0.22s ease;
-  transform-origin: center;
-}
-
-.home-hamburger[aria-expanded="true"] span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-
-.home-hamburger[aria-expanded="true"] span:nth-child(2) {
-  opacity: 0;
-  transform: scaleX(0);
-}
-
-.home-hamburger[aria-expanded="true"] span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-}
-
-/* ============================================================
-   HERO STATS — línea de confianza bajo el CTA
+   HERO LAYOUT — dos columnas: contenido izq · imagen dcha
    ============================================================ */
 .hero-stats {
   display: flex;
