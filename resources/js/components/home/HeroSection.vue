@@ -14,7 +14,7 @@
         </p>
 
         <button class="home-btn-play" @click="goPlay">
-          Jugar ahora <span>&gt;</span>
+          Jugar ahora <span>›</span>
         </button>
       </div>
 

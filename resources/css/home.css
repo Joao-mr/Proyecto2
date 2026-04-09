@@ -10,18 +10,53 @@
   margin: 0 auto;
 }
 
+/* ============================================================
+   VUE TRANSITIONS
+   ============================================================ */
+.expand-enter-active,
+.expand-leave-active {
+  transition: all 0.28s ease;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.expand-enter-from,
+.expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+@keyframes slideDownSmooth {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* NAVBAR */
 .home-header {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;          
+  right: 0;
   width: 100%;
-  z-index: 9999;     
+  z-index: 9999;
   padding: 1rem 0;
   background: #5f74b7;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.home-header--scrolled {
+  background: rgba(66, 79, 134, 0.97);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px rgba(20, 28, 70, 0.28);
 }
 
 .home-header__inner {
@@ -124,7 +159,19 @@
   overflow: hidden;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
+  transition: transform 0.2s ease, box-shadow 0.22s ease;
+}
+
+.home-btn-register:hover,
+.home-btn-play:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(255, 114, 79, 0.42);
+}
+
+.home-btn-register:active,
+.home-btn-play:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .home-btn-register {
@@ -180,6 +227,30 @@
   max-width: 100%;
   height: auto;
   display: block;
+
+  /* Sombra proyectada (hace que parezca que flota sobre el fondo) */
+  filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.25));
+
+  /* Aplicación de la animación */
+  /* 6s = duración (lento es mejor para PC), ease-in-out = suavidad, infinite = no para */
+  animation: floatAnim 6s ease-in-out infinite;
+
+  /* Mejora del renderizado en monitores de alta resolución */
+  transform-origin: center center;
+  will-change: transform;
+}
+
+@keyframes floatAnim {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    /* Sube 25 píxeles y rota 2 grados a la derecha */
+    transform: translateY(-25px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
 }
 
 @media (min-width: 992px) {
@@ -191,13 +262,258 @@
 
 @media (max-width: 991.98px) {
   .home-header__inner {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
   }
 
-  .home-nav {
+  /* Ocultar nav y auth de desktop en móvil */
+  .home-nav,
+  .home-auth {
+    display: none !important;
+  }
+
+  .home-hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    margin-left: auto;
+    transition: background 0.2s ease;
+    z-index: 10000;
+  }
+
+  .home-hamburger:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .home-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #eef2ff;
+    border-radius: 2px;
+    transition: transform 0.28s ease, opacity 0.22s ease;
+    transform-origin: center;
+  }
+
+  .home-hamburger[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .home-hamburger[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .home-hamburger[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* ============================================================
+     MOBILE MENU — Accordion estilo desplegable
+     ============================================================ */
+  .home-nav-mobile {
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    order: 3;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    margin-top: 0.5rem;
+    animation: slideDownSmooth 0.28s ease-out;
+  }
+
+  .home-nav-mobile__item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .home-nav-mobile__toggle {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #eef2ff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: background 0.18s ease;
+    position: relative;
+  }
+
+  .home-nav-mobile__toggle:active {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .home-nav-mobile__label {
+    flex: 1;
+    text-align: left;
+  }
+
+  .home-nav-mobile__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 1.2rem;
+    transition: transform 0.28s ease;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+  }
+
+  .home-nav-mobile__toggle.is-active .home-nav-mobile__icon {
+    transform: rotate(-90deg);
+  }
+
+  .home-nav-mobile__submenu {
+    background: rgba(0, 0, 0, 0.15);
+    border-left: 3px solid #ff724f;
+    overflow: hidden;
+  }
+
+  .home-nav-mobile__subitem {
+    display: block;
+    padding: 0.85rem 1rem 0.85rem 2rem;
+    color: #eef2ff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.15s ease, padding-left 0.15s ease;
+  }
+
+  .home-nav-mobile__subitem:last-child {
+    border-bottom: none;
+  }
+
+  .home-nav-mobile__subitem:active {
+    background: rgba(255, 255, 255, 0.08);
+    padding-left: 2.25rem;
+  }
+
+  /* ============================================================
+     MOBILE AUTH MENU — cuando usuario está autenticado
+     ============================================================ */
+  .home-auth-mobile {
+    width: 100%;
+    order: 4;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    animation: slideDownSmooth 0.28s ease-out 0.05s both;
+  }
+
+  .home-auth-mobile__user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .home-auth-mobile__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ff724f;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .home-auth-mobile__name {
+    color: #eef2ff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .home-auth-mobile__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    color: #eef2ff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s ease;
+    margin-bottom: 0.25rem;
+  }
+
+  .home-auth-mobile__link:active {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .home-auth-mobile__logout {
+    color: #ff9e87;
+  }
+
+  /* ============================================================
+     MOBILE AUTH BUTTONS — cuando usuario NO está autenticado
+     ============================================================ */
+  .home-auth-mobile-buttons {
+    width: 100%;
+    order: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideDownSmooth 0.28s ease-out 0.05s both;
+  }
+
+  .home-auth-mobile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.22s ease;
+  }
+
+  .home-auth-mobile-btn--login {
+    background: transparent;
+    color: #eef2ff;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .home-auth-mobile-btn--login:active {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .home-auth-mobile-btn--register {
+    background: #ff724f;
+    color: #fff;
+  }
+
+  .home-auth-mobile-btn--register:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(255, 114, 79, 0.4);
   }
 
   .home-hero-text {
@@ -502,7 +818,7 @@
 
 .action-btn:hover {
   transform: translateY(-2px);
-  opacity: 0.9;
+  box-shadow: 0 6px 18px rgba(255, 107, 82, 0.38);
 }
 
 /* --- SECCIÓN INFERIOR --- */
@@ -566,6 +882,12 @@
 /* Sombra suave tipo "halo" alrededor de los círculos como en la imagen */
 .shadow-effect {
   box-shadow: 0 0 0 4px rgba(74, 81, 109, 0.3), 0 5px 15px rgba(0,0,0,0.2);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.feature-item:hover .shadow-effect {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 5px rgba(74, 81, 109, 0.42), 0 10px 24px rgba(0,0,0,0.3);
 }
 
 .feature-item p {
@@ -664,6 +986,28 @@
   font-weight: 700;
   padding: 1rem 1.4rem;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background 0.18s ease;
+}
+
+.ranking-row:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ranking-row--gold {
+  background: linear-gradient(90deg, rgba(255, 200, 0, 0.1), transparent 65%);
+}
+
+.ranking-row--gold .ranking-pos {
+  color: #ffd700;
+  font-weight: 900;
+}
+
+.ranking-row--silver .ranking-pos {
+  color: #ccd5f0;
+}
+
+.ranking-row--bronze .ranking-pos {
+  color: #e0a06a;
 }
 
 .ranking-player {
@@ -831,6 +1175,13 @@
   min-width: 170px;
   height: 50px;
   padding: 0 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.22s ease;
+}
+
+.categories-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 75, 0.42);
 }
 
 .categories-btn span {
@@ -849,6 +1200,12 @@
   color: #fff;
   font-size: 1.35rem;
   z-index: 10;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.categories-arrow:hover {
+  background: #e85e40;
+  box-shadow: 0 4px 16px rgba(229, 92, 58, 0.5);
 }
 
 .categories-arrow--left {
@@ -1071,4 +1428,124 @@
 .home-footer__link:hover {
   opacity: 0.8;
   transition: opacity 0.15s;
+}
+
+/* ============================================================
+   HERO LAYOUT — dos columnas: contenido izq · imagen dcha
+   ============================================================ */
+.hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-stat__value {
+  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.hero-stat__label {
+  color: rgba(238, 242, 255, 0.68);
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.hero-stat-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.22);
+  flex-shrink: 0;
+}
+
+@media (max-width: 991.98px) {
+  .hero-stats {
+    justify-content: center;
+  }
+}
+
+/* ============================================================
+   RANKING SWITCH — transición suave al cambiar modo
+   ============================================================ */
+.ranking-switch__btn {
+  cursor: pointer;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+/* ============================================================
+   INFO SECTION — instrucciones con número estilizado
+   ============================================================ */
+.instructions-list {
+  counter-reset: steps;
+  list-style: none;
+  padding-left: 0;
+}
+
+.instructions-list li {
+  counter-increment: steps;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.instructions-list li::before {
+  content: counter(steps);
+  min-width: 26px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #fff;
+}
+
+/* ============================================================
+   HOME NAV — transición en hover item
+   ============================================================ */
+.home-nav-item {
+  transition: color 0.18s ease;
+}
+
+/* ============================================================
+   RANKING HEAD — separar visualmente header de filas
+   ============================================================ */
+.ranking-head {
+  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   FEATURE ITEM — cursor + transition en texto
+   ============================================================ */
+.feature-item {
+  cursor: default;
+  transition: background 0.18s ease;
+}
+
+.feature-item p {
+  transition: color 0.18s ease;
+}
+
+.feature-item:hover p {
+  color: #fff;
 }

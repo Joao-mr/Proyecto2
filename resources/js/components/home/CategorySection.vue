@@ -2,7 +2,7 @@
 <template>
   <section class="categories-section">
     <div class="container-home">
-      <h2 class="categories-title">CATEGORIAS</h2>
+      <h2 class="categories-title">Categorías</h2>
 
       <div class="categories-carousel">
         <button class="categories-arrow categories-arrow--left" @click="prev" aria-label="Anterior">←</button>
@@ -26,7 +26,7 @@
                 <div class="categories-divider"></div>
 
                 <button class="categories-btn" @click="goToRooms">
-                  <span>&gt;</span> JUGAR YA!
+                  <span>›</span> ¡Jugar ahora!
                 </button>
               </div>
             </div>
@@ -46,10 +46,10 @@ const index = ref(0)
 
 const categories = [
   {
-    slug: 'ciencia',
-    name: 'NOMBRE CATEGORIA',
+    slug: 'naturaleza',
+    name: 'NATURALEZA',
     description:
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit cum aliquet nisi aptent class, lectus aliquam vehicula dis felis iaculis conubia facilisi habitant convallis at.',
+      'Animales, plantas, paisajes y fenómenos del mundo natural. Demuestra cuánto sabes sobre la naturaleza más salvaje y sorprendente del planeta.',
     image: '/images/categoria-placeholder.webp'
   },
   {
@@ -63,7 +63,7 @@ const categories = [
     slug: 'historia',
     name: 'HISTORIA',
     description:
-      'Retos sobre acontecimientos históricos y personajes clave. Suma puntos y escala en el ranking.',
+      'Retos sobre acontecimientos históricos y personajes clave de todos los tiempos. Suma puntos y escala en el ranking.',
     image: '/images/categoria-placeholder.webp'
   }
 ]
