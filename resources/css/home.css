@@ -15,13 +15,21 @@
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;          
+  right: 0;
   width: 100%;
-  z-index: 9999;     
+  z-index: 9999;
   padding: 1rem 0;
   background: #5f74b7;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.home-header--scrolled {
+  background: rgba(66, 79, 134, 0.97);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px rgba(20, 28, 70, 0.28);
 }
 
 .home-header__inner {
@@ -124,7 +132,19 @@
   overflow: hidden;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
+  transition: transform 0.2s ease, box-shadow 0.22s ease;
+}
+
+.home-btn-register:hover,
+.home-btn-play:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(255, 114, 79, 0.42);
+}
+
+.home-btn-register:active,
+.home-btn-play:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .home-btn-register {
@@ -191,13 +211,65 @@
 
 @media (max-width: 991.98px) {
   .home-header__inner {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .home-hamburger {
+    display: flex;
+    margin-left: auto;
   }
 
   .home-nav {
+    display: none;
     width: 100%;
-    justify-content: space-between;
+    order: 3;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    padding: 0.5rem 0 1rem;
+    background: transparent;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    margin-top: 0.5rem;
+  }
+
+  .home-nav--open {
+    display: flex;
+  }
+
+  .home-auth {
+    display: none;
+    order: 4;
+    width: 100%;
+    padding: 0.75rem 0;
+    justify-content: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .home-auth--open {
+    display: flex;
+  }
+
+  .home-nav-item {
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    display: block;
+  }
+
+  .home-nav-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .home-nav-dropdown-menu {
+    position: static;
+    transform: none;
+    border-radius: 8px;
+    margin: 0.2rem 0 0.5rem 1rem;
+    animation: none;
   }
 
   .home-hero-text {
@@ -502,7 +574,7 @@
 
 .action-btn:hover {
   transform: translateY(-2px);
-  opacity: 0.9;
+  box-shadow: 0 6px 18px rgba(255, 107, 82, 0.38);
 }
 
 /* --- SECCIÓN INFERIOR --- */
@@ -566,6 +638,12 @@
 /* Sombra suave tipo "halo" alrededor de los círculos como en la imagen */
 .shadow-effect {
   box-shadow: 0 0 0 4px rgba(74, 81, 109, 0.3), 0 5px 15px rgba(0,0,0,0.2);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.feature-item:hover .shadow-effect {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 5px rgba(74, 81, 109, 0.42), 0 10px 24px rgba(0,0,0,0.3);
 }
 
 .feature-item p {
@@ -664,6 +742,28 @@
   font-weight: 700;
   padding: 1rem 1.4rem;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background 0.18s ease;
+}
+
+.ranking-row:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ranking-row--gold {
+  background: linear-gradient(90deg, rgba(255, 200, 0, 0.1), transparent 65%);
+}
+
+.ranking-row--gold .ranking-pos {
+  color: #ffd700;
+  font-weight: 900;
+}
+
+.ranking-row--silver .ranking-pos {
+  color: #ccd5f0;
+}
+
+.ranking-row--bronze .ranking-pos {
+  color: #e0a06a;
 }
 
 .ranking-player {
@@ -831,6 +931,13 @@
   min-width: 170px;
   height: 50px;
   padding: 0 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.22s ease;
+}
+
+.categories-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 75, 0.42);
 }
 
 .categories-btn span {
@@ -849,6 +956,12 @@
   color: #fff;
   font-size: 1.35rem;
   z-index: 10;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.categories-arrow:hover {
+  background: #e85e40;
+  box-shadow: 0 4px 16px rgba(229, 92, 58, 0.5);
 }
 
 .categories-arrow--left {
@@ -1071,4 +1184,167 @@
 .home-footer__link:hover {
   opacity: 0.8;
   transition: opacity 0.15s;
+}
+
+/* ============================================================
+   HAMBURGER BUTTON — oculto en desktop, visible en móvil
+   ============================================================ */
+.home-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.home-hamburger:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.home-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #eef2ff;
+  border-radius: 2px;
+  transition: transform 0.28s ease, opacity 0.22s ease;
+  transform-origin: center;
+}
+
+.home-hamburger[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.home-hamburger[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.home-hamburger[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ============================================================
+   HERO STATS — línea de confianza bajo el CTA
+   ============================================================ */
+.hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-stat__value {
+  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.hero-stat__label {
+  color: rgba(238, 242, 255, 0.68);
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.hero-stat-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.22);
+  flex-shrink: 0;
+}
+
+@media (max-width: 991.98px) {
+  .hero-stats {
+    justify-content: center;
+  }
+}
+
+/* ============================================================
+   RANKING SWITCH — transición suave al cambiar modo
+   ============================================================ */
+.ranking-switch__btn {
+  cursor: pointer;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+/* ============================================================
+   INFO SECTION — instrucciones con número estilizado
+   ============================================================ */
+.instructions-list {
+  counter-reset: steps;
+  list-style: none;
+  padding-left: 0;
+}
+
+.instructions-list li {
+  counter-increment: steps;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.instructions-list li::before {
+  content: counter(steps);
+  min-width: 26px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #fff;
+}
+
+/* ============================================================
+   HOME NAV — transición en hover item
+   ============================================================ */
+.home-nav-item {
+  transition: color 0.18s ease;
+}
+
+/* ============================================================
+   RANKING HEAD — separar visualmente header de filas
+   ============================================================ */
+.ranking-head {
+  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   FEATURE ITEM — cursor + transition en texto
+   ============================================================ */
+.feature-item {
+  cursor: default;
+  transition: background 0.18s ease;
+}
+
+.feature-item p {
+  transition: color 0.18s ease;
+}
+
+.feature-item:hover p {
+  color: #fff;
 }

@@ -2,7 +2,7 @@
 <template>
   <section class="ranking-section">
     <div class="container-home">
-      <h2 class="ranking-title">MEJORES JUGADORES</h2>
+      <h2 class="ranking-title">Mejores Jugadores</h2>
 
       <div class="ranking-switch">
         <button
@@ -34,6 +34,7 @@
             v-for="(player, index) in currentRows"
             :key="`${mode}-${player.name}-${index}`"
             class="ranking-row"
+            :class="getRankClass(index)"
           >
             <div class="ranking-player">
               <span class="ranking-pos">{{ index + 1 }}.</span>
@@ -79,4 +80,11 @@ const multijugador = [
 const currentRows = computed(() =>
   mode.value === 'individual' ? individual : multijugador
 )
+
+const getRankClass = (index) => {
+  if (index === 0) return 'ranking-row--gold'
+  if (index === 1) return 'ranking-row--silver'
+  if (index === 2) return 'ranking-row--bronze'
+  return ''
+}
 </script>
