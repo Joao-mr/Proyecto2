@@ -189,6 +189,7 @@ const rankClass = (index) => {
 .ranking-mode-switch {
   background: rgba(95, 111, 153, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 15px;
   display: inline-flex;
   gap: 0.45rem;
 }
@@ -200,6 +201,7 @@ const rankClass = (index) => {
 
 .mode-btn.active {
   background: #eef2ff;
+  border-radius: 15px   ;
   color: #556799;
 }
 
