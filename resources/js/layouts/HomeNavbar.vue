@@ -171,8 +171,8 @@ const navItems = [
   {
     label: 'Juegos',
     children: [
-      { label: 'Todas las salas', route: '/' },
-      { label: 'Categorías', route: '/categorias' },
+      { label: 'Tus salas', route: '/mis-salas' },
+      { label: 'Categorías individuales', route: '/categorias' },
     ]
   },
   {

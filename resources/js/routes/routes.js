@@ -52,6 +52,12 @@ export default [
         component: () => import('../views/CategoriasView.vue'),
     },
     {
+        path: '/mis-salas',
+        name: 'mis-salas',
+        component: () => import('../views/user/MisSalasView.vue'),
+        beforeEnter: requireLogin,
+    },
+    {
         path: '/',
         component: GuestLayout,
         children: [
@@ -84,6 +90,18 @@ export default [
                 name: 'auth.reset-password',
                 component: () => import('../views/auth/passwords/Reset.vue'),
                 beforeEnter: guest,
+            },
+            {
+                path: 'game/sala/:id',
+                name: 'game.sala',
+                component: () => import('../views/public/game/SalaView.vue'),
+                beforeEnter: requireLogin,
+            },
+            {
+                path: 'game/categoria/:id',
+                name: 'game.categoria',
+                component: () => import('../views/public/game/CategoriaGameView.vue'),
+                beforeEnter: requireLogin,
             },
         ]
     },

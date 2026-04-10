@@ -39,6 +39,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('role-permissions', [PermissionController::class, 'updateRolePermissions']);
 
 
+    //imagenes
+    Route::post('imagenes/store-with-upload', [ImagenController::class, 'storeWithUpload'])->name('imagenes.store-upload');
+    Route::apiResource('imagenes', ImagenController::class)->parameters(['imagenes' => 'imagen']);
+    Route::get('imagenes-list', [ImagenController::class, 'getList']);
+    Route::post('imagenes/{imagen}/upload', [ImagenController::class, 'uploadImage'])->name('imagenes.upload');
+    Route::get('imagenes/{imagen}/media-info', [ImagenController::class, 'getMediaInfo'])->name('imagenes.media-info');
+    Route::get('imagenes/{imagen}/all-media', [ImagenController::class, 'getAllMedia'])->name('imagenes.all-media');
+
     //perfil
     Route::get('user', [ProfileController::class, 'user']);
     Route::get('user/signin', [ProfileController::class, 'user']);

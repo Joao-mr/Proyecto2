@@ -83,6 +83,13 @@
                         </template>
                     </Column>
 
+                    <Column field="categoria_nombre" header="Categoría" sortable class="min-w-[160px]">
+                        <template #body="slotProps">
+                            <Tag v-if="slotProps.data.categoria_nombre" :value="slotProps.data.categoria_nombre" severity="secondary" />
+                            <span v-else class="text-sm opacity-50">Sin categoría</span>
+                        </template>
+                    </Column>
+
                     <Column field="created_at" header="Fecha de Creaci├│n" sortable class="min-w-[180px]">
                         <template #body="slotProps">
                             <span class="text-sm table-cell-date">
@@ -141,6 +148,19 @@
                         {{ getError('respuesta_correcta') }}
                     </small>
                 </div>
+                <div>
+                    <label for="imagen-categoria" class="dialog-label">Categoría</label>
+                    <select
+                        v-model="imagen.categoria_id"
+                        id="imagen-categoria"
+                        class="w-full border rounded px-3 py-2 text-sm"
+                    >
+                        <option :value="null">Sin categoría</option>
+                        <option v-for="cat in categorias" :key="cat.id" :value="cat.id">
+                            {{ cat.nombre }}
+                        </option>
+                    </select>
+                </div>
             </div>
             <template #footer>
                 <Button
@@ -172,6 +192,7 @@
 import { ref, reactive, computed, onMounted, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import useImagen from '@/composables/useImagen';
+import useCategorias from '@/composables/categorias';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 
 const {
@@ -188,6 +209,8 @@ const {
     upsertImagenRecord,
     isLoading
 } = useImagen();
+
+const { categorias, getCategorias } = useCategorias();
 
 const swal = inject('$swal');
 
@@ -282,5 +305,6 @@ const formatDate = (dateString) => {
 
 onMounted(() => {
     getImagenes();
+    getCategorias();
 });
 </script>

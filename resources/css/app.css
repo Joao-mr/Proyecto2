@@ -6,6 +6,7 @@
 @import 'sweetalert2/dist/sweetalert2.min.css';
 @import "./flags.css";
 @import "./home.css";
+@import "./game.css";
 
 /* ============================================
    Variables CSS - Colores y Tamaños

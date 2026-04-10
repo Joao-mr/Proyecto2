@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Models;
 
@@ -17,7 +17,13 @@ class Imagen extends Model implements HasMedia
     protected $fillable = [
         'url',
         'respuesta_correcta',
+        'categoria_id',
     ];
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
 
     //se crea una carpeta "logica" que se llama imagenes
     public function registerMediaCollections(): void
