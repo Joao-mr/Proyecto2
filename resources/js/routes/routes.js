@@ -62,6 +62,12 @@ export default [
             },
 
             {
+                path: 'rankings',
+                name: 'public.rankings',
+                component: () => import('../views/public/rankings/index.vue'),
+            },
+
+            {
                 path: 'login',
                 name: 'auth.login',
                 component: () => import('../views/auth/login/Login.vue'),

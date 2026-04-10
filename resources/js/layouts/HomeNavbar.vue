@@ -178,7 +178,7 @@ const navItems = [
   {
     label: 'Rankings',
     children: [
-      { label: 'Ranking global', route: '/' },
+      { label: 'Ranking global', route: '/rankings' },
       { label: 'Por categoría', route: '/' },
     ]
   },
