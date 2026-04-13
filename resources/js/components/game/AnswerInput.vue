@@ -4,7 +4,7 @@
       <input
         ref="inputRef"
         v-model="answer"
-        class="game-answer-panel__input"
+        class="game-answer-panel__input form-control form-control-lg"
         type="text"
         placeholder="¿Qué hay en la imagen?"
         maxlength="120"
@@ -13,11 +13,11 @@
       />
       <button
         type="submit"
-        class="game-answer-panel__btn"
+        class="game-answer-panel__btn btn btn-warning btn-lg fw-bold d-inline-flex align-items-center gap-2"
         :disabled="disabled || !answer.trim()"
       >
+        <i class="pi pi-send"></i>
         Responder
-        <span aria-hidden="true">›</span>
       </button>
     </form>
 
@@ -25,13 +25,13 @@
     <Transition name="feedback-slide">
       <div
         v-if="feedback"
-        class="game-feedback"
-        :class="feedbackClass"
+        class="game-feedback alert mt-3 mb-0 d-flex align-items-center gap-2"
+        :class="[feedbackClass, feedbackAlertClass]"
         role="status"
         aria-live="polite"
       >
-        <span>{{ feedbackIcon }}</span>
-        {{ feedbackMessage }}
+        <span class="fs-5">{{ feedbackIcon }}</span>
+        <span>{{ feedbackMessage }}</span>
       </div>
     </Transition>
   </div>
@@ -71,6 +71,13 @@ const feedbackClass = computed(() => ({
   'game-feedback--wrong':   props.feedback === 'wrong',
   'game-feedback--timeout': props.feedback === 'timeout',
 }));
+
+const feedbackAlertClass = computed(() => {
+  if (props.feedback === 'correct') return 'alert-success';
+  if (props.feedback === 'wrong')   return 'alert-danger';
+  if (props.feedback === 'timeout') return 'alert-warning';
+  return '';
+});
 
 const feedbackIcon = computed(() => {
   if (props.feedback === 'correct') return '✅';

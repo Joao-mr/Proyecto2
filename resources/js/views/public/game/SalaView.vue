@@ -1,18 +1,51 @@
 <template>
   <!-- GAME OVER -->
-  <div v-if="gameOver" class="game-page">
-    <div class="game-over">
-      <div class="game-over__card">
-        <div class="game-over__icon">🏆</div>
-        <h1 class="game-over__title">¡Partida finalizada!</h1>
-        <p class="game-over__subtitle">Has completado todas las rondas de <strong>{{ salaName }}</strong></p>
-        <div class="game-over__score">{{ score }}</div>
-        <div class="game-over__score-label">puntos totales</div>
-        <RouterLink to="/" class="game-over__btn">
-          Volver al inicio
-          <span aria-hidden="true">›</span>
-        </RouterLink>
+  <div v-if="gameOver" class="game-page d-flex align-items-center justify-content-center">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
+            <div class="card-body p-5">
+              <div class="display-1 mb-3">🏆</div>
+              <h1 class="card-title fw-bold text-white mb-2">¡Partida finalizada!</h1>
+              <p class="text-white-50 mb-4">Has completado todas las rondas de <strong>{{ salaName }}</strong></p>
+              <div class="display-4 fw-black text-warning mb-1">{{ score }}</div>
+              <p class="text-white-50 small mb-4">puntos totales</p>
+              <RouterLink to="/mis-salas" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
+                <i class="pi pi-arrow-left me-2"></i>Volver a tus salas
+              </RouterLink>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <!-- SIN IMÁGENES -->
+  <div v-else-if="!isLoading && rounds.length === 0" class="game-page d-flex align-items-center justify-content-center">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
+            <div class="card-body p-5">
+              <div class="display-1 mb-3">📭</div>
+              <h1 class="card-title fw-bold text-white mb-2">Sin imágenes</h1>
+              <p class="text-white-50 mb-4">Las categorías de esta sala no tienen imágenes todavía.</p>
+              <RouterLink to="/mis-salas" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
+                <i class="pi pi-arrow-left me-2"></i>Volver a tus salas
+              </RouterLink>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARGANDO -->
+  <div v-else-if="isLoading" class="game-page d-flex align-items-center justify-content-center">
+    <div class="text-center text-white">
+      <div class="spinner-border text-warning mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+      <p class="fs-5 fw-semibold">Cargando sala...</p>
     </div>
   </div>
 
@@ -21,17 +54,23 @@
     <!-- Navbar -->
     <GameNavbar :sala-name="salaName" @exit="handleExit" />
 
-    <!-- Barra de progreso de rondas -->
+    <!-- Barra de progreso Bootstrap -->
     <div class="game-progress-bar">
       <div class="game-progress-bar__inner">
         <span class="game-progress-bar__label">Progreso</span>
-        <div class="game-progress-bar__track">
+        <div class="progress flex-grow-1" style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 999px;">
           <div
-            class="game-progress-bar__fill"
-            :style="{ width: `${((round - 1) / totalRounds) * 100}%` }"
+            class="progress-bar bg-warning"
+            role="progressbar"
+            :style="{ width: `${((round - 1) / totalRounds) * 100}%`, borderRadius: '999px' }"
+            :aria-valuenow="round - 1"
+            :aria-valuemin="0"
+            :aria-valuemax="totalRounds"
           ></div>
         </div>
-        <span class="game-progress-bar__round">Ronda {{ round }} / {{ totalRounds }}</span>
+        <span class="game-progress-bar__round">
+          <span class="badge bg-light text-dark">Ronda {{ round }} / {{ totalRounds }}</span>
+        </span>
       </div>
     </div>
 
@@ -68,6 +107,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { authStore } from '@/store/auth';
+import axios from 'axios';
 
 import GameNavbar   from '@/components/game/GameNavbar.vue';
 import GameImage    from '@/components/game/GameImage.vue';
@@ -79,55 +119,42 @@ const route  = useRoute();
 const router = useRouter();
 const auth   = authStore();
 
-/* ── Sala identity ── */
-const salaId   = computed(() => route.params.id);
-const salaName = ref('Sala de Naturaleza');
+const salaId     = computed(() => route.params.id);
+const salaName   = ref('');
 const playerName = computed(() => auth.user?.name ?? 'Jugador');
+const isLoading  = ref(true);
 
-/* ── Mock rounds data ── */
-const mockRounds = [
-  {
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_from_Silesia2.jpg/800px-Sunflower_from_Silesia2.jpg',
-    answer: 'girasol',
-  },
-  {
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Dog_Breeds.jpg/800px-Dog_Breeds.jpg',
-    answer: 'perro',
-  },
-  {
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/800px-Cat03.jpg',
-    answer: 'gato',
-  },
-  {
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Marigold_in_Hyderabad%2C_AP_W_IMG_0526.jpg/800px-Marigold_in_Hyderabad%2C_AP_W_IMG_0526.jpg',
-    answer: 'flor',
-  },
-  {
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Collage_of_Nine_Dogs.jpg/800px-Collage_of_Nine_Dogs.jpg',
-    answer: 'perros',
-  },
-];
+/* ── Rounds built from API images ── */
+const rounds = ref([]);
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 /* ── Game state ── */
-const TOTAL_TIME    = 30;
-const round         = ref(1);
-const totalRounds   = ref(mockRounds.length);
-const score         = ref(0);
-const timeLeft      = ref(TOTAL_TIME);
-const feedback      = ref(null);       // 'correct' | 'wrong' | 'timeout' | null
-const revealAnswer  = ref(false);
+const TOTAL_TIME     = ref(30);
+const round          = ref(1);
+const totalRounds    = computed(() => rounds.value.length);
+const score          = ref(0);
+const timeLeft       = ref(30);
+const feedback       = ref(null);
+const revealAnswer   = ref(false);
 const answerDisabled = ref(false);
-const gameOver      = ref(false);
+const gameOver       = ref(false);
 const answerInputRef = ref(null);
 
-const currentRound = computed(() => mockRounds[round.value - 1] ?? null);
+const currentRound = computed(() => rounds.value[round.value - 1] ?? null);
 
 /* ── Timer ── */
 let timerInterval = null;
 
 function startTimer() {
   clearInterval(timerInterval);
-  timeLeft.value = TOTAL_TIME;
+  timeLeft.value = TOTAL_TIME.value;
   timerInterval = setInterval(() => {
     if (timeLeft.value <= 0) {
       clearInterval(timerInterval);
@@ -138,9 +165,7 @@ function startTimer() {
   }, 1000);
 }
 
-function stopTimer() {
-  clearInterval(timerInterval);
-}
+function stopTimer() { clearInterval(timerInterval); }
 
 function onTimeout() {
   answerDisabled.value = true;
@@ -149,17 +174,16 @@ function onTimeout() {
   scheduleNextRound();
 }
 
-/* ── Answer handling ── */
+/* ── Answer ── */
 function handleAnswer(value) {
   stopTimer();
   answerDisabled.value = true;
   revealAnswer.value   = true;
 
-  const correct = (value ?? '').toLowerCase().trim();
+  const correct  = (value ?? '').toLowerCase().trim();
   const expected = (currentRound.value?.answer ?? '').toLowerCase().trim();
-  const isCorrect = correct === expected;
 
-  if (isCorrect) {
+  if (correct === expected) {
     score.value += 50;
     feedback.value = 'correct';
   } else {
@@ -175,8 +199,8 @@ function scheduleNextRound() {
       gameOver.value = true;
     } else {
       round.value++;
-      feedback.value      = null;
-      revealAnswer.value  = false;
+      feedback.value       = null;
+      revealAnswer.value   = false;
       answerDisabled.value = false;
       nextTick(() => {
         startTimer();
@@ -189,16 +213,54 @@ function scheduleNextRound() {
 /* ── Exit ── */
 function handleExit() {
   stopTimer();
-  router.push('/');
+  router.push('/mis-salas');
 }
 
-/* ── Lifecycle ── */
-onMounted(() => {
-  startTimer();
-  nextTick(() => answerInputRef.value?.focus());
+/* ── Load sala data ── */
+onMounted(async () => {
+  try {
+    // 1. Fetch sala with categories
+    const { data: sala } = await axios.get(`/api/salas/${salaId.value}`);
+    salaName.value = sala.nombre ?? 'Sala';
+    TOTAL_TIME.value = sala.tiempo_respuesta ?? 30;
+
+    const categoriaIds = (sala.categorias ?? []).map(c => c.id);
+
+    if (categoriaIds.length === 0) {
+      isLoading.value = false;
+      return;
+    }
+
+    // 2. Fetch imagenes for each category in parallel
+    const requests = categoriaIds.map(catId =>
+      axios.get(`/api/imagenes?categoria_id=${catId}&per_page=100&page=1`)
+        .then(r => r.data?.data ?? [])
+        .catch(() => [])
+    );
+
+    const results = await Promise.all(requests);
+    const allImagenes = results.flat();
+
+    // 3. Build rounds (ignore images without media)
+    const built = allImagenes
+      .filter(img => img.urls?.original || img.urls?.preview || img.url)
+      .map(img => ({
+        image: img.urls?.preview || img.urls?.original || img.url,
+        answer: img.respuesta_correcta,
+      }));
+
+    rounds.value = shuffle(built);
+  } catch (err) {
+    console.error('Error loading sala:', err);
+  } finally {
+    isLoading.value = false;
+  }
+
+  if (rounds.value.length > 0) {
+    startTimer();
+    nextTick(() => answerInputRef.value?.focus());
+  }
 });
 
-onUnmounted(() => {
-  stopTimer();
-});
+onUnmounted(() => stopTimer());
 </script>

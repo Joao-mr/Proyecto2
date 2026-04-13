@@ -1,6 +1,6 @@
 <template>
-  <div class="salas-create-page max-w-xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-xl font-bold mb-4">Crear Sala</h2>
+  <div class="salas-create-page container py-4">
+    <h2 class="fs-4 fw-bold mb-4">Crear Sala</h2>
     <div v-if="isLoading" class="mb-4">Cargando...</div>
     <form v-else @submit.prevent="submitCreate">
       <div class="mb-4">
@@ -8,7 +8,7 @@
         <InputText
           v-model="sala.nombre"
           id="sala-nombre"
-          class="w-full"
+          class="w-100"
           :class="{ 'p-invalid': hasError('nombre') }"
           placeholder="Ej: Sala Pop"
         />
@@ -19,7 +19,7 @@
         <InputText
           v-model="sala.codigo"
           id="sala-codigo"
-          class="w-full"
+          class="w-100"
           :class="{ 'p-invalid': hasError('codigo') }"
           placeholder="Ej: ABC123"
         />
@@ -34,11 +34,11 @@
           option-label="nombre"
           option-value="id"
           placeholder="Selecciona categorías"
-          class="w-full"
+          class="w-100"
           display="chip"
         />
       </div>
-      <div class="flex gap-2 justify-end">
+      <div class="d-flex gap-2 justify-content-end">
         <Button label="Cancelar" severity="secondary" @click="goBack" />
         <Button label="Crear" type="submit" :loading="isSubmitting" :disabled="isSubmitting" />
       </div>
