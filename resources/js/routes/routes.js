@@ -91,6 +91,16 @@ export default [
                 component: () => import('../views/auth/passwords/Reset.vue'),
                 beforeEnter: guest,
             },
+            {
+                path: 'ranking-category',
+                name: 'ranking.category',
+                component: () => import('@/views/public/ranking_category/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: 'ranking.category',
+                redirect: { name: 'ranking.category' }
+            }
         ]
     },
 
