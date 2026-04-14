@@ -1,10 +1,10 @@
-<template>
+ï»¿<template>
     <div class="imagenes-page">
         <Card>
             <template #title>
-                <div class="d-flex align-items-center justify-content-between w-100">
-                    <span>Gesti+¦n de Im+ígenes (Juego)</span>
-                    <div class="d-flex align-items-center gap-2">
+                <div class="flex items-center justify-between w-full">
+                    <span>Gestiâ”œâ”‚n de Imâ”œÃ­genes (Juego)</span>
+                    <div class="flex items-center gap-2">
                         <Button
                             label="Actualizar"
                             icon="pi pi-refresh"
@@ -26,7 +26,7 @@
             </template>
 
             <template #subtitle>
-                Administra las im+ígenes y su respuesta correcta.
+                Administra las imâ”œÃ­genes y su respuesta correcta.
             </template>
 
             <template #content>
@@ -47,7 +47,7 @@
                     <template #empty>
                         <div class="table-empty-state">
                             <i class="pi pi-inbox empty-state-icon"></i>
-                            <p class="empty-state-text">No se encontraron im+ígenes</p>
+                            <p class="empty-state-text">No se encontraron imâ”œÃ­genes</p>
                         </div>
                     </template>
 
@@ -56,7 +56,7 @@
                             <span class="table-cell-id">#{{ slotProps.data.id }}</span>
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" placeholder="ID" class="w-100" />
+                            <InputText v-model="filterModel.value" placeholder="ID" class="w-full" />
                         </template>
                     </Column>
 
@@ -66,15 +66,15 @@
                                 v-if="slotProps.data.urls?.thumb || slotProps.data.urls?.original"
                                 :src="slotProps.data.urls.thumb || slotProps.data.urls.original"
                                 :alt="`Imagen #${slotProps.data.id}`"
-                                class="rounded border object-fit-cover" style="width: 64px; height: 64px;"
+                                class="w-16 h-16 object-cover rounded border"
                             />
-                            <div v-else class="d-flex align-items-center justify-content-center rounded border bg-light" style="width: 64px; height: 64px;">
+                            <div v-else class="w-16 h-16 bg-gray-100 rounded border flex items-center justify-center">
                                 <i class="pi pi-image text-gray-400 text-xl"></i>
                             </div>
                         </template>
                     </Column>
 
-                    <Column field="respuesta_correcta" header="Respuesta Correcta" sortable filter class="" style="min-width: 220px;">
+                    <Column field="respuesta_correcta" header="Respuesta Correcta" sortable filter class="min-w-[220px]">
                         <template #body="slotProps">
                             <Tag :value="slotProps.data.respuesta_correcta || '-'" severity="info" />
                         </template>
@@ -83,14 +83,14 @@
                         </template>
                     </Column>
 
-                    <Column field="categoria_nombre" header="Categoría" sortable class="" style="min-width: 160px;">
+                    <Column field="categoria_nombre" header="CategorÃ­a" sortable class="min-w-[160px]">
                         <template #body="slotProps">
                             <Tag v-if="slotProps.data.categoria_nombre" :value="slotProps.data.categoria_nombre" severity="secondary" />
-                            <span v-else class="text-sm opacity-50">Sin categoría</span>
+                            <span v-else class="text-sm opacity-50">Sin categorÃ­a</span>
                         </template>
                     </Column>
 
-                    <Column field="created_at" header="Fecha de Creaci+¦n" sortable class="" style="min-width: 180px;">
+                    <Column field="created_at" header="Fecha de Creaciâ”œâ”‚n" sortable class="min-w-[180px]">
                         <template #body="slotProps">
                             <span class="text-sm table-cell-date">
                                 <i class="pi pi-calendar mr-2 text-xs opacity-70"></i>
@@ -101,7 +101,7 @@
 
                     <Column header="Acciones" class="w-[160px]">
                         <template #body="slotProps">
-                            <div class="d-flex gap-2">
+                            <div class="flex gap-2">
                                 <Button
                                     v-tooltip.top="'Editar imagen'"
                                     icon="pi pi-pencil"
@@ -134,13 +134,13 @@
             :style="{ width: '600px' }"
             class="imagen-dialog"
         >
-            <div class="vstack gap-3">
+            <div class="flex flex-col gap-4">
                 <div>
                     <label for="imagen-respuesta" class="dialog-label">Respuesta correcta</label>
                     <InputText
                         v-model="imagen.respuesta_correcta"
                         id="imagen-respuesta"
-                        class="w-100"
+                        class="w-full"
                         :class="{ 'p-invalid': hasError('respuesta_correcta') }"
                         placeholder="Ej: Cristiano Ronaldo"
                     />
@@ -149,13 +149,13 @@
                     </small>
                 </div>
                 <div>
-                    <label for="imagen-categoria" class="dialog-label">Categoría</label>
+                    <label for="imagen-categoria" class="dialog-label">CategorÃ­a</label>
                     <select
                         v-model="imagen.categoria_id"
                         id="imagen-categoria"
                         class="w-full border rounded px-3 py-2 text-sm"
                     >
-                        <option :value="null">Sin categoría</option>
+                        <option :value="null">Sin categorÃ­a</option>
                         <option v-for="cat in categorias" :key="cat.id" :value="cat.id">
                             {{ cat.nombre }}
                         </option>
@@ -280,10 +280,10 @@ const confirmDeleteImagen = (currentImagen) => {
 
     swal({
         icon: 'warning',
-        title: '-+Eliminar imagen?',
-        text: `La imagen #${currentImagen.id} se eliminar+í de forma permanente.`,
+        title: 'â”¬â”Eliminar imagen?',
+        text: `La imagen #${currentImagen.id} se eliminarâ”œÃ­ de forma permanente.`,
         showCancelButton: true,
-        confirmButtonText: 'S+¡, eliminar',
+        confirmButtonText: 'Sâ”œÂ¡, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
     }).then((result) => {

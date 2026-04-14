@@ -7,9 +7,9 @@
 
       <span class="game-navbar__sala-name">{{ salaName }}</span>
 
-      <button class="game-navbar__exit btn btn-danger btn-sm d-inline-flex align-items-center gap-2" @click="emit('exit')">
-        <i class="pi pi-sign-out"></i>
+      <button class="game-navbar__exit" @click="emit('exit')">
         Salir
+        <span aria-hidden="true">›</span>
       </button>
     </div>
   </nav>

@@ -1,9 +1,9 @@
 <template>
     <Card>
         <template #title>
-            <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="flex items-center justify-between w-full">
                 <span>Gestión de Usuarios</span>
-                <div class="d-flex align-items-center gap-2">
+                <div class="flex items-center gap-2">
                     <Button 
                         label="Actualizar" 
                         icon="pi pi-refresh" 
@@ -50,43 +50,43 @@
                     </template>
                 </Column>
 
-                <Column field="name" header="Nombre" sortable filter :filter-placeholder="'Nombre'" class="" style="min-width: 200px;">
+                <Column field="name" header="Nombre" sortable filter :filter-placeholder="'Nombre'" class="min-w-[200px]">
                     <template #body="slotProps">
                         <Skeleton v-if="loading" width="10rem" height="1rem" />
-                        <div v-else class="d-flex align-items-center gap-2">
-                            <i class="pi pi-user text-primary" />
-                            <span class="fw-medium table-cell-name">{{ slotProps.data.name || '-' }}</span>
+                        <div v-else class="flex items-center space-x-2">
+                            <i class="pi pi-user text-blue-600" />
+                            <span class="font-medium table-cell-name">{{ slotProps.data.name || '-' }}</span>
                         </div>
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" placeholder="Nombre" class="w-100" />
+                        <InputText v-model="filterModel.value" placeholder="Nombre" class="w-full" />
                     </template>
                 </Column>
 
-                <Column field="alias" header="Alias" sortable filter :filter-placeholder="'Alias'" class="" style="min-width: 150px;">
+                <Column field="alias" header="Alias" sortable filter :filter-placeholder="'Alias'" class="min-w-[150px]">
                     <template #body="slotProps">
                         <Skeleton v-if="loading" width="8rem" height="1rem" />
                         <span v-else class="table-cell-name">{{ slotProps.data.alias || '-' }}</span>
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" placeholder="Alias" class="w-100" />
+                        <InputText v-model="filterModel.value" placeholder="Alias" class="w-full" />
                     </template>
                 </Column>
 
-                <Column field="email" header="Email" sortable filter :filter-placeholder="'Email'" class="" style="min-width: 200px;">
+                <Column field="email" header="Email" sortable filter :filter-placeholder="'Email'" class="min-w-[200px]">
                     <template #body="slotProps">
                         <Skeleton v-if="loading" width="12rem" height="1rem" />
                         <span v-else class="text-sm table-cell-email">{{ slotProps.data.email || '-' }}</span>
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" placeholder="Email" class="w-100" />
+                        <InputText v-model="filterModel.value" placeholder="Email" class="w-full" />
                     </template>
                 </Column>
 
-                <Column field="roles" header="Roles" class="" filter :filter-function="filterRoles" style="min-width: 200px;">
+                <Column field="roles" header="Roles" class="min-w-[200px]" filter :filter-function="filterRoles">
                     <template #body="slotProps">
                         <Skeleton v-if="loading" width="6rem" height="1.5rem" />
-                        <div v-else class="d-flex flex-wrap gap-1">
+                        <div v-else class="flex flex-wrap gap-1">
                             <Tag
                                 v-for="role in slotProps.data.roles || []"
                                 :key="role.id"
@@ -103,11 +103,11 @@
                         </div>
                     </template>
                     <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" placeholder="Buscar por nombre de rol" class="w-100" />
+                        <InputText v-model="filterModel.value" placeholder="Buscar por nombre de rol" class="w-full" />
                     </template>
                 </Column>
 
-                <Column field="created_at" header="Fecha de Creación" sortable class="" style="min-width: 150px;">
+                <Column field="created_at" header="Fecha de Creación" sortable class="min-w-[150px]">
                     <template #body="slotProps">
                         <Skeleton v-if="loading" width="8rem" height="1rem" />
                         <span v-else class="text-sm table-cell-date">{{ formatDate(slotProps.data.created_at) }}</span>
@@ -117,7 +117,7 @@
                 <Column header="Acciones" class="w-[150px]">
                     <template #body="slotProps">
                         <Skeleton v-if="loading" width="4rem" height="2rem" />
-                        <div v-else class="d-flex gap-2">
+                        <div v-else class="flex gap-2">
                             <Button
                                 v-if="can('user-edit')"
                                 v-tooltip.top="'Editar usuario'"

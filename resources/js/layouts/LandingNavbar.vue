@@ -1,41 +1,41 @@
 <template>
-    <nav 
-        class="navbar navbar-expand-lg fixed-top border-bottom"
-        :class="isDarkTheme ? 'navbar-dark bg-dark' : 'navbar-light bg-white'">
-        <div class="container">
+    <div 
+        class="fixed w-full z-50 border-b border-gray-200 dark:border-gray-800 transition-all duration-300"
+        :class="isDarkTheme ? 'bg-gray-900' : 'bg-white'">
+        <nav class="container mx-auto px-6 py-4 flex items-center justify-between">
             <!-- Logo -->
-            <router-link to="/" class="navbar-brand d-flex align-items-center gap-2">
-                <img src="/images/logo.svg" alt="logo" style="height: 40px; width: auto;"/>
+            <router-link to="/" class="flex items-center gap-2">
+                <img src="/images/logo.svg" alt="logo" class="h-10 w-auto"/>
             </router-link>
 
-            <!-- Mobile Toggle -->
+            <!-- Mobile Menu Button -->
             <button
                 v-if="!isDesktop"
                 @click="visibleMobileMenu = true"
-                class="btn btn-outline-secondary">
-                <i class="pi pi-bars"></i>
+                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <i class="pi pi-bars text-2xl"></i>
             </button>
 
             <!-- Desktop Menu -->
-            <div v-if="isDesktop" class="d-flex align-items-center gap-4">
+            <div v-if="isDesktop" class="flex items-center gap-6">
                 <router-link 
                     v-for="link in navLinks" 
                     :key="link.route" 
                     :to="link.route" 
-                    class="nav-link fw-medium"
+                    class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
                 >
                     {{ link.label }}
                 </router-link>
                 
                 <!-- Actions -->
-                <div class="d-flex align-items-center gap-2 ps-3 border-start">
+                <div class="flex items-center gap-3 pl-6 border-l border-gray-200 dark:border-gray-700">
                     <LocaleSwitcher />
                     
                     <button 
                         type="button" 
                         @click="toggleDarkMode"
-                        class="btn btn-outline-secondary btn-sm">
-                        <i :class="isDarkTheme ? 'pi pi-moon' : 'pi pi-sun'"></i>
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <i :class="isDarkTheme ? 'pi-moon' : 'pi-sun'" class="pi text-lg"></i>
                     </button>
 
                     <template v-if="!authStore().user?.name">
@@ -51,98 +51,96 @@
                         <button 
                             type="button" 
                             @click="toggle"
-                            class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
+                            class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                             <Avatar :image="authStore().user.avatar" :label="authStore().user.name[0]" shape="circle" size="small" />
-                            <span class="small fw-medium d-none d-xl-inline">{{ authStore().user?.name }}</span>
-                            <i class="pi pi-chevron-down" style="font-size: 0.75rem;"></i>
+                            <span class="text-sm font-medium hidden xl:inline">{{ authStore().user?.name }}</span>
+                            <i class="pi pi-chevron-down text-xs"></i>
                         </button>
                         <Menu ref="menu" :model="items" popup />
                     </div>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <!-- Mobile Menu Offcanvas -->
-    <div v-if="visibleMobileMenu" class="d-lg-none">
-        <!-- Backdrop -->
-        <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1040; background: rgba(0,0,0,0.5);" @click="visibleMobileMenu = false"></div>
-        
-        <!-- Panel -->
-        <div 
-            class="position-fixed top-0 end-0 h-100 shadow"
-            :class="isDarkTheme ? 'bg-dark text-white' : 'bg-white'"
-            style="z-index: 1050; width: min(100%, 320px);"
-            @click.stop>
-            <!-- Header -->
-            <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
-                <div class="d-flex align-items-center gap-2">
-                    <img src="/images/logo.svg" alt="logo" style="height: 32px;"/>
-                    <span class="fw-bold fs-5">Menu</span>
-                </div>
-                <button 
-                    @click="visibleMobileMenu = false"
-                    class="btn btn-outline-secondary btn-sm">
-                    <i class="pi pi-times"></i>
-                </button>
-            </div>
-
-            <!-- Content -->
-            <div class="d-flex flex-column gap-3 p-3 overflow-y-auto" style="height: calc(100% - 5rem);">
-                <!-- Nav Links -->
-                <div class="d-flex flex-column gap-1">
-                    <router-link 
-                        v-for="link in navLinks"
-                        :key="link.route"
-                        :to="link.route" 
-                        @click="visibleMobileMenu = false"
-                        class="d-flex align-items-center gap-2 p-2 rounded text-decoration-none"
-                        :class="isDarkTheme ? 'text-white' : 'text-dark'">
-                        <i :class="link.icon"></i>
-                        <span>{{ link.label }}</span>
-                    </router-link>
-                </div>
-
-                <hr class="my-1"/>
-
-                <!-- Auth -->
-                <div class="d-flex flex-column gap-2">
-                    <template v-if="!authStore().user?.name">
-                        <router-link :to="{ name: 'auth.login' }" @click="visibleMobileMenu = false">
-                            <Button label="Iniciar Sesión" outlined class="w-100" />
-                        </router-link>
-                        <router-link :to="{ name: 'auth.register' }" @click="visibleMobileMenu = false">
-                            <Button label="Registrarse" class="w-100" />
-                        </router-link>
-                    </template>
-                    <template v-else>
-                        <div class="p-3 rounded" :class="isDarkTheme ? 'bg-secondary' : 'bg-light'">
-                            <div class="fw-medium">{{ authStore().user.name }}</div>
-                            <div class="small text-muted">{{ authStore().user.email }}</div>
-                        </div>
-                        <Button label="Ir al Dashboard" icon="pi pi-th-large" outlined @click="navigateToDashboard" />
-                        <Button label="Cerrar Sesión" icon="pi pi-power-off" severity="danger" text @click="handleLogout" />
-                    </template>
-                </div>
-                
-                <!-- Theme Toggle -->
-                <div 
-                    class="mt-auto d-flex align-items-center justify-content-between p-2 rounded"
-                    :class="isDarkTheme ? 'bg-secondary' : 'bg-light'">
-                    <span class="small fw-medium">Tema</span>
+        <!-- Mobile Menu -->
+        <div v-if="visibleMobileMenu" class="fixed inset-0 z-50 lg:hidden">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black/50" @click="visibleMobileMenu = false"></div>
+            
+            <!-- Panel -->
+            <div 
+                class="absolute right-0 top-0 h-full w-full sm:w-80 shadow-2xl"
+                :class="isDarkTheme ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'"
+                @click.stop>
+                <!-- Header -->
+                <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+                    <div class="flex items-center gap-2">
+                        <img src="/images/logo.svg" alt="logo" class="h-8"/>
+                        <span class="font-bold text-lg">Menu</span>
+                    </div>
                     <button 
-                        @click="toggleDarkMode"
-                        class="btn btn-sm"
-                        :class="isDarkTheme ? 'btn-outline-light' : 'btn-outline-secondary'">
-                        <i :class="isDarkTheme ? 'pi pi-moon' : 'pi pi-sun'" class="pi"></i>
+                        @click="visibleMobileMenu = false"
+                        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        <i class="pi pi-times text-xl"></i>
                     </button>
+                </div>
+
+                <!-- Content -->
+                <div class="flex flex-col gap-4 p-4 h-[calc(100%-5rem)] overflow-y-auto">
+                    <!-- Nav Links -->
+                    <div class="flex flex-col gap-1">
+                        <router-link 
+                            v-for="link in navLinks"
+                            :key="link.route"
+                            :to="link.route" 
+                            @click="visibleMobileMenu = false"
+                            class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                            <i :class="link.icon"></i>
+                            <span>{{ link.label }}</span>
+                        </router-link>
+                    </div>
+
+                    <div class="border-t border-gray-200 dark:border-gray-800"></div>
+
+                    <!-- Auth -->
+                    <div class="flex flex-col gap-3">
+                        <template v-if="!authStore().user?.name">
+                            <router-link :to="{ name: 'auth.login' }" @click="visibleMobileMenu = false">
+                                <Button label="Iniciar Sesión" outlined class="w-full" />
+                            </router-link>
+                            <router-link :to="{ name: 'auth.register' }" @click="visibleMobileMenu = false">
+                                <Button label="Registrarse" class="w-full" />
+                            </router-link>
+                        </template>
+                        <template v-else>
+                            <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <div class="font-medium">{{ authStore().user.name }}</div>
+                                <div class="text-xs text-gray-500">{{ authStore().user.email }}</div>
+                            </div>
+                            <Button label="Ir al Dashboard" icon="pi pi-th-large" outlined @click="navigateToDashboard" />
+                            <Button label="Cerrar Sesión" icon="pi pi-power-off" severity="danger" text @click="handleLogout" />
+                        </template>
+                    </div>
+                    
+                    <!-- Theme Toggle -->
+                    <div 
+                        class="mt-auto flex items-center justify-between p-3 rounded-lg"
+                        :class="isDarkTheme ? 'bg-gray-800' : 'bg-gray-50'">
+                        <span class="text-sm font-medium">Tema</span>
+                        <button 
+                            @click="toggleDarkMode"
+                            class="p-2 rounded-lg transition-colors"
+                            :class="isDarkTheme ? 'hover:bg-gray-700' : 'hover:bg-gray-200'">
+                            <i :class="isDarkTheme ? 'pi-moon' : 'pi-sun'" class="pi"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Spacer for fixed navbar -->
-    <div style="height: 80px;"></div>
+    <!-- Spacer -->
+    <div class="h-20"></div>
 </template>
 
 <script setup>

@@ -2,9 +2,9 @@
     <div class="roles-page">
         <Card>
             <template #title>
-                <div class="d-flex align-items-center justify-content-between w-100">
+                <div class="flex items-center justify-between w-full">
                     <span>Gestión de Roles</span>
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="flex items-center gap-2">
                         <Button
                             label="Actualizar"
                             icon="pi pi-refresh"
@@ -59,21 +59,21 @@
                             <span v-else class="table-cell-id">#{{ slotProps.data.id }}</span>
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" placeholder="ID" class="w-100" />
+                            <InputText v-model="filterModel.value" placeholder="ID" class="w-full" />
                         </template>
                     </Column>
 
-                    <Column field="name" header="Nombre" sortable filter class="" style="min-width: 200px;">
+                    <Column field="name" header="Nombre" sortable filter class="min-w-[200px]">
                         <template #body="slotProps">
                             <Skeleton v-if="isLoading" width="10rem" height="1rem" />
                             <span v-else class="table-cell-name">{{ slotProps.data.name || '-' }}</span>
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" placeholder="Nombre" class="w-100" />
+                            <InputText v-model="filterModel.value" placeholder="Nombre" class="w-full" />
                         </template>
                     </Column>
 
-                    <Column field="created_at" header="Fecha de Creación" sortable class="" style="min-width: 170px;">
+                    <Column field="created_at" header="Fecha de Creación" sortable class="min-w-[170px]">
                         <template #body="slotProps">
                             <Skeleton v-if="isLoading" width="8rem" height="1rem" />
                             <span v-else class="text-sm table-cell-date">
@@ -86,7 +86,7 @@
                     <Column header="Acciones" class="w-[150px]">
                         <template #body="slotProps">
                             <Skeleton v-if="isLoading" width="4rem" height="2rem" />
-                            <div v-else class="d-flex gap-2">
+                            <div v-else class="flex gap-2">
                         <Button
                             v-if="can('role-edit')"
                             v-tooltip.top="'Editar rol'"
@@ -121,14 +121,14 @@
             :style="{ width: '400px' }"
             class="role-dialog"
         >
-            <div class="vstack gap-3">
+            <div class="flex flex-col gap-4">
                 <div>
                     <label for="role-name" class="dialog-label">Nombre del rol</label>
                     <InputText
                         id="role-name"
                         v-model="role.name"
                         placeholder="Nombre"
-                        class="w-100"
+                        class="w-full"
                         :class="{ 'p-invalid': hasError('name') }"
                     />
                     <small v-if="hasError('name')" class="dialog-error">

@@ -1,10 +1,10 @@
 <template>
-  <div class="d-flex justify-content-center">
+  <div class="flex justify-center">
     <Card class="w-full max-w-4xl">
       <template #title>
-        <div class="d-flex align-items-start justify-content-between">
+        <div class="flex items-start justify-between">
           <div>
-            <h2 class="fs-4 fw-semibold">Editar rol</h2>
+            <h2 class="text-xl font-semibold">Editar rol</h2>
             <p class="text-sm text-surface-500">Actualiza el nombre y revisa los permisos asociados.</p>
           </div>
           <Tag value="Roles" severity="secondary" rounded />
@@ -12,9 +12,9 @@
       </template>
 
       <template #content>
-        <form class="vstack gap-4" @submit.prevent="submitForm">
-          <div class="row g-3">
-            <div class="vstack gap-1">
+        <form class="flex flex-col gap-6" @submit.prevent="submitForm">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="flex flex-col gap-1">
               <label for="role-name" class="text-sm font-medium text-surface-700">Nombre del rol</label>
               <InputText
                 id="role-name"
@@ -26,8 +26,8 @@
             </div>
           </div>
 
-          <div class="vstack gap-2">
-            <div class="d-flex align-items-center gap-2">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2">
               <h3 class="text-base font-medium text-surface-700">Permisos</h3>
             </div>
             <PickList
@@ -49,7 +49,7 @@
             </PickList>
           </div>
 
-          <div class="d-flex justify-content-end gap-3 pt-4">
+          <div class="flex justify-end gap-3 pt-4">
             <Button type="button" label="Cancelar" severity="secondary" text @click="goBack" :disabled="isSubmitting" />
             <Button type="submit" label="Guardar cambios" icon="pi pi-save" :loading="isSubmitting" />
           </div>

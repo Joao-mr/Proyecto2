@@ -2,7 +2,7 @@
     <Panel class="flex flex-col justify-center my-10">
         <form @submit.prevent="submitForm">
             <div class="mb-3">
-                <div class="d-flex align-items-center gap-3">
+                <div class="flex items-center gap-3">
                     <label for="user-name">Name:</label>
                     <InputText v-model="user.name" id="user-name" type="text" size="small" :invalid="!!errors.name" />
                 </div>
@@ -17,7 +17,7 @@
             </div>
 
             <div class="mb-3">
-                <div class="d-flex align-items-center gap-3">
+                <div class="flex items-center gap-3">
                     <label for="user-surname1">Surname 1:</label>
                     <InputText v-model="user.surname1" id="user-surname1" type="text" size="small" :invalid="!!errors.surname1" />
                 </div>
@@ -32,7 +32,7 @@
             </div>
 
             <div class="mb-3">
-                <div class="d-flex align-items-center gap-3">
+                <div class="flex items-center gap-3">
                     <label for="user-surname2">Surname 2:</label>
                     <InputText v-model="user.surname2" id="user-surname2" type="text" size="small" :invalid="!!errors.surname2" />
                 </div>
@@ -47,7 +47,7 @@
             </div>
 
             <div class="mb-3">
-                <div class="d-flex align-items-center gap-3">
+                <div class="flex items-center gap-3">
                     <label for="user-email">Email:</label>
                     <InputText v-model="user.email" id="user-email" type="email" size="small" :invalid="!!errors.email" />
                 </div>
@@ -62,7 +62,7 @@
             </div>
 
             <div class="mb-3">
-                <div class="d-flex align-items-center gap-3">
+                <div class="flex items-center gap-3">
                     <label for="user-password">Password:</label>
                     <InputText v-model="user.password" id="user-password" type="password" size="small" :invalid="!!errors.password" />
                 </div>
@@ -77,7 +77,7 @@
             </div>
 
             <div class="mb-3">
-                <div class="d-flex align-items-center gap-3">
+                <div class="flex items-center gap-3">
                     <label for="user-role">Role:</label>
                     <MultiSelect
                         v-model="user.role_id"

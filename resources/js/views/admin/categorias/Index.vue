@@ -2,9 +2,9 @@
     <div class="categories-page">
         <Card>
             <template #title>
-                <div class="d-flex align-items-center justify-content-between w-100">
+                <div class="flex items-center justify-between w-full">
                     <span>Gestión de Categorías (Juego)</span>
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="flex items-center gap-2">
                         <Button
                             label="Actualizar"
                             icon="pi pi-refresh"
@@ -51,16 +51,16 @@
                         </div>
                     </template>
 
-                    <Column field="id" header="ID" sortable filter style="width: 80px;">
+                    <Column field="id" header="ID" sortable filter class="w-[80px]">
                         <template #body="slotProps">
                             <span class="table-cell-id">#{{ slotProps.data.id }}</span>
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" placeholder="ID" class="w-100" />
+                            <InputText v-model="filterModel.value" placeholder="ID" class="w-full" />
                         </template>
                     </Column>
 
-                    <Column field="nombre" header="Nombre" sortable filter style="min-width: 220px;">
+                    <Column field="nombre" header="Nombre" sortable filter class="min-w-[220px]">
                         <template #body="slotProps">
                             <span class="table-cell-name">{{ slotProps.data.nombre || '-' }}</span>
                         </template>
@@ -69,24 +69,24 @@
                         </template>
                     </Column>
 
-                    <Column header="Salas vinculadas" style="min-width: 180px;">
+                    <Column header="Salas vinculadas" class="min-w-[180px]">
                         <template #body="slotProps">
                             <Tag :value="String(slotProps.data.salas?.length ?? 0)" severity="info" />
                         </template>
                     </Column>
 
-                    <Column field="created_at" header="Fecha de Creación" sortable style="min-width: 180px;">
+                    <Column field="created_at" header="Fecha de Creación" sortable class="min-w-[180px]">
                         <template #body="slotProps">
-                            <span class="small table-cell-date">
-                                <i class="pi pi-calendar me-2" style="font-size: 0.7rem; opacity: 0.7;"></i>
+                            <span class="text-sm table-cell-date">
+                                <i class="pi pi-calendar mr-2 text-xs opacity-70"></i>
                                 {{ formatDate(slotProps.data.created_at) }}
                             </span>
                         </template>
                     </Column>
 
-                    <Column header="Acciones" style="width: 160px;">
+                    <Column header="Acciones" class="w-[160px]">
                         <template #body="slotProps">
-                            <div class="d-flex gap-2">
+                            <div class="flex gap-2">
                                 <Button
                                     v-tooltip.top="'Editar categoría'"
                                     icon="pi pi-pencil"
@@ -119,13 +119,13 @@
             :style="{ width: '500px' }"
             class="category-dialog"
         >
-            <div class="vstack gap-3">
+            <div class="flex flex-col gap-4">
                 <div>
                     <label for="categoria-nombre" class="dialog-label">Nombre de la categoría</label>
                     <InputText
                         v-model="categoria.nombre"
                         id="categoria-nombre"
-                        class="w-100"
+                        class="w-full"
                         :class="{ 'p-invalid': hasError('nombre') }"
                         placeholder="Ej: Famosos"
                     />

@@ -9,7 +9,6 @@ import useAuth from './composables/auth';
 import { installI18n, loadMessages } from "./plugins/i18n";
 import { langStore } from "@/store/lang";
 import './plugins/axios.js';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import App from './main.vue'
 
 /*PRIMEVUE */

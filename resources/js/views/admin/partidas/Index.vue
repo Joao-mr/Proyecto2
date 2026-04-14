@@ -2,9 +2,9 @@
   <div class="partidas-page">
     <Card>
       <template #title>
-        <div class="d-flex align-items-center justify-content-between w-100">
+        <div class="flex items-center justify-between w-full">
           <span>Gestión de Partidas</span>
-          <div class="d-flex align-items-center gap-2">
+          <div class="flex items-center gap-2">
             <Button
               label="Actualizar"
               icon="pi pi-refresh"
@@ -44,21 +44,21 @@
           </template>
 
           <Column field="id" header="ID" sortable class="w-[80px]" />
-          <Column header="Sala" class="" style="min-width: 200px;">
+          <Column header="Sala" class="min-w-[200px]">
             <template #body="slotProps">
               {{ slotProps.data.sala?.nombre || `Sala #${slotProps.data.id_sala}` }}
             </template>
           </Column>
-          <Column field="fecha_inicio" header="Inicio" class="" style="min-width: 180px;">
+          <Column field="fecha_inicio" header="Inicio" class="min-w-[180px]">
             <template #body="slotProps">{{ formatDate(slotProps.data.fecha_inicio) }}</template>
           </Column>
-          <Column field="fecha_fin" header="Fin" class="" style="min-width: 180px;">
+          <Column field="fecha_fin" header="Fin" class="min-w-[180px]">
             <template #body="slotProps">{{ formatDate(slotProps.data.fecha_fin) }}</template>
           </Column>
 
           <Column header="Acciones" class="w-[160px]">
             <template #body="slotProps">
-              <div class="d-flex gap-2">
+              <div class="flex gap-2">
                 <Button
                   icon="pi pi-pencil"
                   rounded

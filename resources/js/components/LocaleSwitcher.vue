@@ -1,7 +1,7 @@
 <template>
-    <Select v-model="locale" :options="locales" placeholder="Select a Country" class="w-100" style="max-width: 112px;" @change="setLocale">
+    <Select v-model="locale" :options="locales" placeholder="Select a Country" class="w-full md:w-28" @change="setLocale">
         <template #value="slotProps">
-            <div v-if="slotProps.value" class="d-flex align-items-center">
+            <div v-if="slotProps.value" class="flex items-center">
                 <img :alt="slotProps.value" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`mr-2 flag flag-${getFlag(slotProps.value)}`" style="width: 18px"/>
                 <div>{{ slotProps.value }}</div>
             </div>
@@ -11,7 +11,7 @@
 
         </template>
         <template #option="slotProps">
-            <div class="d-flex align-items-center">
+            <div class="flex items-center">
                 <img :alt="slotProps.option" src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png" :class="`mr-2 flag flag-${getFlag(slotProps.option)}`" style="width: 18px" />
                 <div>{{ slotProps.option }}</div>
             </div>

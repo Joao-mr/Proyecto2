@@ -1,12 +1,10 @@
 <template>
   <div class="game-player-panel">
-    <p class="game-player-panel__name">
-      <i class="pi pi-user me-1"></i>{{ playerName }}
-    </p>
+    <p class="game-player-panel__name">{{ playerName }}</p>
 
     <div class="game-player-panel__score-label">Puntuación</div>
     <div class="game-player-panel__score" :class="{ 'game-player-panel__score--pop': scorePop }">
-      <span class="badge rounded-pill bg-warning text-dark fs-4 px-4 py-2">{{ score }}</span>
+      {{ score }}
     </div>
 
     <div class="game-player-panel__divider"></div>
@@ -18,7 +16,7 @@
         :width="timerSize"
         :height="timerSize"
         :viewBox="`0 0 ${timerSize} ${timerSize}`"
-        :aria-label="`Tiempo restante: ${timeLeft} segundos`"
+        aria-label="`Tiempo restante: ${timeLeft} segundos`"
       >
         <!-- track -->
         <circle

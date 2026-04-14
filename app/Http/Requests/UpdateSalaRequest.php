@@ -16,11 +16,10 @@ class UpdateSalaRequest extends FormRequest
         $salaId = $this->route('sala')?->id ?? $this->sala;
 
         return [
-            'nombre'           => ['sometimes', 'required', 'string', 'max:255'],
-            'codigo'           => ['sometimes', 'required', 'string', 'max:50', 'unique:salas,codigo,' . $salaId],
-            'tiempo_respuesta' => ['sometimes', 'nullable', 'integer', 'min:5', 'max:300'],
-            'categorias'       => ['nullable', 'array'],
-            'categorias.*'     => ['exists:categorias,id'],
+            'nombre' => ['sometimes', 'required', 'string', 'max:255'],
+            'codigo' => ['sometimes', 'required', 'string', 'max:50', 'unique:salas,codigo,' . $salaId],
+            'categorias' => ['nullable', 'array'],
+            'categorias.*' => ['exists:categorias,id'],
         ];
     }
 }

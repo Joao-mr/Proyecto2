@@ -1,6 +1,6 @@
 <template>
-  <div class="salas-edit-page container py-4">
-    <h2 class="fs-4 fw-bold mb-4">Editar Sala</h2>
+  <div class="salas-edit-page max-w-xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-xl font-bold mb-4">Editar Sala</h2>
     <div v-if="isLoading" class="mb-4">Cargando...</div>
     <form v-else @submit.prevent="submitUpdate">
       <div class="mb-4">
@@ -8,7 +8,7 @@
         <InputText
           v-model="sala.nombre"
           id="sala-nombre"
-          class="w-100"
+          class="w-full"
           :class="{ 'p-invalid': hasError('nombre') }"
           placeholder="Ej: Sala Trivia Pop"
         />
@@ -19,7 +19,7 @@
         <InputText
           v-model="sala.codigo"
           id="sala-codigo"
-          class="w-100"
+          class="w-full"
           :class="{ 'p-invalid': hasError('codigo') }"
           placeholder="Ej: ABC123"
         />
@@ -34,11 +34,11 @@
           option-label="nombre"
           option-value="id"
           placeholder="Selecciona categorías"
-          class="w-100"
+          class="w-full"
           display="chip"
         />
       </div>
-      <div class="d-flex gap-2 justify-content-end">
+      <div class="flex gap-2 justify-end">
         <Button label="Cancelar" severity="secondary" @click="goBack" />
         <Button label="Guardar" type="submit" :loading="isSubmitting" :disabled="isSubmitting" />
       </div>

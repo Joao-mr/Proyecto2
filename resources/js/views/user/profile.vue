@@ -1,11 +1,11 @@
 <template>
-    <div class="row g-4">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
         <!-- Avatar Section -->
-        <div class="col-12 col-md-4 col-lg-3">
+        <div class="col-span-1 md:col-span-4 lg:col-span-3">
             <Card>
                 <template #title>Avatar</template>
                 <template #content>
-                    <div class="d-flex flex-column align-items-center">
+                    <div class="flex flex-col items-center">
                         <!-- File Upload -->
                         <FileUpload
                             name="picture"
@@ -18,13 +18,13 @@
                             mode="basic"
                             :auto="true"
                             chooseLabel="Cambiar Avatar"
-                            class="w-100"
+                            class="w-full"
                         />
                         
-                        <div class="mt-4 w-100 d-flex justify-content-center">
+                        <div class="mt-4 w-full flex justify-center">
                             <Avatar 
                                 :image="user.avatar || 'https://bootdey.com/img/Content/avatar/avatar7.png'" 
-                                style="width: 8rem; height: 8rem;" 
+                                class="w-32 h-32" 
                                 size="xlarge" 
                                 shape="circle"
                             />
@@ -35,35 +35,35 @@
         </div>
 
         <!-- Personal Data Section -->
-        <div class="col-12 col-md-8 col-lg-9">
+        <div class="col-span-1 md:col-span-8 lg:col-span-9">
             <Card>
                 <template #title>Datos Personales</template>
                 <template #content>
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6">
-                            <label class="fw-bold d-block mb-2">Nombre</label>
-                            <div class="p-3 bg-light rounded border">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="field">
+                            <label class="font-bold block mb-2">Nombre</label>
+                            <div class="p-3 bg-surface-50 dark:bg-surface-800 rounded border border-surface-200 dark:border-surface-700">
                                 {{ user.name }}
                             </div>
                         </div>
                         
-                        <div class="col-12 col-md-6">
-                            <label class="fw-bold d-block mb-2">Email</label>
-                            <div class="p-3 bg-light rounded border">
+                        <div class="field">
+                            <label class="font-bold block mb-2">Email</label>
+                            <div class="p-3 bg-surface-50 dark:bg-surface-800 rounded border border-surface-200 dark:border-surface-700">
                                 {{ user.email }}
                             </div>
                         </div>
 
-                        <div class="col-12 col-md-6">
-                            <label class="fw-bold d-block mb-2">Primer Apellido</label>
-                            <div class="p-3 bg-light rounded border">
+                        <div class="field">
+                            <label class="font-bold block mb-2">Primer Apellido</label>
+                            <div class="p-3 bg-surface-50 dark:bg-surface-800 rounded border border-surface-200 dark:border-surface-700">
                                 {{ user.surname1 || '-' }}
                             </div>
                         </div>
 
-                        <div class="col-12 col-md-6">
-                            <label class="fw-bold d-block mb-2">Segundo Apellido</label>
-                            <div class="p-3 bg-light rounded border">
+                        <div class="field">
+                            <label class="font-bold block mb-2">Segundo Apellido</label>
+                            <div class="p-3 bg-surface-50 dark:bg-surface-800 rounded border border-surface-200 dark:border-surface-700">
                                 {{ user.surname2 || '-' }}
                             </div>
                         </div>

@@ -2,7 +2,7 @@
     
     <div >
         <!-- ===== Page Wrapper Start ===== -->
-        <div class="d-flex vh-100 overflow-hidden">
+        <div class="flex h-screen overflow-hidden">
             <!-- ===== Sidebar Start ===== -->
             <!-- ===== Sidebar Start ===== -->
             <MainSidebar 
@@ -15,7 +15,7 @@
             <!-- ===== Sidebar End ===== -->
 
             <!-- ===== Content Area Start ===== -->
-            <div class="position-relative d-flex flex-column flex-grow-1 overflow-y-auto overflow-x-hidden">
+            <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
                 <!-- ===== Header Start ===== -->
                 <MainHeader 
                     :sidebarOpen="sidebarOpen" 
