@@ -1,52 +1,75 @@
 <template>
   <!-- GAME OVER -->
-  <div v-if="gameOver" class="game-page">
-    <div class="game-over">
-      <div class="game-over__card">
-        <div class="game-over__icon">🏆</div>
-        <h1 class="game-over__title">¡Partida finalizada!</h1>
-        <p class="game-over__subtitle">Has completado todas las rondas de <strong>{{ categoriaName }}</strong></p>
-        <div class="game-over__score">{{ score }}</div>
-        <div class="game-over__score-label">puntos totales</div>
-        <RouterLink to="/categorias" class="game-over__btn">
-          Volver a categorías
-          <span aria-hidden="true">›</span>
-        </RouterLink>
+  <div v-if="gameOver" class="game-page d-flex align-items-center justify-content-center">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
+            <div class="card-body p-5">
+              <div class="display-1 mb-3">🏆</div>
+              <h1 class="card-title fw-bold text-white mb-2">¡Partida finalizada!</h1>
+              <p class="text-white-50 mb-4">Has completado todas las rondas de <strong>{{ categoriaName }}</strong></p>
+              <div class="display-4 fw-black text-warning mb-1">{{ score }}</div>
+              <p class="text-white-50 small mb-4">puntos totales</p>
+              <RouterLink to="/categorias" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
+                <i class="pi pi-arrow-left me-2"></i>Volver a categorías
+              </RouterLink>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- SIN IMÁGENES -->
-  <div v-else-if="!isLoading && rounds.length === 0" class="game-page">
-    <div class="game-over">
-      <div class="game-over__card">
-        <div class="game-over__icon">📭</div>
-        <h1 class="game-over__title">Sin imágenes</h1>
-        <p class="game-over__subtitle">Esta categoría no tiene imágenes disponibles todavía.</p>
-        <RouterLink to="/categorias" class="game-over__btn">Volver a categorías <span>›</span></RouterLink>
+  <div v-else-if="!isLoading && rounds.length === 0" class="game-page d-flex align-items-center justify-content-center">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
+            <div class="card-body p-5">
+              <div class="display-1 mb-3">📭</div>
+              <h1 class="card-title fw-bold text-white mb-2">Sin imágenes</h1>
+              <p class="text-white-50 mb-4">Esta categoría no tiene imágenes disponibles todavía.</p>
+              <RouterLink to="/categorias" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
+                <i class="pi pi-arrow-left me-2"></i>Volver a categorías
+              </RouterLink>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- CARGANDO -->
-  <div v-else-if="isLoading" class="game-page game-loading">
-    <p>Cargando...</p>
+  <div v-else-if="isLoading" class="game-page d-flex align-items-center justify-content-center">
+    <div class="text-center text-white">
+      <div class="spinner-border text-warning mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+      <p class="fs-5 fw-semibold">Cargando...</p>
+    </div>
   </div>
 
   <!-- PARTIDA -->
   <div v-else class="game-page">
     <GameNavbar :sala-name="categoriaName" @exit="handleExit" />
 
+    <!-- Barra de progreso Bootstrap -->
     <div class="game-progress-bar">
       <div class="game-progress-bar__inner">
         <span class="game-progress-bar__label">Progreso</span>
-        <div class="game-progress-bar__track">
+        <div class="progress flex-grow-1" style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 999px;">
           <div
-            class="game-progress-bar__fill"
-            :style="{ width: `${((round - 1) / totalRounds) * 100}%` }"
+            class="progress-bar bg-warning"
+            role="progressbar"
+            :style="{ width: `${((round - 1) / totalRounds) * 100}%`, borderRadius: '999px' }"
+            :aria-valuenow="round - 1"
+            :aria-valuemin="0"
+            :aria-valuemax="totalRounds"
           ></div>
         </div>
-        <span class="game-progress-bar__round">Ronda {{ round }} / {{ totalRounds }}</span>
+        <span class="game-progress-bar__round">
+          <span class="badge bg-light text-dark">Ronda {{ round }} / {{ totalRounds }}</span>
+        </span>
       </div>
     </div>
 

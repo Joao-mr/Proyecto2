@@ -78,6 +78,7 @@
             </span>
           </div>
           <div class="sala-card__actions">
+            <button class="btn-play" @click="jugarSala(s.id)">▶ Jugar</button>
             <button class="btn-edit" @click="showForm('edit', s)">Editar</button>
             <button class="btn-delete" @click="handleDelete(s.id)">Eliminar</button>
           </div>
@@ -89,12 +90,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import HomeNavbar from '@/layouts/HomeNavbar.vue';
 import { authStore } from '@/store/auth';
 import useSalas from '@/composables/salas';
 import useCategorias from '@/composables/categorias';
 
 const auth = authStore();
+const router = useRouter();
 
 const {
   salas,
@@ -160,6 +163,10 @@ async function handleDelete(id) {
   if (!window.confirm('¿Seguro que quieres eliminar esta sala?')) return;
   await deleteSala(id);
   await getSalas();
+}
+
+function jugarSala(id) {
+  router.push({ name: 'game.sala', params: { id } });
 }
 </script>
 
@@ -348,6 +355,18 @@ async function handleDelete(id) {
   display: flex;
   gap: 0.75rem;
 }
+.btn-play {
+  flex: 1;
+  background: #ff724f;
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-play:hover { background: #e05c38; }
 .btn-edit {
   flex: 1;
   background: rgba(255,255,255,0.1);

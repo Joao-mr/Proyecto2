@@ -18,7 +18,7 @@
                                     </div>
                                 </div>
                                 <!-- Buttons -->
-                                <div class="flex items-center justify-end mt-4">
+                                <div class="d-flex align-items-center justify-content-end mt-4">
                                     <button class="btn btn-primary" :class="{ 'opacity-25': processing }" :disabled="processing">
                                         {{ $t('send_password_reset_link') }}
                                     </button>

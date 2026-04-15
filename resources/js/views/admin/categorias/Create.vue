@@ -1,20 +1,20 @@
 <template>
-  <div class="categorias-create-page max-w-xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-xl font-bold mb-4">Crear Categoría</h2>
+  <div class="categorias-create-page container py-4" style="max-width: 576px;">
+    <h2 class="fs-4 fw-bold mb-4">Crear Categoría</h2>
     <div v-if="isLoading" class="mb-4">Cargando...</div>
     <form v-else @submit.prevent="submitCreate">
       <div class="mb-4">
-        <label for="categoria-nombre" class="block font-medium mb-1">Nombre de la categoría</label>
+        <label for="categoria-nombre" class="d-block fw-medium mb-1">Nombre de la categoría</label>
         <InputText
           v-model="categoria.nombre"
           id="categoria-nombre"
-          class="w-full"
+          class="w-100"
           :class="{ 'p-invalid': hasError('nombre') }"
           placeholder="Ej: Famosos"
         />
-        <small v-if="hasError('nombre')" class="text-red-500">{{ getError('nombre') }}</small>
+        <small v-if="hasError('nombre')" class="text-danger">{{ getError('nombre') }}</small>
       </div>
-      <div class="flex gap-2 justify-end">
+      <div class="d-flex gap-2 justify-content-end">
         <Button label="Cancelar" severity="secondary" @click="goBack" />
         <Button label="Crear" type="submit" :loading="isSubmitting" :disabled="isSubmitting" />
       </div>
