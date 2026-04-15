@@ -7,7 +7,7 @@
       </RouterLink>
 
       <!-- NAV DESKTOP (solo visible en desktop) -->
-      <nav class="home-nav" :class="{ 'home-nav--open': mobileMenuOpen }">
+      <nav class="home-nav d-none d-lg-flex" :class="{ 'home-nav--open': mobileMenuOpen }">
         <div
           v-for="item in navItems"
           :key="item.label"
@@ -29,7 +29,7 @@
       </nav>
 
       <!-- AUTH DESKTOP (solo visible en desktop) -->
-      <div class="home-auth" :class="{ 'home-auth--open': mobileMenuOpen }">
+      <div class="home-auth d-none d-lg-flex" :class="{ 'home-auth--open': mobileMenuOpen }">
         <template v-if="!store.authenticated">
           <router-link :to="{ name: 'auth.login' }" class="home-link" @click="closeMobileMenu">Login</router-link>
           <router-link :to="{ name: 'auth.register' }" class="home-btn-register" @click="closeMobileMenu">Registrarse <span>›</span></router-link>
@@ -55,7 +55,7 @@
       </div>
 
       <!-- MOBILE NAV MENU (solo visible en móvil) -->
-      <nav class="home-nav-mobile" v-show="mobileMenuOpen">
+      <nav class="home-nav-mobile d-lg-none" v-show="mobileMenuOpen">
         <div v-for="item in navItems" :key="`mobile-${item.label}`" class="home-nav-mobile__item">
           <button
             class="home-nav-mobile__toggle"
@@ -80,7 +80,7 @@
       </nav>
 
       <!-- MOBILE AUTH MENU (solo visible en móvil cuando está autenticado) -->
-      <div v-if="mobileMenuOpen && store.authenticated" class="home-auth-mobile">
+      <div v-if="mobileMenuOpen && store.authenticated" class="home-auth-mobile d-lg-none">
         <div class="home-auth-mobile__user">
           <span class="home-auth-mobile__avatar">{{ store.user?.name?.[0]?.toUpperCase() }}</span>
           <span class="home-auth-mobile__name">{{ store.user?.name }}</span>
@@ -94,7 +94,7 @@
       </div>
 
       <!-- MOBILE AUTH BUTTONS (solo visible en móvil cuando NO está autenticado) -->
-      <div v-if="mobileMenuOpen && !store.authenticated" class="home-auth-mobile-buttons">
+      <div v-if="mobileMenuOpen && !store.authenticated" class="home-auth-mobile-buttons d-lg-none">
         <router-link :to="{ name: 'auth.login' }" class="home-auth-mobile-btn home-auth-mobile-btn--login" @click="closeMobileMenu">
           Login
         </router-link>
@@ -105,7 +105,7 @@
 
       <!-- Hamburger (solo móvil) -->
       <button
-        class="home-hamburger"
+        class="home-hamburger d-lg-none"
         @click="mobileMenuOpen = !mobileMenuOpen"
         :aria-expanded="mobileMenuOpen"
         :aria-label="mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'"
@@ -150,22 +150,29 @@ const handleScroll = () => {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('resize', handleResize, { passive: true });
+  handleResize();
 });
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('resize', handleResize);
 });
 
 const closeMobileMenu = () => {
-  mobileMenuOpen.value = false;
-  activeDropdown.value = null;
-  activeMobileDropdown.value = null;
-  userMenuOpen.value = false;
-};
+  mobileMenuOpen.value = false
+  activeDropdown.value = null
+  activeMobileDropdown.value = null
+  userMenuOpen.value = false
+}
+
+const handleResize = () => {
+  if (window.innerWidth >= 992) closeMobileMenu()
+}
 
 const toggleMobileDropdown = (label) => {
-  activeMobileDropdown.value = activeMobileDropdown.value === label ? null : label;
-};
+  activeMobileDropdown.value = activeMobileDropdown.value === label ? null : label
+}
 
 const navItems = [
   {

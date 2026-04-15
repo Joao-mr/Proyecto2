@@ -193,6 +193,8 @@
   align-items: center;
   justify-content: center;
   font-weight: 800;
+  border-radius: 8px;
+  margin-left: 10px;
 }
 
 /* hero vars — definición única, limpia */
@@ -228,14 +230,10 @@
   height: auto;
   display: block;
 
-  /* Sombra proyectada (hace que parezca que flota sobre el fondo) */
   filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.25));
 
-  /* Aplicación de la animación */
-  /* 6s = duración (lento es mejor para PC), ease-in-out = suavidad, infinite = no para */
   animation: floatAnim 6s ease-in-out infinite;
 
-  /* Mejora del renderizado en monitores de alta resolución */
   transform-origin: center center;
   will-change: transform;
 }
@@ -245,7 +243,6 @@
     transform: translateY(0px) rotate(0deg);
   }
   50% {
-    /* Sube 25 píxeles y rota 2 grados a la derecha */
     transform: translateY(-25px) rotate(2deg);
   }
   100% {
@@ -272,7 +269,22 @@
   .home-auth {
     display: none !important;
   }
+  
+@media (min-width: 992px) {
+  .home-nav-mobile,
+  .home-auth-mobile,
+  .home-auth-mobile-buttons,
+  .home-hamburger {
+    display: none !important;
+  }
+}
 
+@media (max-width: 991.98px) {
+  .home-nav,
+  .home-auth {
+    display: none !important;
+  }
+}
   .home-hamburger {
     display: flex;
     flex-direction: column;
