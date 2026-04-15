@@ -109,6 +109,11 @@ export default [
                 component: () => import('../views/public/game/CategoriaGameView.vue'),
                 beforeEnter: requireLogin,
             },
+            {
+                path: 'ranking-category',
+                name: 'ranking.category',
+                component: () => import('@/views/public/ranking_category/index.vue'),
+            },
         ]
     },
 
