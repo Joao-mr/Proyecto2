@@ -318,6 +318,39 @@ const rankClass = (index) => {
   font-size: 0.95rem;
 }
 
+
+.ranking-table.table {
+  --bs-table-bg: transparent;
+  --bs-table-accent-bg: transparent;
+  --bs-table-striped-bg: transparent;
+  --bs-table-active-bg: transparent;
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.06);
+  --bs-table-color: #f2f5ff;
+  --bs-table-border-color: rgba(255, 255, 255, 0.12);
+  margin-bottom: 0;
+}
+
+.ranking-table.table > :not(caption) > * > * {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.ranking-table thead th {
+  background: #5f6d96 !important;
+  color: #ff744f !important;
+}
+
+.ranking-table tbody td {
+  background: rgba(114, 130, 171, 0.40) !important;
+  color: #f2f5ff !important;
+}
+
+.ranking-table tbody tr.top-1 td,
+.ranking-table tbody tr.ranking-row--top td {
+  background: rgba(255, 255, 255, 0.10) !important;
+}
+
+
 /* BREAKPOINTS */
 @media (max-width: 768px) {
   .ranking-mode-switch {
