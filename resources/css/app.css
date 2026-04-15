@@ -736,6 +736,10 @@ body {
 /* ============================================
    TailAdmin Sidebar - Estilos del Contenedor
    ============================================ */
+/* Sidebar visibility classes (replace Tailwind translate utilities) */
+.translate-x-0    { transform: translateX(0); }
+.-translate-x-full { transform: translateX(-100%); }
+
 aside.sidebar-container {
     position: fixed;
     left: 0;
