@@ -17,12 +17,21 @@ class Imagen extends Model implements HasMedia
     protected $fillable = [
         'url',
         'respuesta_correcta',
-        'categoria_id',
     ];
 
-    public function categoria()
+    public function categorias()
     {
-        return $this->belongsTo(Categoria::class, 'categoria_id');
+        return $this->belongsToMany(Categoria::class, 'imagen_categoria', 'id_imagen', 'id_categoria');
+    }
+
+    public function partidas()
+    {
+        return $this->belongsToMany(Partida::class, 'partida_imagen', 'id_imagen', 'id_partida')->withPivot('ronda');
+    }
+
+    public function respuestas()
+    {
+        return $this->hasMany(Respuesta::class, 'id_imagen');
     }
 
     //se crea una carpeta "logica" que se llama imagenes
