@@ -9,7 +9,6 @@ use App\Http\Controllers\Api\PartidaController;
 use App\Http\Controllers\Api\PartidaImagenController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\Api\RespuestaController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\SalaController;
 use App\Http\Controllers\Api\SalaCategoriaController;
@@ -51,9 +50,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('imagenes/{imagen}/upload', [ImagenController::class, 'uploadImage'])->name('imagenes.upload');
     Route::get('imagenes/{imagen}/media-info', [ImagenController::class, 'getMediaInfo'])->name('imagenes.media-info');
     Route::get('imagenes/{imagen}/all-media', [ImagenController::class, 'getAllMedia'])->name('imagenes.all-media');
-
-    //respuestas
-    Route::apiResource('respuestas', RespuestaController::class);
 
     //usuario-partida
     Route::get('usuario-partidas', [UsuarioPartidaController::class, 'index']);
