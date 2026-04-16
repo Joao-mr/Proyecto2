@@ -68,6 +68,12 @@ export default [
             },
 
             {
+                path: 'rankings',
+                name: 'public.rankings',
+                component: () => import('../views/public/rankings/index.vue'),
+            },
+
+            {
                 path: 'login',
                 name: 'auth.login',
                 component: () => import('../views/auth/login/Login.vue'),
@@ -103,6 +109,16 @@ export default [
                 component: () => import('../views/public/game/CategoriaGameView.vue'),
                 beforeEnter: requireLogin,
             },
+            {
+                path: 'ranking-category',
+                name: 'ranking.category',
+                component: () => import('@/views/public/ranking_category/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: 'ranking.category',
+                redirect: { name: 'ranking.category' }
+            }
         ]
     },
 

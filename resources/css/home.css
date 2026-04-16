@@ -152,10 +152,11 @@
   border-radius: 7px;
   height: 52px;
   min-width: 150px;
-  padding-left: 12px;
+  padding: 0 0 0 12px; /* sin separación a la derecha */
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0;
   overflow: hidden;
   font-weight: 700;
   cursor: pointer;
@@ -166,6 +167,7 @@
 .home-btn-play:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 22px rgba(255, 114, 79, 0.42);
+  filter: brightness(1.08) saturate(1.1);
 }
 
 .home-btn-register:active,
@@ -187,13 +189,15 @@
 .home-btn-register span,
 .home-btn-play span {
   background: #f6b45f;
+  width: 44px;
   height: 100%;
-  width: 40px;
+  margin-left: 0;         
+  border: 0 !important;   
+  border-radius: 0;       
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  border-radius: 8px;
+  flex-shrink: 0;
   margin-left: 10px;
 }
 
@@ -811,7 +815,7 @@
 .description {
   font-size: 0.95rem;
   line-height: 1.8;
-  margin-bottom: 35px;
+  margin-bottom: 75px;
 }
 
 /* BOTONES */

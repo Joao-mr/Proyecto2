@@ -23,4 +23,14 @@ class Partida extends Model
     {
         return $this->belongsTo(Sala::class, 'id_sala');
     }
+
+    public function usuarios()
+    {
+        return $this->belongsToMany(User::class, 'usuario_partida', 'id_partida', 'id_usuario')->withPivot('puntuacion');
+    }
+
+    public function imagenes()
+    {
+        return $this->belongsToMany(Imagen::class, 'partida_imagen', 'id_partida', 'id_imagen')->withPivot('ronda');
+    }
 }

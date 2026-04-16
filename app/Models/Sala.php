@@ -17,4 +17,14 @@ class Sala extends Model
     {
         return $this->hasMany(Partida::class, 'id_sala');
     }
+
+    public function usuarios()
+    {
+        return $this->belongsToMany(User::class, 'usuario_sala', 'id_sala', 'id_usuario')->withPivot('fecha_entrada');
+    }
+
+    public function creador()
+    {
+        return $this->belongsTo(User::class, 'id_creador');
+    }
 }
