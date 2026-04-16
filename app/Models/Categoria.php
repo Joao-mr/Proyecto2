@@ -13,4 +13,9 @@ class Categoria extends Model
     {
         return $this->belongsToMany(Sala::class, 'sala_categorias', 'id_categoria', 'id_sala');
     }
+
+    public function imagenes()
+    {
+        return $this->belongsToMany(Imagen::class, 'imagen_categoria', 'id_categoria', 'id_imagen');
+    }
 }
