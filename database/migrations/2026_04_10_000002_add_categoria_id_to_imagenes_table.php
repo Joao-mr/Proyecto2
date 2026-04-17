@@ -8,21 +8,28 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('imagenes', function (Blueprint $table) {
-            $table->unsignedBigInteger('categoria_id')->nullable()->after('respuesta_correcta');
+        if (!Schema::hasTable('imagenes')) {
+            return;
+        }
 
-            $table->foreign('categoria_id')
-                ->references('id')
-                ->on('categorias')
-                ->onDelete('set null');
-        });
+        if (!Schema::hasColumn('imagenes', 'categoria_id')) {
+            Schema::table('imagenes', function (Blueprint $table) {
+                $table->unsignedBigInteger('categoria_id')->nullable()->after('respuesta_correcta');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('imagenes', function (Blueprint $table) {
-            $table->dropForeign(['categoria_id']);
-            $table->dropColumn('categoria_id');
-        });
+        if (!Schema::hasTable('imagenes')) {
+            return;
+        }
+
+        if (Schema::hasColumn('imagenes', 'categoria_id')) {
+            Schema::table('imagenes', function (Blueprint $table) {
+                $table->dropColumn('categoria_id');
+            });
+        }
     }
 };
+    
