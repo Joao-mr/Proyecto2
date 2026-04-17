@@ -17,6 +17,7 @@ class Imagen extends Model implements HasMedia
     protected $fillable = [
         'url',
         'respuesta_correcta',
+        'categoria_id',
     ];
 
     public function categoria()

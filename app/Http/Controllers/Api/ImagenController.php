@@ -28,9 +28,9 @@ class ImagenController extends Controller
             'categoria_id' => $imagen->categoria_id,
             'categoria_nombre' => $imagen->categoria?->nombre,
             'urls' => [
-                'original' => $imagen->getFirstMediaUrl('imagenes'),
-                'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb'),
-                'preview' => $imagen->getFirstMediaUrl('imagenes', 'preview'),
+                'original' => $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+                'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+                'preview' => $imagen->getFirstMediaUrl('imagenes', 'preview') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
             ],
             'has_media' => $imagen->hasMedia('imagenes'),
             'created_at' => $imagen->created_at,
@@ -53,10 +53,20 @@ class ImagenController extends Controller
     {
         $imagen = Imagen::create($request->validated());
         $imagen->load('categoria');
-        return response()->json(array_merge(
-            $imagen->toArray(),
-            ['categoria_nombre' => $imagen->categoria?->nombre]
-        ), 201);
+        return response()->json([
+            'id' => $imagen->id,
+            'respuesta_correcta' => $imagen->respuesta_correcta,
+            'categoria_id' => $imagen->categoria_id,
+            'categoria_nombre' => $imagen->categoria?->nombre,
+            'urls' => [
+                'original' => $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+                'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+                'preview' => $imagen->getFirstMediaUrl('imagenes', 'preview') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+            ],
+            'has_media' => $imagen->hasMedia('imagenes'),
+            'created_at' => $imagen->created_at,
+            'updated_at' => $imagen->updated_at,
+        ], 201);
     }
 
     // Obtener una imagen específica con todas sus URLs y datos
@@ -94,10 +104,20 @@ class ImagenController extends Controller
     {
         $imagen->update($request->validated());
         $imagen->load('categoria');
-        return response()->json(array_merge(
-            $imagen->toArray(),
-            ['categoria_nombre' => $imagen->categoria?->nombre]
-        ));
+        return response()->json([
+            'id' => $imagen->id,
+            'respuesta_correcta' => $imagen->respuesta_correcta,
+            'categoria_id' => $imagen->categoria_id,
+            'categoria_nombre' => $imagen->categoria?->nombre,
+            'urls' => [
+                'original' => $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+                'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+                'preview' => $imagen->getFirstMediaUrl('imagenes', 'preview') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+            ],
+            'has_media' => $imagen->hasMedia('imagenes'),
+            'created_at' => $imagen->created_at,
+            'updated_at' => $imagen->updated_at,
+        ]);
     }
 
     public function destroy(Imagen $imagen)
@@ -114,9 +134,9 @@ class ImagenController extends Controller
             'respuesta_correcta' => $imagen->respuesta_correcta,
             'categoria_id' => $imagen->categoria_id,
             'categoria_nombre' => $imagen->categoria?->nombre,
-            'url' => $imagen->getFirstMediaUrl('imagenes'),
-            'thumb_url' => $imagen->getFirstMediaUrl('imagenes', 'thumb'),
-            'preview_url' => $imagen->getFirstMediaUrl('imagenes', 'preview'),
+            'url' => $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+            'thumb_url' => $imagen->getFirstMediaUrl('imagenes', 'thumb') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
+            'preview_url' => $imagen->getFirstMediaUrl('imagenes', 'preview') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
             'has_media' => $imagen->hasMedia('imagenes'),
             'created_at' => $imagen->created_at,
         ]);
