@@ -192,8 +192,9 @@ const navItems = [
   {
     label: 'Información',
     children: [
-      { label: 'Cómo jugar', route: '/' },
-      { label: 'Contacto', route: '/' },
+      { label: 'Cómo jugar', route: { name: 'como-jugar' } },
+      { label: 'Normas', route: { name: 'normas' } },
+      { label: 'Ranking', route: { name: 'ranking-info' } }
     ]
   },
 ];

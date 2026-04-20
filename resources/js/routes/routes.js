@@ -115,9 +115,24 @@ export default [
                 component: () => import('@/views/public/ranking_category/index.vue'),
                 meta: { requiresAuth: false }
             },
+            
             {
-                path: 'ranking.category',
-                redirect: { name: 'ranking.category' }
+                path: '/info/como-jugar',
+                name: 'como-jugar',
+                component: () => import('@/views/public/Information/how_to_play/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: '/info/normas',
+                name: 'normas',
+                component: () => import('@/views/public/Information/rules/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: '/info/ranking',
+                name: 'ranking-info',
+                component: () => import('@/views/public/Information/performance_ranking/index.vue'),
+                meta: { requiresAuth: false }
             }
         ]
     },
@@ -208,7 +223,7 @@ export default [
                         component: () => import('../views/admin/users/Index.vue'),
                         meta: {
                             breadCrumb: 'Usuarios',
-                            hideBreadcrumb: true // Ocultar breadcrumb del layout porque la Card tiene su propio header
+                            hideBreadcrumb: true 
                         }
                     },
                     {
