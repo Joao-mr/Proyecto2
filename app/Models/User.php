@@ -70,12 +70,6 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Sala::class, 'id_creador');
     }
 
-    public function respuestas()
-    {
-        return $this->hasMany(Respuesta::class, 'id_usuario');
-    }
-
-
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('images/users')

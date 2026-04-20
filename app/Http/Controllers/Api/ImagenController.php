@@ -169,12 +169,19 @@ class ImagenController extends Controller
         try {
             // Crea la imagen con la respuesta correcta
             $imagen = Imagen::create([
-                'respuesta_correcta' => $request->respuesta_correcta
+                'url' => '',
+                'respuesta_correcta' => $request->input('respuesta_correcta', ''),
+                'categoria_id' => $request->input('categoria_id')
             ]);
 
             // Sube la imagen
             $mediaItem = $imagen->addMediaFromRequest('image')
                 ->toMediaCollection('imagenes');
+
+            // Sincroniza la URL legacy con la URL real del archivo subido
+            $imagen->update([
+                'url' => $mediaItem->getUrl()
+            ]);
 
             DB::commit();
 
