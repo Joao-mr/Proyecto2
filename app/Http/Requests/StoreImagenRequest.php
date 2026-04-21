@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Requests;
 
@@ -18,6 +18,7 @@ class StoreImagenRequest extends FormRequest
         return [
             'url' => ['nullable', 'string', 'max:255'],
             'respuesta_correcta' => ['nullable', 'string', 'max:255'],
+            'categoria_id' => ['nullable', 'integer', 'exists:categorias,id'],
         ];
     }
 }

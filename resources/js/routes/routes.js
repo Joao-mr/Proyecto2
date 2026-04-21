@@ -52,6 +52,12 @@ export default [
         component: () => import('../views/CategoriasView.vue'),
     },
     {
+        path: '/mis-salas',
+        name: 'mis-salas',
+        component: () => import('../views/user/MisSalasView.vue'),
+        beforeEnter: requireLogin,
+    },
+    {
         path: '/',
         component: GuestLayout,
         children: [
@@ -59,6 +65,12 @@ export default [
                 path: '/',
                 name: 'home',
                 component: () => import('../views/public/home/index.vue'),
+            },
+
+            {
+                path: 'rankings',
+                name: 'public.rankings',
+                component: () => import('../views/public/rankings/index.vue'),
             },
 
             {
@@ -85,6 +97,45 @@ export default [
                 component: () => import('../views/auth/passwords/Reset.vue'),
                 beforeEnter: guest,
             },
+            {
+                path: 'game/sala/:id',
+                name: 'game.sala',
+                component: () => import('../views/public/game/SalaView.vue'),
+                beforeEnter: requireLogin,
+            },
+            {
+                path: 'game/categoria/:id',
+                name: 'game.categoria',
+                component: () => import('../views/public/game/CategoriaGameView.vue'),
+                beforeEnter: requireLogin,
+            },
+            {
+                path: 'ranking-category',
+                name: 'ranking.category',
+                component: () => import('@/views/public/ranking_category/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: 'info',
+                name: 'info.index',
+                component: () => import('@/views/public/Information/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: 'info/como-jugar',
+                name: 'como-jugar',
+                redirect: { name: 'info.index', query: { tab: 'como-jugar' } }
+            },
+            {
+                path: 'info/normas',
+                name: 'normas',
+                redirect: { name: 'info.index', query: { tab: 'normas' } }
+            },
+            {
+                path: 'info/ranking',
+                name: 'ranking-info',
+                redirect: { name: 'info.index', query: { tab: 'ranking' } }
+            }
         ]
     },
 
@@ -174,7 +225,7 @@ export default [
                         component: () => import('../views/admin/users/Index.vue'),
                         meta: {
                             breadCrumb: 'Usuarios',
-                            hideBreadcrumb: true // Ocultar breadcrumb del layout porque la Card tiene su propio header
+                            hideBreadcrumb: true 
                         }
                     },
                     {

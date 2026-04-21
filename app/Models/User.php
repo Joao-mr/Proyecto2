@@ -55,8 +55,20 @@ class User extends Authenticatable implements HasMedia
         $this->notify(new UserResetPasswordNotification($token));
     }
 
-    
+    public function partidas()
+    {
+        return $this->belongsToMany(Partida::class, 'usuario_partida', 'id_usuario', 'id_partida')->withPivot('puntuacion');
+    }
 
+    public function salas()
+    {
+        return $this->belongsToMany(Sala::class, 'usuario_sala', 'id_usuario', 'id_sala')->withPivot('fecha_entrada');
+    }
+
+    public function salasCreadas()
+    {
+        return $this->hasMany(Sala::class, 'id_creador');
+    }
 
     public function registerMediaCollections(): void
     {

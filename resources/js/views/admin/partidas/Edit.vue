@@ -1,6 +1,6 @@
 <template>
-  <div class="partidas-edit-page max-w-xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-xl font-bold mb-4">Editar Partida</h2>
+  <div class="partidas-edit-page container py-4">
+    <h2 class="fs-4 fw-bold mb-4">Editar Partida</h2>
 
     <div v-if="isLoading" class="mb-4">Cargando...</div>
 
@@ -36,7 +36,7 @@
         <small v-if="hasError('fecha_fin')" class="text-red-500">{{ getError('fecha_fin') }}</small>
       </div>
 
-      <div class="flex gap-2 justify-end">
+      <div class="d-flex gap-2 justify-content-end">
         <Button label="Cancelar" severity="secondary" @click="goBack" />
         <Button label="Guardar" type="submit" :loading="isLoading" :disabled="isLoading" />
       </div>

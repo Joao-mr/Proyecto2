@@ -20,7 +20,7 @@
         >
           <div class="card-image-wrapper">
             <div class="card-image placeholder">
-              <img v-if="categoria.imagen" :src="categoria.imagen" :alt="categoria.nombre" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+              <img v-if="categoria.imagen" :src="categoria.imagen" :alt="categoria.nombre" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
               <span v-else>{{ categoria.nombre }}</span>
             </div>
           </div>
@@ -32,6 +32,7 @@
           </div>
         </div>
       </div>
+
       <div class="info-section">
         <div class="info-card ranking-card">
           <span class="info-card-icon">🏆</span>
@@ -52,67 +53,38 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import HomeNavbar from '@/layouts/HomeNavbar.vue';
+import useCategorias from '@/composables/categorias';
 
-export default {
-  name: "CategoriasView",
-  components: { HomeNavbar },
-  data() {
-    return {
-      categorias: [
-        { id: 1, nombre: "Películas", imagen: null },
-        { id: 2, nombre: "Música", imagen: null },
-        { id: 3, nombre: "Deportes", imagen: null },
-        { id: 4, nombre: "Geografía", imagen: null },
-        { id: 5, nombre: "Historia", imagen: null },
-      ]
-    };
-  },
-  mounted() {
-    this.fetchCategorias();
-  },
-  methods: {
-    async fetchCategorias() {
-      try {
-        // Descomenta esto cuando tengas tu endpoint de categorías listo
-        // const response = await fetch('/api/categorias');
-        // this.categorias = await response.json();
-        // Por ahora usamos los datos de ejemplo arriba
-      } catch (error) {
-        console.error('Error al cargar categorías:', error);
-      }
-    },
-    jugarCategoria(categoriaId) {
-      console.log('Jugando categoría:', categoriaId);
-      // Aquí redirigirías a la vista de juego
-      // this.$router.push({ name: 'juego', params: { categoriaId } });
-    }
-  }
-};
+const router = useRouter();
+const { categorias, getCategorias } = useCategorias();
+
+onMounted(() => getCategorias());
+
+function jugarCategoria(id) {
+  router.push({ name: 'game.categoria', params: { id } });
+}
 </script>
 
 <style scoped>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-/* ── Página: mismo gradiente que home ── */
 .categorias-page {
   min-height: 100vh;
   background: linear-gradient(190deg, #5f74b7 25%, #a6aec5 100%);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  padding-top: 96px; /* mismo offset que .home-page */
+  padding-top: 96px;
 }
 
-/* ── Contenedor: mismo ancho que container-home ── */
 .main-content {
   width: min(1200px, 92%);
   margin: 0 auto;
   padding: 3rem 0;
 }
 
-/* ── Cabecera de sección ── */
 .categorias-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -133,7 +105,6 @@ export default {
   margin: 0;
 }
 
-/* ── Grid de categorías ── */
 .categorias-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -141,7 +112,6 @@ export default {
   margin-bottom: 3rem;
 }
 
-/* ── Cards: glass card igual que el estilo del home ── */
 .categoria-card {
   background: rgba(255, 255, 255, 0.10);
   border: 1px solid rgba(255, 255, 255, 0.22);
@@ -163,11 +133,8 @@ export default {
   background: rgba(255, 255, 255, 0.17);
 }
 
-.categoria-card:hover .card-overlay {
-  opacity: 1;
-}
+.categoria-card:hover .card-overlay { opacity: 1; }
 
-/* Overlay que aparece al hover */
 .card-overlay {
   position: absolute;
   inset: 0;
@@ -198,116 +165,66 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 1.75rem 1.5rem 1rem;
-  min-height: 150px;
 }
 
 .card-image {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #eef2ff;
-  font-weight: 600;
   text-align: center;
 }
 
-.card-image.placeholder {
-  font-size: 0.9rem;
-}
-
 .card-content {
-  padding: 1rem 1.5rem 1.5rem;
+  padding: 0.75rem 1.25rem 1.25rem;
   text-align: center;
 }
 
 .card-title {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 800;
   color: #eef2ff;
+  margin: 0;
 }
 
-/* ── Info section (ranking / recompensas) ── */
+/* Info section */
 .info-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .info-card {
   background: rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
   border-radius: 14px;
+  padding: 1.25rem 1.75rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.25rem 1.5rem;
-  min-height: 80px;
-  transition: background 0.3s;
+  min-width: 260px;
 }
 
-.info-card:hover {
-  background: rgba(255, 255, 255, 0.17);
-}
-
-.ranking-card,
-.rewards-card {
-  background: rgba(255, 114, 79, 0.55); /* mismo naranja del home con transparencia */
-  border: 1px solid rgba(255, 180, 120, 0.35);
-}
-
-.ranking-card:hover,
-.rewards-card:hover {
-  background: rgba(255, 114, 79, 0.70);
-}
+.info-card-icon { font-size: 2rem; }
 
 .info-title {
-  margin: 0 0 0.2rem 0;
-  font-size: 1rem;
-  font-weight: 700;
   color: #eef2ff;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
 }
 
 .info-subtitle {
+  color: rgba(238, 242, 255, 0.65);
+  font-size: 0.85rem;
   margin: 0;
-  font-size: 0.83rem;
-  color: rgba(238, 242, 255, 0.72);
-  font-weight: 400;
-}
-
-.info-card-icon {
-  font-size: 2rem;
-  flex-shrink: 0;
-  line-height: 1;
-}
-
-/* ── Responsive ── */
-@media (max-width: 768px) {
-  .categorias-title {
-    font-size: 2rem;
-  }
-
-  .categorias-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .categorias-title {
-    font-size: 1.5rem;
-  }
-
-  .categorias-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
 }
 </style>

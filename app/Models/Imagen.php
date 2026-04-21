@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Models;
 
@@ -18,6 +18,21 @@ class Imagen extends Model implements HasMedia
         'url',
         'respuesta_correcta',
     ];
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
+
+    public function categorias()
+    {
+        return $this->belongsToMany(Categoria::class, 'imagen_categoria', 'id_imagen', 'id_categoria');
+    }
+
+    public function partidas()
+    {
+        return $this->belongsToMany(Partida::class, 'partida_imagen', 'id_imagen', 'id_partida')->withPivot('ronda');
+    }
 
     //se crea una carpeta "logica" que se llama imagenes
     public function registerMediaCollections(): void

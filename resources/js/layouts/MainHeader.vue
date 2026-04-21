@@ -1,60 +1,62 @@
 <template>
-    <header class="tail-admin-header sticky top-0 z-999 flex w-full">
-        <div class="flex grow items-center justify-between p-1 md:px-6 2xl:px-11">
-            <div class="flex items-center gap-2 sm:gap-4">
+    <header class="tail-admin-header sticky-top z-999 d-flex w-100">
+        <div class="d-flex flex-grow-1 align-items-center justify-content-between p-1 px-md-4">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
                 <!-- Toggle Button - Mobile -->
                 <button 
                     @click="emit('toggleSidebar')" 
-                    class="z-99999 flex items-center justify-center w-9 h-9 rounded-lg border transition-colors lg:hidden"
+                    class="d-flex d-lg-none align-items-center justify-content-center header-icon-button rounded"
+                    style="width: 36px; height: 36px;"
                     aria-label="Toggle sidebar"
                 >
-                    <i class="pi pi-bars text-lg"></i>
+                    <i class="pi pi-bars"></i>
                 </button>
 
-                <!-- Toggle Button - Desktop (para colapsar/expandir) -->
+                <!-- Toggle Button - Desktop -->
                 <button 
                     @click="emit('toggleCollapse')" 
-                    class="hidden lg:flex items-center justify-center w-9 h-9 rounded-lg border transition-colors"
+                    class="d-none d-lg-flex align-items-center justify-content-center header-icon-button rounded"
+                    style="width: 36px; height: 36px;"
                     :title="props.isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'"
                     aria-label="Toggle sidebar"
                 >
-                    <i :class="props.isCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'" class="text-lg"></i>
+                    <i :class="props.isCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"></i>
                 </button>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3">
-                <ul class="flex items-center gap-1.5 sm:gap-2">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <ul class="list-unstyled d-flex align-items-center gap-2 mb-0">
                     <!-- Dark Mode Toggle -->
                     <li>
-                        <button @click="toggleDarkMode" class="header-icon-button relative flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-200" title="Cambiar tema">
-                            <i :class="isDarkTheme ? 'pi pi-sun' : 'pi pi-moon'" class="text-base"></i>
+                        <button @click="toggleDarkMode" class="header-icon-button d-flex align-items-center justify-content-center rounded" style="width: 40px; height: 40px;" title="Cambiar tema">
+                            <i :class="isDarkTheme ? 'pi pi-sun' : 'pi pi-moon'"></i>
                         </button>
                     </li>
 
                     <!-- User Dropdown -->
                     <li>
-                        <div class="relative">
-                            <button @click="toggleDropdown" class="header-user-button flex items-center gap-3 rounded-lg px-2 py-1.5 transition-all duration-200 hover:bg-opacity-50">
-                                <span class="hidden text-right lg:block min-w-[80px]">
-                                    <span class="block text-sm font-semibold leading-tight user-name">{{ user?.name || 'Usuario' }}</span>
-                                    <span class="block text-xs leading-tight user-role">{{ user?.roles?.[0]?.name || 'Rol' }}</span>
+                        <div class="position-relative">
+                            <button @click="toggleDropdown" class="header-user-button d-flex align-items-center gap-2 rounded px-2 py-1">
+                                <span class="d-none d-lg-block text-end" style="min-width: 80px;">
+                                    <span class="d-block small fw-semibold lh-sm user-name">{{ user?.name || 'Usuario' }}</span>
+                                    <span class="d-block lh-sm user-role" style="font-size: 0.75rem;">{{ user?.roles?.[0]?.name || 'Rol' }}</span>
                                 </span>
-                                <div class="header-avatar relative h-10 w-10 shrink-0 rounded-full overflow-hidden ring-2 ring-offset-2">
-                                    <img v-if="user?.avatar" :src="user.avatar" alt="User" class="h-full w-full object-cover"/>
-                                    <div v-else class="flex h-full w-full items-center justify-center text-sm font-semibold avatar-initials">
+                                <div class="header-avatar position-relative flex-shrink-0 rounded-circle overflow-hidden" style="width: 40px; height: 40px;">
+                                    <img v-if="user?.avatar" :src="user.avatar" alt="User" class="w-100 h-100 object-fit-cover"/>
+                                    <div v-else class="d-flex h-100 w-100 align-items-center justify-content-center small fw-semibold avatar-initials">
                                         {{ user?.name?.charAt(0).toUpperCase() || 'U' }}
                                     </div>
                                 </div>
-                                <i class="pi pi-chevron-down text-xs transition-transform duration-200" :class="{ 'rotate-180': dropdownOpen }"></i>
+                                <i class="pi pi-chevron-down" style="font-size: 0.75rem; transition: transform 0.2s;" :style="dropdownOpen ? 'transform: rotate(180deg)' : ''"></i>
                             </button>
 
                             <transition name="dropdown-fade">
-                                <div v-show="dropdownOpen" class="header-dropdown absolute right-0 mt-2 z-50">
+                                <div v-show="dropdownOpen" class="header-dropdown position-absolute end-0 mt-2" style="z-index: 50;">
                                     <div class="header-dropdown-header">
-                                        <p class="user-dropdown-name">{{ user?.name || 'Usuario' }}</p>
-                                        <p class="user-dropdown-email">{{ user?.email || '' }}</p>
+                                        <p class="user-dropdown-name mb-0">{{ user?.name || 'Usuario' }}</p>
+                                        <p class="user-dropdown-email mb-0">{{ user?.email || '' }}</p>
                                     </div>
-                                    <ul>
+                                    <ul class="list-unstyled mb-0 p-2">
                                         <li>
                                             <router-link :to="route.path.startsWith('/app') ? '/app/profile' : '/admin/profile'" class="dropdown-menu-item">
                                                 <i class="pi pi-user"></i>
@@ -74,8 +76,8 @@
                                             </router-link>
                                         </li>
                                     </ul>
-                                    <div class="border-t">
-                                        <button @click="logout" class="dropdown-menu-item logout-button">
+                                    <div style="border-top: 1px solid;" class="p-2">
+                                        <button @click="logout" class="dropdown-menu-item logout-button w-100">
                                             <i class="pi pi-sign-out"></i>
                                             <span>Cerrar Sesión</span>
                                         </button>

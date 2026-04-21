@@ -30,7 +30,7 @@
                 <div>
                     <a
                         href="javascript:void(0)"
-                        class="ml-2"
+                        class="ms-2"
                         type="button"
                         @click="remove(index)"
                         title="Remove file"
@@ -42,7 +42,7 @@
         </div>
 
         <label for="fileInput" class="block cursor-pointer text-xl text-center" v-if=" !thumbnail && !modelValue">
-            <div class="py-7 flex flex-col justify-between items-center gap-y-6">
+            <div class="py-5 d-flex flex-column justify-content-between align-items-center gap-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-image"
                      viewBox="0 0 16 16">
                     <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>

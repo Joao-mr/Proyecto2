@@ -10,10 +10,10 @@
 
         <!-- Links -->
         <nav class="home-footer__nav" aria-label="Footer navigation">
-          <a href="#" class="home-footer__link">Feauters</a>
-          <a href="#" class="home-footer__link">Pricing</a>
+          <a href="#" class="home-footer__link">Funciones</a>
+          <a href="#" class="home-footer__link">Rankings</a>
           <a href="#" class="home-footer__link">FAQ</a>
-          <a href="#" class="home-footer__link">Download</a>
+          <a href="#" class="home-footer__link">Contacto</a>
         </nav>
 
         <!-- Social -->

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers\Api;
 
@@ -13,13 +13,20 @@ use Illuminate\Support\Facades\DB;
 
 class ImagenController extends Controller
 {
-    
-     //obtiene lista de imagenes con URLs de Spatie Media Library 
-    public function index()
+    // Obtiene lista de imágenes con URLs de Spatie Media Library
+    public function index(Request $request)
     {
-        $imagenes = Imagen::paginate(10)->through(fn($imagen) => [
+        $query = Imagen::with('categoria');
+
+        if ($request->filled('categoria_id')) {
+            $query->where('categoria_id', $request->categoria_id);
+        }
+
+        $imagenes = $query->paginate(min((int) $request->get('per_page', 10), 200))->through(fn($imagen) => [
             'id' => $imagen->id,
             'respuesta_correcta' => $imagen->respuesta_correcta,
+            'categoria_id' => $imagen->categoria_id,
+            'categoria_nombre' => $imagen->categoria?->nombre,
             'urls' => [
                 'original' => $imagen->getFirstMediaUrl('imagenes'),
                 'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb'),
@@ -45,11 +52,14 @@ class ImagenController extends Controller
     public function store(StoreImagenRequest $request)
     {
         $imagen = Imagen::create($request->validated());
-        return response()->json($imagen, 201);
+        $imagen->load('categoria');
+        return response()->json(array_merge(
+            $imagen->toArray(),
+            ['categoria_nombre' => $imagen->categoria?->nombre]
+        ), 201);
     }
 
-    
-     //obtener una imagen espec├¡fica con todas sus URLs y datos
+    // Obtener una imagen específica con todas sus URLs y datos
     public function show(Imagen $imagen)
     {
         return response()->json([
@@ -83,7 +93,11 @@ class ImagenController extends Controller
     public function update(UpdateImagenRequest $request, Imagen $imagen)
     {
         $imagen->update($request->validated());
-        return response()->json($imagen);
+        $imagen->load('categoria');
+        return response()->json(array_merge(
+            $imagen->toArray(),
+            ['categoria_nombre' => $imagen->categoria?->nombre]
+        ));
     }
 
     public function destroy(Imagen $imagen)
@@ -92,12 +106,14 @@ class ImagenController extends Controller
         return response()->json(null, 204);
     }
 
-     //obtener lista simple de todas las im├ígenes con URLs
+    // Obtener lista simple de todas las imágenes con URLs
     public function getList()
     {
-        $imagenes = Imagen::all()->map(fn($imagen) => [
+        $imagenes = Imagen::with('categoria')->get()->map(fn($imagen) => [
             'id' => $imagen->id,
             'respuesta_correcta' => $imagen->respuesta_correcta,
+            'categoria_id' => $imagen->categoria_id,
+            'categoria_nombre' => $imagen->categoria?->nombre,
             'url' => $imagen->getFirstMediaUrl('imagenes'),
             'thumb_url' => $imagen->getFirstMediaUrl('imagenes', 'thumb'),
             'preview_url' => $imagen->getFirstMediaUrl('imagenes', 'preview'),
@@ -112,11 +128,12 @@ class ImagenController extends Controller
         ]);
     }
 
-    //sube imagen a un modelo de imagen existente con spatie media library
+    // Sube imagen a un modelo de imagen existente con Spatie Media Library
     public function uploadImage(UploadImagenRequest $request, Imagen $imagen)
     {
         try {
-            // coge el archivo del request, lo guarda en el disco, lo registra en la tabla media, lo asocia con el modelo imagen
+            // Coge el archivo del request, lo guarda en el disco, lo registra en la tabla media,
+            // lo asocia con el modelo imagen
             $mediaItem = $imagen->addMediaFromRequest('image')
                 ->toMediaCollection('imagenes');
 
@@ -144,18 +161,18 @@ class ImagenController extends Controller
         }
     }
 
-     //crea la imagen y sube archivo en una sola petici├│n
+    // Crea la imagen y sube archivo en una sola petición
     public function storeWithUpload(UploadImagenRequest $request)
     {
         DB::beginTransaction();
 
         try {
-            // crea la imagen con la respuesta correcta
+            // Crea la imagen con la respuesta correcta
             $imagen = Imagen::create([
                 'respuesta_correcta' => $request->respuesta_correcta
             ]);
 
-            // sube la imagen
+            // Sube la imagen
             $mediaItem = $imagen->addMediaFromRequest('image')
                 ->toMediaCollection('imagenes');
 
@@ -193,7 +210,7 @@ class ImagenController extends Controller
         }
     }
 
-     //obtiene informacion completa de media de una imagen
+    // Obtiene información completa de media de una imagen
     public function getMediaInfo(Imagen $imagen)
     {
         $media = $imagen->getFirstMedia('imagenes');
@@ -227,7 +244,7 @@ class ImagenController extends Controller
         ]);
     }
 
-     //Obtiene todas las im├ígenes con informacion detallada
+    // Obtiene todas las imágenes con información detallada
     public function getAllMedia(Imagen $imagen)
     {
         $allMedia = $imagen->getMedia('imagenes');
@@ -254,7 +271,7 @@ class ImagenController extends Controller
         ]);
     }
 
-     //formatea bytes a formato legible
+    // Formatea bytes a formato legible
     private function formatBytes($bytes, $precision = 2)
     {
         $units = ['B', 'KB', 'MB', 'GB'];

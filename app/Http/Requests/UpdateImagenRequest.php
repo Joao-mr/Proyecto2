@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Requests;
 
@@ -18,6 +18,7 @@ class UpdateImagenRequest extends FormRequest
         return [
             'url' => ['sometimes', 'nullable', 'string', 'max:255'],
             'respuesta_correcta' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'categoria_id' => ['sometimes', 'nullable', 'integer', 'exists:categorias,id'],
         ];
     }
 }
