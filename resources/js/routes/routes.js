@@ -130,6 +130,10 @@ export default [
         meta: { breadCrumb: '.' },
         children: [
             {
+                path: '',
+                redirect: { name: 'app.profile' },
+            },
+            {
                 name: 'app.profile',
                 path: 'profile',
                 component: () => import('../views/user/profile.vue'),

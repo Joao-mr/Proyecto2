@@ -3,8 +3,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import MainLayout from './MainLayout.vue';
+
+const route = useRoute();
+const router = useRouter();
+
+const ensureProfileRoute = () => {
+    if (route.path === '/app') {
+        router.replace('/app/profile');
+    }
+};
+
+onMounted(() => {
+    ensureProfileRoute();
+});
+
+watch(
+    () => route.path,
+    () => {
+        ensureProfileRoute();
+    }
+);
 
 const items = ref([
    

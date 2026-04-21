@@ -145,6 +145,8 @@ const feedback       = ref(null);
 const revealAnswer   = ref(false);
 const answerDisabled = ref(false);
 const gameOver       = ref(false);
+const isSavingStats  = ref(false);
+const hasSavedStats  = ref(false);
 const answerInputRef = ref(null);
 
 const currentRound = computed(() => rounds.value[round.value - 1] ?? null);
@@ -196,7 +198,7 @@ function handleAnswer(value) {
 function scheduleNextRound() {
   setTimeout(() => {
     if (round.value >= totalRounds.value) {
-      gameOver.value = true;
+      finishGame();
     } else {
       round.value++;
       feedback.value       = null;
@@ -208,6 +210,35 @@ function scheduleNextRound() {
       });
     }
   }, 2200);
+}
+
+async function finishGame() {
+  stopTimer();
+  await persistMatchStats();
+  gameOver.value = true;
+}
+
+async function persistMatchStats() {
+  if (hasSavedStats.value || isSavingStats.value) {
+    return;
+  }
+
+  isSavingStats.value = true;
+  try {
+    await axios.post('/api/usuario-partidas/finalizar', {
+      id_sala: Number(salaId.value),
+      fecha_inicio: new Date().toISOString(),
+      fecha_fin: new Date().toISOString(),
+      puntuacion: score.value,
+    });
+
+    await auth.getUser();
+    hasSavedStats.value = true;
+  } catch (error) {
+    console.error('Error al guardar estadísticas de partida:', error);
+  } finally {
+    isSavingStats.value = false;
+  }
 }
 
 /* ── Exit ── */

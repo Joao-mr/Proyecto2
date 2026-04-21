@@ -70,6 +70,32 @@
                     </div>
                 </template>
             </Card>
+
+            <Card class="mt-4">
+                <template #title>Estadísticas</template>
+                <template #content>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <div class="p-3 bg-light rounded border">
+                                <div class="text-muted small mb-1">ELO</div>
+                                <div class="fw-bold fs-4">{{ Number(user.elo ?? 0) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="p-3 bg-light rounded border">
+                                <div class="text-muted small mb-1">Partidas Jugadas</div>
+                                <div class="fw-bold fs-4">{{ Number(user.partidas_jugadas ?? 0) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="p-3 bg-light rounded border">
+                                <div class="text-muted small mb-1">Título</div>
+                                <div class="fw-bold fs-4">{{ user.titulo || 'Sin rango' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </Card>
         </div>
     </div>
 </template>

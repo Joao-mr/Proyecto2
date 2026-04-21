@@ -54,6 +54,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //usuario-partida
     Route::get('usuario-partidas', [UsuarioPartidaController::class, 'index']);
     Route::post('usuario-partidas', [UsuarioPartidaController::class, 'store']);
+    Route::post('usuario-partidas/finalizar', [UsuarioPartidaController::class, 'finish']);
     Route::get('usuario-partidas/{idPartida}', [UsuarioPartidaController::class, 'show']);
     Route::put('usuario-partidas/{idPartida}', [UsuarioPartidaController::class, 'update']);
     Route::delete('usuario-partidas/{idPartida}', [UsuarioPartidaController::class, 'destroy']);

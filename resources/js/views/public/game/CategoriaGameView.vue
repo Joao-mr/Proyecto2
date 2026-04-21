@@ -100,6 +100,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { authStore } from '@/store/auth';
+import axios from 'axios';
 import GameNavbar  from '@/components/game/GameNavbar.vue';
 import GameImage   from '@/components/game/GameImage.vue';
 import PlayerPanel from '@/components/game/PlayerPanel.vue';
@@ -139,6 +140,8 @@ const feedback       = ref(null);
 const revealAnswer   = ref(false);
 const answerDisabled = ref(false);
 const gameOver       = ref(false);
+const isSavingStats  = ref(false);
+const hasSavedStats  = ref(false);
 const answerInputRef = ref(null);
 
 const currentRound = computed(() => rounds.value[round.value - 1] ?? null);
@@ -190,7 +193,7 @@ function handleAnswer(value) {
 function scheduleNextRound() {
   setTimeout(() => {
     if (round.value >= totalRounds.value) {
-      gameOver.value = true;
+      finishGame();
     } else {
       round.value++;
       feedback.value       = null;
@@ -202,6 +205,35 @@ function scheduleNextRound() {
       });
     }
   }, 2200);
+}
+
+async function finishGame() {
+  stopTimer();
+  await persistMatchStats();
+  gameOver.value = true;
+}
+
+async function persistMatchStats() {
+  if (hasSavedStats.value || isSavingStats.value) {
+    return;
+  }
+
+  isSavingStats.value = true;
+  try {
+    await axios.post('/api/usuario-partidas/finalizar', {
+      id_categoria: Number(categoriaId.value),
+      fecha_inicio: new Date().toISOString(),
+      fecha_fin: new Date().toISOString(),
+      puntuacion: score.value,
+    });
+
+    await auth.getUser();
+    hasSavedStats.value = true;
+  } catch (error) {
+    console.error('Error al guardar estadísticas de partida:', error);
+  } finally {
+    isSavingStats.value = false;
+  }
 }
 
 function handleExit() {
