@@ -115,24 +115,26 @@ export default [
                 component: () => import('@/views/public/ranking_category/index.vue'),
                 meta: { requiresAuth: false }
             },
-            
             {
-                path: '/info/como-jugar',
+                path: 'info',
+                name: 'info.index',
+                component: () => import('@/views/public/Information/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: 'info/como-jugar',
                 name: 'como-jugar',
-                component: () => import('@/views/public/Information/how_to_play/index.vue'),
-                meta: { requiresAuth: false }
+                redirect: { name: 'info.index', query: { tab: 'como-jugar' } }
             },
             {
-                path: '/info/normas',
+                path: 'info/normas',
                 name: 'normas',
-                component: () => import('@/views/public/Information/rules/index.vue'),
-                meta: { requiresAuth: false }
+                redirect: { name: 'info.index', query: { tab: 'normas' } }
             },
             {
-                path: '/info/ranking',
+                path: 'info/ranking',
                 name: 'ranking-info',
-                component: () => import('@/views/public/Information/performance_ranking/index.vue'),
-                meta: { requiresAuth: false }
+                redirect: { name: 'info.index', query: { tab: 'ranking' } }
             }
         ]
     },

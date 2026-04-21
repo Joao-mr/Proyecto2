@@ -1,83 +1,72 @@
 <template>
-  <div class="home-page ranking-info-page">
-    <HomeNavbar />
+  <div class="ranking-info-main">
+    <section class="card border-0 ranking-hero mb-4 rise-in">
+      <div class="card-body p-4 p-lg-5">
+        <p class="ranking-kicker mb-2">
+          <i class="pi pi-chart-line me-2"></i>Información
+        </p>
+        <h1 class="ranking-title mb-3">¿Cómo funciona el ranking?</h1>
+        <p class="ranking-lead mb-0">
+          El ranking premia rapidez, precisión y constancia en cada partida.
+        </p>
+      </div>
+    </section>
 
-    <main class="ranking-info-main">
-      <div class="container-home">
-        <section class="card border-0 ranking-hero mb-4 rise-in">
-          <div class="card-body p-4 p-lg-5">
-            <p class="ranking-kicker mb-2">
-              <i class="pi pi-chart-line me-2"></i>Información
-            </p>
-            <h1 class="ranking-title mb-3">¿Cómo funciona el ranking?</h1>
-            <p class="ranking-lead mb-0">
-              El ranking premia rapidez, precisión y constancia en cada partida.
-            </p>
+    <div class="row g-4 mb-4">
+      <div class="col-md-4" v-for="(item, index) in resumen" :key="`resumen-${index}`">
+        <article class="card border-0 ranking-card h-100 rise-in" :style="{ animationDelay: `${index * 0.05}s` }">
+          <div class="card-body p-4">
+            <h2 class="ranking-card-title">{{ item.title }}</h2>
+            <p class="ranking-card-text mb-0">{{ item.text }}</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <section class="card border-0 ranking-card h-100 rise-in">
+          <div class="card-body p-4">
+            <h2 class="ranking-subtitle mb-3">Funcionamiento</h2>
+
+            <ul class="ranking-list mb-3">
+              <li v-for="(linea, index) in funcionamiento" :key="`linea-${index}`">
+                <i class="pi pi-check-circle me-2"></i>{{ linea }}
+              </li>
+            </ul>
+
+            <h3 class="ranking-subtitle ranking-subtitle--sm mb-2">Existen rankings:</h3>
+            <div class="ranking-tags">
+              <span class="ranking-tag">Global</span>
+              <span class="ranking-tag">Por categoría</span>
+            </div>
           </div>
         </section>
-
-        <div class="row g-4 mb-4">
-          <div class="col-md-4" v-for="(item, index) in resumen" :key="`resumen-${index}`">
-            <article class="card border-0 ranking-card h-100 rise-in" :style="{ animationDelay: `${index * 0.05}s` }">
-              <div class="card-body p-4">
-                <h2 class="ranking-card-title">{{ item.title }}</h2>
-                <p class="ranking-card-text mb-0">{{ item.text }}</p>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <div class="row g-4">
-          <div class="col-lg-7">
-            <section class="card border-0 ranking-card h-100 rise-in">
-              <div class="card-body p-4">
-                <h2 class="ranking-subtitle mb-3">Funcionamiento</h2>
-
-                <ul class="ranking-list mb-3">
-                  <li v-for="(linea, index) in funcionamiento" :key="`linea-${index}`">
-                    <i class="pi pi-check-circle me-2"></i>{{ linea }}
-                  </li>
-                </ul>
-
-                <h3 class="ranking-subtitle ranking-subtitle--sm mb-2">Existen rankings:</h3>
-                <div class="ranking-tags">
-                  <span class="ranking-tag">Global</span>
-                  <span class="ranking-tag">Por categoría</span>
-                </div>
-              </div>
-            </section>
-          </div>
-
-          <div class="col-lg-5">
-            <section class="card border-0 ranking-card h-100 rise-in" style="animation-delay:.08s;">
-              <div class="card-body p-4">
-                <h2 class="ranking-subtitle mb-3">Cómo subir posiciones</h2>
-                <div class="ranking-tip" v-for="(tip, index) in tips" :key="`tip-${index}`">
-                  <i class="pi pi-star-fill"></i>
-                  <span>{{ tip }}</span>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-
-        <div class="d-flex justify-content-end mt-4">
-          <RouterLink to="/rankings" class="home-btn-play ranking-cta">
-            Ver ranking
-            <span>›</span>
-          </RouterLink>
-        </div>
       </div>
-    </main>
 
-    <HomeFooter />
+      <div class="col-lg-5">
+        <section class="card border-0 ranking-card h-100 rise-in" style="animation-delay:.08s;">
+          <div class="card-body p-4">
+            <h2 class="ranking-subtitle mb-3">Cómo subir posiciones</h2>
+            <div class="ranking-tip" v-for="(tip, index) in tips" :key="`tip-${index}`">
+              <i class="pi pi-star-fill"></i>
+              <span>{{ tip }}</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+      <RouterLink to="/rankings" class="home-btn-play ranking-cta">
+        Ver ranking
+        <span>›</span>
+      </RouterLink>
+    </div>
   </div>
 </template>
 
 <script setup>
-import HomeNavbar from '@/layouts/HomeNavbar.vue'
-import HomeFooter from '@/layouts/HomeFooter.vue'
-
 const resumen = [
   { title: 'Puntos por partida', text: 'Cada partida suma puntos según tu resultado.' },
   { title: 'Rapidez y precisión', text: 'Responder antes y acertar aumenta la puntuación.' },
