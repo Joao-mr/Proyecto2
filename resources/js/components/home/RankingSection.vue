@@ -1,4 +1,3 @@
-<!-- filepath: c:\xampp\htdocs\Proyecto2\Laravel-VUE-API-Base-Clase\resources\js\components\home\RankingSection.vue -->
 <template>
   <section class="ranking-section">
     <div class="container-home">

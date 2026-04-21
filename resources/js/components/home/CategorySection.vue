@@ -1,4 +1,3 @@
-<!-- filepath: c:\xampp\htdocs\Proyecto2\Laravel-VUE-API-Base-Clase\resources\js\components\home\CategorySection.vue -->
 <template>
   <section class="categories-section">
     <div class="container-home">
@@ -9,9 +8,7 @@
         <button class="categories-arrow categories-arrow--right" @click="next" aria-label="Siguiente">→</button>
 
         <div class="categories-slide">
-          <!-- div principal -->
           <div class="categories-main">
-            <!-- div imagen (izquierda) -->
             <div class="categories-main__media">
               <div class="categories-image-box">
                 <img :src="current.image" :alt="current.name" class="categories-image" />
