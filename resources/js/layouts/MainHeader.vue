@@ -64,15 +64,9 @@
                                             </router-link>
                                         </li>
                                         <li>
-                                            <router-link v-if="auth.is('admin') || auth.is('docent')" to="/admin" class="dropdown-menu-item">
+                                            <router-link v-if="canAccessDashboard" to="/admin" class="dropdown-menu-item">
                                                 <i class="pi pi-shield"></i>
                                                 <span>Panel Admin</span>
-                                            </router-link>
-                                        </li>
-                                        <li>
-                                            <router-link to="/app" class="dropdown-menu-item">
-                                                <i class="pi pi-graduation-cap"></i>
-                                                <span>Panel Usuario</span>
                                             </router-link>
                                         </li>
                                     </ul>
@@ -120,6 +114,12 @@ const auth = authStore();
 const dropdownOpen = ref(false);
 
 const user = computed(() => auth.user);
+const canAccessDashboard = computed(() => {
+    return user.value?.roles?.some((role) => {
+        const roleName = role?.name?.toLowerCase() || '';
+        return roleName.includes('admin') || roleName === 'docent';
+    }) || false;
+});
 
 
 const toggleDropdown = () => {

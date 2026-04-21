@@ -82,6 +82,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //perfil
     Route::get('user', [ProfileController::class, 'user']);
     Route::get('user/signin', [ProfileController::class, 'user']);
+    Route::get('user/stats', [ProfileController::class, 'stats']);
     Route::put('user', [ProfileController::class, 'update']);
 
 

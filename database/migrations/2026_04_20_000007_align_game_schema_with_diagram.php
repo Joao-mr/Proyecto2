@@ -47,8 +47,10 @@ return new class extends Migration
                 }
             });
 
-            DB::statement('ALTER TABLE imagenes MODIFY url VARCHAR(255) NOT NULL');
-            DB::statement('ALTER TABLE imagenes MODIFY respuesta_correcta VARCHAR(255) NOT NULL');
+            if ($this->isMySqlCompatibleDriver()) {
+                DB::statement('ALTER TABLE imagenes MODIFY url VARCHAR(255) NOT NULL');
+                DB::statement('ALTER TABLE imagenes MODIFY respuesta_correcta VARCHAR(255) NOT NULL');
+            }
         }
     }
 
@@ -85,8 +87,10 @@ return new class extends Migration
                 }
             });
 
-            DB::statement('ALTER TABLE imagenes MODIFY url VARCHAR(255) NULL');
-            DB::statement('ALTER TABLE imagenes MODIFY respuesta_correcta VARCHAR(255) NULL');
+            if ($this->isMySqlCompatibleDriver()) {
+                DB::statement('ALTER TABLE imagenes MODIFY url VARCHAR(255) NULL');
+                DB::statement('ALTER TABLE imagenes MODIFY respuesta_correcta VARCHAR(255) NULL');
+            }
         }
 
         if (! Schema::hasTable('respuestas')) {
@@ -110,5 +114,10 @@ return new class extends Migration
                     ->onDelete('cascade');
             });
         }
+    }
+
+    private function isMySqlCompatibleDriver(): bool
+    {
+        return in_array(DB::connection()->getDriverName(), ['mysql', 'mariadb'], true);
     }
 };
