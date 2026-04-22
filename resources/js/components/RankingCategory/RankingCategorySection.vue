@@ -201,9 +201,14 @@
 import { computed, onMounted, ref, unref, watch } from 'vue'
 import axios from 'axios'
 import useCategorias from '@/composables/categorias'
-import useRanking from '@/composables/useRanking'
+import { useRanking } from '@/composables/useRanking'
 
-const { ranking, isLoading, error, getRanking } = useRanking()
+const {
+  categoryRows: ranking,
+  loadingCategory: isLoading,
+  errorCategory: error,
+  fetchCategoryRanking: getRanking
+} = useRanking()
 
 const categoriasModule = useCategorias()
 const categorias = categoriasModule?.categorias
@@ -211,18 +216,31 @@ const getCategorias = categoriasModule?.getCategorias
 const isLoadingCategorias = categoriasModule?.isLoading
 
 const categoriasFallback = ref([])
+const loadingCategoriasFallback = ref(false)
 const categoryError = ref(null)
 const selectedCategoriaId = ref('')
 const topLimit = ref(10)
 const initialized = ref(false)
 
-const categoriasLoading = computed(() => Boolean(unref(isLoadingCategorias)))
+const normalizeCategoria = (categoria = {}) => ({
+  ...categoria,
+  id: categoria?.id ?? categoria?.categoria_id ?? categoria?.idCategoria ?? categoria?.slug ?? '',
+  nombre: categoria?.nombre ?? categoria?.name ?? categoria?.titulo ?? categoria?.title ?? 'Sin nombre'
+})
+
+const normalizeCategorias = (list = []) =>
+  list
+    .map(normalizeCategoria)
+    .filter((c) => String(c.id ?? '').trim() !== '')
+
+const categoriasLoading = computed(() =>
+  Boolean(unref(isLoadingCategorias)) || loadingCategoriasFallback.value
+)
 
 const categoryOptions = computed(() => {
   const source = categorias ? unref(categorias) : categoriasFallback.value
-  if (Array.isArray(source)) return source
-  if (Array.isArray(source?.data)) return source.data
-  return []
+  const raw = Array.isArray(source) ? source : (Array.isArray(source?.data) ? source.data : [])
+  return normalizeCategorias(raw)
 })
 
 const rows = computed(() => {
@@ -239,14 +257,23 @@ const totalPlayers = computed(() => rows.value.length)
 const totalPoints = computed(() => rows.value.reduce((acc, row) => acc + getPuntuacion(row), 0))
 const totalGames = computed(() => rows.value.reduce((acc, row) => acc + getPartidas(row), 0))
 
-const getCategoriaId = (categoria) => categoria?.id ?? categoria?.categoria_id ?? ''
-const getCategoriaNombre = (categoria) => categoria?.nombre ?? categoria?.name ?? 'Sin nombre'
+const getCategoriaId = (categoria) =>
+  categoria?.id ?? categoria?.categoria_id ?? categoria?.idCategoria ?? categoria?.slug ?? ''
 
-const getUsuario = (row) => row?.usuario ?? row?.user?.name ?? row?.nombre ?? 'Sin nombre'
-const getPuntuacion = (row) => Number(row?.puntuacion_total ?? row?.puntuacion ?? 0)
-const getPartidas = (row) => Number(row?.partidas_jugadas ?? row?.partidas ?? 0)
+const getCategoriaNombre = (categoria) =>
+  categoria?.nombre ?? categoria?.name ?? 'Sin nombre'
+
+const getUsuario = (row) =>
+  row?.usuario ?? row?.user?.name ?? row?.nombre ?? row?.name ?? 'Sin nombre'
+
+const getPuntuacion = (row) =>
+  Number(row?.puntuacion_total ?? row?.puntuacion ?? row?.points ?? row?.score ?? row?.elo ?? 0)
+
+const getPartidas = (row) =>
+  Number(row?.partidas_jugadas ?? row?.partidas ?? row?.matches ?? row?.games ?? 0)
 
 const formatNumber = (value) => new Intl.NumberFormat('es-ES').format(Number(value) || 0)
+
 const getAverage = (row) => {
   const partidas = getPartidas(row)
   if (!partidas) return '0'
@@ -265,12 +292,26 @@ const setTopLimit = (limit) => {
 
 const loadCategorias = async () => {
   categoryError.value = null
+  loadingCategoriasFallback.value = true
+
   try {
+    let loaded = false
+
+    // 1) Intentar composable existente
     if (typeof getCategorias === 'function') {
-      await getCategorias()
-    } else {
-      const { data } = await axios.get('/api/categorias')
-      categoriasFallback.value = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : [])
+      try {
+        await getCategorias()
+        loaded = categoryOptions.value.length > 0
+      } catch (_) {
+        loaded = false
+      }
+    }
+
+    // 2) Fallback público si falla el privado o no devuelve datos
+    if (!loaded) {
+      const { data } = await axios.get('/api/public/categories')
+      const raw = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : [])
+      categoriasFallback.value = normalizeCategorias(raw)
     }
 
     if (!selectedCategoriaId.value && categoryOptions.value.length > 0) {
@@ -278,13 +319,14 @@ const loadCategorias = async () => {
     }
   } catch (err) {
     categoryError.value = err?.response?.data?.message ?? 'No se pudieron cargar las categorías.'
+  } finally {
+    loadingCategoriasFallback.value = false
   }
 }
 
 const loadRanking = async () => {
   if (!selectedCategoriaId.value) return
-  const categoriaId = Number(selectedCategoriaId.value) || selectedCategoriaId.value
-  await getRanking(categoriaId, { limit: topLimit.value })
+  await getRanking(selectedCategoriaId.value, { limit: topLimit.value, force: true })
 }
 
 watch([selectedCategoriaId, topLimit], async () => {

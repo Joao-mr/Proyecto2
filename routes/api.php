@@ -24,7 +24,14 @@ Public API (sin auth)
 */
 Route::prefix('public')->name('public.')->group(function () {
     Route::get('categories', [CategoryPublicController::class, 'index'])->name('categories.index');
+
+
     Route::get('rankings', [RankingPublicController::class, 'index'])->name('rankings.index');
+
+    Route::get('rankings/category/{categoria}', [RankingPublicController::class, 'category'])
+        ->whereNumber('categoria')
+        ->name('rankings.category');
+    Route::get('rankings/category', [RankingPublicController::class, 'category']); 
 });
 
 /*

@@ -18,6 +18,7 @@ class CategoryPublicController extends Controller
             return response()->json(['data' => []]);
         }
 
+        $idCol = $this->firstExistingColumn($table, ['id', 'idCategoria', 'categoria_id']) ?? 'id';
         $nameCol = $this->firstExistingColumn($table, ['nombre', 'name', 'titulo', 'title']);
         $slugCol = $this->firstExistingColumn($table, ['slug', 'codigo']);
         $descCol = $this->firstExistingColumn($table, ['descripcion', 'description', 'detalle']);
@@ -27,7 +28,8 @@ class CategoryPublicController extends Controller
         $rows = DB::table($table)
             ->orderBy($orderCol)
             ->get()
-            ->map(function ($row) use ($nameCol, $slugCol, $descCol, $imageCol) {
+            ->map(function ($row) use ($idCol, $nameCol, $slugCol, $descCol, $imageCol) {
+                $id = $idCol ? ($row->{$idCol} ?? null) : null;
                 $name = trim((string) ($nameCol ? ($row->{$nameCol} ?? '') : ''));
                 $description = trim((string) ($descCol ? ($row->{$descCol} ?? '') : ''));
                 $slug = trim((string) ($slugCol ? ($row->{$slugCol} ?? '') : ''));
@@ -37,8 +39,9 @@ class CategoryPublicController extends Controller
                 $slug = $slug !== '' ? $slug : Str::slug($name);
 
                 return [
+                    'id' => $id ?? $slug,
                     'slug' => $slug,
-                    'name' => Str::upper($name),
+                    'name' => $name,
                     'description' => $description,
                     'image' => $image !== '' ? $image : '/images/categoria-placeholder.webp',
                 ];
@@ -62,7 +65,6 @@ class CategoryPublicController extends Controller
                 return $column;
             }
         }
-
         return null;
     }
 }

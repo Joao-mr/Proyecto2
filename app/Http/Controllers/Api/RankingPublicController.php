@@ -78,7 +78,7 @@ class RankingPublicController extends Controller
                     'name' => strtoupper($name),
                     'elo' => $elo,
                     'matches' => (int) ($row->matches ?? 0),
-                    'title' => (string) ($row->title ?? $this->titleByElo($elo)),
+                    'title' => strtoupper((string) ($row->title ?? $this->titleByElo($elo))),
                 ];
             })
             ->values();
@@ -86,6 +86,78 @@ class RankingPublicController extends Controller
         return response()->json([
             'mode' => $mode,
             'data' => $data,
+        ]);
+    }
+
+    public function category(Request $request, $categoria = null): JsonResponse
+    {
+        $categoriaId = $categoria ?? $request->query('categoria_id');
+        if ($categoriaId === null || $categoriaId === '') {
+            return response()->json(['category_id' => null, 'data' => []]);
+        }
+
+        $limit = max(1, min((int) $request->query('limit', 50), 200));
+
+        $upTable = $this->firstExistingTable(['usuario_partidas', 'usuario_partida']);
+        $partidasTable = $this->firstExistingTable(['partidas']);
+        $salaCategoriaTable = $this->firstExistingTable(['sala_categoria', 'sala_categorias']);
+
+        if (!$upTable || !$partidasTable || !$salaCategoriaTable || !Schema::hasTable('users')) {
+            return response()->json(['category_id' => $categoriaId, 'data' => []]);
+        }
+
+        $upUserCol = $this->firstExistingColumn($upTable, ['user_id', 'usuario_id', 'idUsuario', 'id_usuario']);
+        $upPartidaCol = $this->firstExistingColumn($upTable, ['partida_id', 'idPartida', 'id_partida']);
+        $upScoreCol = $this->firstExistingColumn($upTable, ['puntuacion_total', 'puntuacion', 'score', 'puntos']);
+
+        $pIdCol = $this->firstExistingColumn($partidasTable, ['id', 'idPartida']) ?? 'id';
+        $pSalaCol = $this->firstExistingColumn($partidasTable, ['sala_id', 'idSala', 'id_sala']);
+
+        $scSalaCol = $this->firstExistingColumn($salaCategoriaTable, ['sala_id', 'idSala', 'id_sala']);
+        $scCategoriaCol = $this->firstExistingColumn($salaCategoriaTable, ['categoria_id', 'idCategoria', 'id_categoria']);
+
+        $uIdCol = $this->firstExistingColumn('users', ['id', 'idUsuario']) ?? 'id';
+        $uNameCol = $this->firstExistingColumn('users', ['name', 'username', 'nick', 'nombre']) ?? $uIdCol;
+
+        if (!$upUserCol || !$upPartidaCol || !$pSalaCol || !$scSalaCol || !$scCategoriaCol) {
+            return response()->json(['category_id' => $categoriaId, 'data' => []]);
+        }
+
+        $scoreExpr = $upScoreCol
+            ? "COALESCE(SUM(up.`{$upScoreCol}`), 0)"
+            : "COUNT(up.`{$upPartidaCol}`)";
+
+        $rows = DB::table("{$upTable} as up")
+            ->join("{$partidasTable} as p", "up.{$upPartidaCol}", '=', "p.{$pIdCol}")
+            ->join("{$salaCategoriaTable} as sc", "p.{$pSalaCol}", '=', "sc.{$scSalaCol}")
+            ->join("users as u", "up.{$upUserCol}", '=', "u.{$uIdCol}")
+            ->where("sc.{$scCategoriaCol}", $categoriaId)
+            ->selectRaw(
+                "u.`{$uIdCol}` as user_id,
+                 u.`{$uNameCol}` as usuario,
+                 {$scoreExpr} as puntuacion_total,
+                 COUNT(up.`{$upPartidaCol}`) as partidas_jugadas"
+            )
+            ->groupBy("u.{$uIdCol}", "u.{$uNameCol}")
+            ->orderByDesc('puntuacion_total')
+            ->limit($limit)
+            ->get()
+            ->map(function ($row) {
+                $usuario = trim((string) ($row->usuario ?? ''));
+                if ($usuario === '') $usuario = 'SIN NOMBRE';
+
+                return [
+                    'user_id' => $row->user_id,
+                    'usuario' => strtoupper($usuario),
+                    'puntuacion_total' => (int) ($row->puntuacion_total ?? 0),
+                    'partidas_jugadas' => (int) ($row->partidas_jugadas ?? 0),
+                ];
+            })
+            ->values();
+
+        return response()->json([
+            'category_id' => $categoriaId,
+            'data' => $rows,
         ]);
     }
 
@@ -100,6 +172,16 @@ class RankingPublicController extends Controller
         };
     }
 
+    private function firstExistingTable(array $tables): ?string
+    {
+        foreach ($tables as $table) {
+            if (Schema::hasTable($table)) {
+                return $table;
+            }
+        }
+        return null;
+    }
+
     private function firstExistingColumn(string $table, array $columns): ?string
     {
         foreach ($columns as $column) {
@@ -107,7 +189,6 @@ class RankingPublicController extends Controller
                 return $column;
             }
         }
-
         return null;
     }
 }
