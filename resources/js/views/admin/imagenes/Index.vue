@@ -3,7 +3,7 @@
         <Card>
             <template #title>
                 <div class="d-flex align-items-center justify-content-between w-100">
-                    <span>Gesti+¦n de Im+ígenes (Juego)</span>
+                    <span>Gestion de Imagenes (Juego)</span>
                     <div class="d-flex align-items-center gap-2">
                         <Button
                             label="Actualizar"
@@ -26,7 +26,7 @@
             </template>
 
             <template #subtitle>
-                Administra las im+ígenes y su respuesta correcta.
+                Administra las imagenes y su respuesta correcta.
             </template>
 
             <template #content>
@@ -47,7 +47,7 @@
                     <template #empty>
                         <div class="table-empty-state">
                             <i class="pi pi-inbox empty-state-icon"></i>
-                            <p class="empty-state-text">No se encontraron im+ígenes</p>
+                            <p class="empty-state-text">No se encontraron imagenes</p>
                         </div>
                     </template>
 
@@ -90,7 +90,7 @@
                         </template>
                     </Column>
 
-                    <Column field="created_at" header="Fecha de Creaci+¦n" sortable class="" style="min-width: 180px;">
+                    <Column field="created_at" header="Fecha de Creacion" sortable class="" style="min-width: 180px;">
                         <template #body="slotProps">
                             <span class="text-sm table-cell-date">
                                 <i class="pi pi-calendar mr-2 text-xs opacity-70"></i>
@@ -280,10 +280,10 @@ const confirmDeleteImagen = (currentImagen) => {
 
     swal({
         icon: 'warning',
-        title: '-+Eliminar imagen?',
-        text: `La imagen #${currentImagen.id} se eliminar+í de forma permanente.`,
+        title: 'Eliminar imagen?',
+        text: `La imagen #${currentImagen.id} se eliminara de forma permanente.`,
         showCancelButton: true,
-        confirmButtonText: 'S+¡, eliminar',
+        confirmButtonText: 'Si, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
     }).then((result) => {

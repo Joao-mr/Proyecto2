@@ -21,10 +21,7 @@ export const authStore = defineStore("authStore", () => {
         await axios.get('/api/user').then(response => {
             user.value = response.data.data
             authenticated.value = true
-            console.log('getUser AT: true ');
-            console.log(user.value);
         }).catch(error => {
-            console.log('getUser: error ');
             user.value = {}
             authenticated.value = false
         })
@@ -35,7 +32,6 @@ export const authStore = defineStore("authStore", () => {
             user.value = response.data.data
             authenticated.value = true
         }).catch(error => {
-            console.log('getUserSignIn: error ');
             user.value = {}
             authenticated.value = false
         })

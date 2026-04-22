@@ -150,6 +150,7 @@ export default [
         children: [
             {
                 path: '',
+                name: 'app',
                 redirect: { name: 'app.profile' },
             },
             {

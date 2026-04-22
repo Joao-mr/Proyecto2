@@ -32,6 +32,8 @@
 </template>
 
 <script setup>
+import ProgressBar from 'primevue/progressbar'
+
 defineProps({
   title: {
     type: String,

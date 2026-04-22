@@ -22,9 +22,31 @@ export default defineConfig({
             },
         }),
     ],
-    // build: {
-    //     chunkSizeWarningLimit: 1600,
-    // },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (!id.includes('node_modules')) return;
+
+                    if (id.includes('primevue') || id.includes('@primevue') || id.includes('primeicons')) {
+                        return 'vendor-primevue';
+                    }
+
+                    if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router')) {
+                        return 'vendor-vue';
+                    }
+
+                    if (id.includes('bootstrap')) {
+                        return 'vendor-bootstrap';
+                    }
+
+                    if (id.includes('axios') || id.includes('yup') || id.includes('sweetalert2') || id.includes('@casl')) {
+                        return 'vendor-app';
+                    }
+                },
+            },
+        },
+    },
     resolve: {
         alias: {
             vue: 'vue/dist/vue.esm-bundler.js',

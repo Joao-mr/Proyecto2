@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="categorias-page">
     <HomeNavbar />
 
@@ -228,3 +228,4 @@ function jugarCategoria(id) {
   margin: 0;
 }
 </style>
+

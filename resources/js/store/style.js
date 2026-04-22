@@ -7,11 +7,9 @@ export const
         let darkTheme = ref(false);
 
         function setDarkTheme(is_dark) {
-            console.log('styleStore Change',darkTheme.value);
             darkTheme.value = is_dark;
         }
         function getDarkTheme() {
-            console.log('styleStore Get',darkTheme.value);
             return darkTheme.value;
         }
 

@@ -117,6 +117,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { authStore } from '@/store/auth';
 import axios from 'axios';
+import '../../../../css/game.css';
 
 import GameNavbar   from '@/components/game/GameNavbar.vue';
 import GameImage    from '@/components/game/GameImage.vue';

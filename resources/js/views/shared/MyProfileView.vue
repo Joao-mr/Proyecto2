@@ -213,6 +213,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import '../../../css/profile.css'
 import useProfile from '@/composables/profile'
 import useUsers from '@/composables/users'
 import { authStore } from '@/store/auth'

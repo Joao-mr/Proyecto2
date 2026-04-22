@@ -14,7 +14,7 @@
             </template>
 
             <template #subtitle>
-                Carga una imagen para agregar al banco de im├ígenes del juego
+                Carga una imagen para agregar al banco de imagenes del juego
             </template>
 
             <template #content>
@@ -108,7 +108,7 @@
         <!-- Recently Uploaded -->
         <Card v-if="imagenes.length > 0" class="mt-6">
             <template #title>
-                <span><i class="pi pi-images mr-2"></i>Im├ígenes Recientes</span>
+                <span><i class="pi pi-images mr-2"></i>Imagenes Recientes</span>
             </template>
 
             <template #content>
@@ -182,7 +182,7 @@ const goBackToIndex = () => {
 }
 
 /**
- * Manejador de selecci├│n de archivo
+ * Manejador de seleccion de archivo
  */
 const handleFileSelect = (event) => {
     const file = event.target.files?.[0]
@@ -262,7 +262,7 @@ const deleteImage = async (id) => {
 }
 
 /**
- * Formatear tama├▒o de archivo
+ * Formatear tamano de archivo
  */
 const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes'
@@ -272,7 +272,7 @@ const formatFileSize = (bytes) => {
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
 }
 
-// Cargar im├ígenes al montar
+// Cargar imagenes al montar
 onMounted(() => {
     getImagenes()
 })
