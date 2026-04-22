@@ -232,6 +232,35 @@ async function persistMatchResult() {
   }
 }
 
+async function finishGame() {
+  stopTimer();
+  await persistMatchStats();
+  gameOver.value = true;
+}
+
+async function persistMatchStats() {
+  if (hasSavedStats.value || isSavingStats.value) {
+    return;
+  }
+
+  isSavingStats.value = true;
+  try {
+    await axios.post('/api/usuario-partidas/finalizar', {
+      id_categoria: Number(categoriaId.value),
+      fecha_inicio: new Date().toISOString(),
+      fecha_fin: new Date().toISOString(),
+      puntuacion: score.value,
+    });
+
+    await auth.getUser();
+    hasSavedStats.value = true;
+  } catch (error) {
+    console.error('Error al guardar estadísticas de partida:', error);
+  } finally {
+    isSavingStats.value = false;
+  }
+}
+
 function handleExit() {
   stopTimer()
   router.push('/categorias')

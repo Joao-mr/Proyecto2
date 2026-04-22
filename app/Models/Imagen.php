@@ -21,6 +21,11 @@ class Imagen extends Model implements HasMedia
         'categoria_id',
     ];
 
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
+
     public function categorias()
     {
         return $this->belongsToMany(Categoria::class, 'imagen_categoria', 'id_imagen', 'id_categoria');

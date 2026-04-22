@@ -58,7 +58,7 @@
                                     </div>
                                     <ul class="list-unstyled mb-0 p-2">
                                         <li>
-                                            <router-link :to="route.path.startsWith('/app') ? '/app/profile' : '/admin/profile'" class="dropdown-menu-item">
+                                            <router-link :to="route.path.startsWith('/admin') ? '/admin/profile' : '/app/profile'" class="dropdown-menu-item">
                                                 <i class="pi pi-user"></i>
                                                 <span>Mi Perfil</span>
                                             </router-link>
