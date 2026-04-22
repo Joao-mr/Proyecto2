@@ -1,4 +1,3 @@
-<!-- filepath: c:\xampp\htdocs\Proyecto2\Laravel-VUE-API-Base-Clase\resources\js\components\home\RankingSection.vue -->
 <template>
   <section class="ranking-section">
     <div class="container-home">
@@ -8,14 +7,14 @@
         <button
           class="ranking-switch__btn"
           :class="{ 'is-active': mode === 'individual' }"
-          @click="mode = 'individual'"
+          @click="changeMode('individual')"
         >
           Individual
         </button>
         <button
           class="ranking-switch__btn"
           :class="{ 'is-active': mode === 'multijugador' }"
-          @click="mode = 'multijugador'"
+          @click="changeMode('multijugador')"
         >
           Multijugador
         </button>
@@ -29,7 +28,7 @@
           <div>Título</div>
         </div>
 
-        <div class="ranking-body">
+        <div class="ranking-body" v-if="currentRows.length">
           <div
             v-for="(player, index) in currentRows"
             :key="`${mode}-${player.name}-${index}`"
@@ -44,11 +43,20 @@
 
             <div class="ranking-elo">
               <span class="ranking-dot"></span>
-              {{ player.elo }}
+              {{ formatElo(player.elo) }}
             </div>
 
             <div>{{ player.matches }}</div>
             <div class="ranking-rank">{{ player.title }}</div>
+          </div>
+        </div>
+
+        <div class="ranking-body" v-else>
+          <div class="ranking-row">
+            <div>{{ loading ? 'Cargando ranking...' : (error || 'Sin datos de ranking.') }}</div>
+            <div>-</div>
+            <div>-</div>
+            <div>-</div>
           </div>
         </div>
       </div>
@@ -57,34 +65,26 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { onMounted } from 'vue'
+import { useRanking } from '../../composables/useRanking'
 
-const mode = ref('individual')
+const {
+  mode,
+  currentRows,
+  loading,
+  error,
+  fetchRanking,
+  setMode,
+  getRankClass,
+  formatElo
+} = useRanking()
 
-const individual = [
-  { name: 'ROBER', elo: '13.749', matches: 567, title: 'RADIANT' },
-  { name: 'LAURA', elo: '11.026', matches: 435, title: 'MASTER' },
-  { name: 'JOAO', elo: '9.925', matches: 530, title: 'UNREAL' },
-  { name: 'CARLOS', elo: '9.335', matches: 386, title: 'CHALLENGER' },
-  { name: 'XD', elo: '8.932', matches: 324, title: 'CHAMPION' }
-]
+onMounted(async () => {
+  await fetchRanking('individual')
+  fetchRanking('multijugador')
+})
 
-const multijugador = [
-  { name: 'MARIO', elo: '14.201', matches: 612, title: 'RADIANT' },
-  { name: 'SARA', elo: '12.488', matches: 502, title: 'MASTER' },
-  { name: 'ALAN', elo: '10.114', matches: 447, title: 'UNREAL' },
-  { name: 'NORA', elo: '9.604', matches: 399, title: 'CHALLENGER' },
-  { name: 'LUIS', elo: '9.020', matches: 341, title: 'CHAMPION' }
-]
-
-const currentRows = computed(() =>
-  mode.value === 'individual' ? individual : multijugador
-)
-
-const getRankClass = (index) => {
-  if (index === 0) return 'ranking-row--gold'
-  if (index === 1) return 'ranking-row--silver'
-  if (index === 2) return 'ranking-row--bronze'
-  return ''
+const changeMode = async (value) => {
+  await setMode(value)
 }
 </script>

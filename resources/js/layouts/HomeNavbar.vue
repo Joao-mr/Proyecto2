@@ -12,11 +12,24 @@
           v-for="item in navItems"
           :key="item.label"
           class="home-nav-dropdown"
-          @mouseenter="openDropdown(item.label)"
-          @mouseleave="closeDropdown()"
+          @mouseenter="item.children?.length && openDropdown(item.label)"
+          @mouseleave="item.children?.length && closeDropdown()"
         >
-          <a href="#" class="home-nav-item" @click.prevent="toggleDropdown(item.label)">{{ item.label }}</a>
-          <div v-if="activeDropdown === item.label" class="home-nav-dropdown-menu">
+          <router-link
+            v-if="item.route"
+            :to="item.route"
+            class="home-nav-item"
+            :class="{ 'home-nav-item--direct': !item.children?.length }"
+            @click="closeMobileMenu"
+          >
+            {{ item.label }}
+          </router-link>
+
+          <a v-else href="#" class="home-nav-item" @click.prevent="toggleDropdown(item.label)">
+            {{ item.label }}
+          </a>
+
+          <div v-if="item.children?.length && activeDropdown === item.label" class="home-nav-dropdown-menu">
             <router-link
               v-for="sub in item.children"
               :key="sub.label"
@@ -57,25 +70,38 @@
       <!-- MOBILE NAV MENU (solo visible en móvil) -->
       <nav class="home-nav-mobile d-lg-none" v-show="mobileMenuOpen">
         <div v-for="item in navItems" :key="`mobile-${item.label}`" class="home-nav-mobile__item">
-          <button
-            class="home-nav-mobile__toggle"
-            @click="toggleMobileDropdown(item.label)"
-            :class="{ 'is-active': activeMobileDropdown === item.label }"
+
+          <router-link
+            v-if="item.route && !item.children?.length"
+            :to="item.route"
+            class="home-nav-mobile__toggle home-nav-mobile__direct"
+            @click="closeMobileMenu"
           >
             <span class="home-nav-mobile__label">{{ item.label }}</span>
-            <span class="home-nav-mobile__icon">‹</span>
-          </button>
-          <transition name="expand">
-            <div v-if="activeMobileDropdown === item.label" class="home-nav-mobile__submenu">
-              <router-link
-                v-for="sub in item.children"
-                :key="`sub-${sub.label}`"
-                :to="sub.route"
-                class="home-nav-mobile__subitem"
-                @click="closeMobileMenu"
-              >{{ sub.label }}</router-link>
-            </div>
-          </transition>
+          </router-link>
+
+          <template v-else>
+            <button
+              class="home-nav-mobile__toggle"
+              @click="toggleMobileDropdown(item.label)"
+              :class="{ 'is-active': activeMobileDropdown === item.label }"
+            >
+              <span class="home-nav-mobile__label">{{ item.label }}</span>
+              <span class="home-nav-mobile__icon">‹</span>
+            </button>
+            <transition name="expand">
+              <div v-if="activeMobileDropdown === item.label" class="home-nav-mobile__submenu">
+                <router-link
+                  v-for="sub in item.children"
+                  :key="`sub-${sub.label}`"
+                  :to="sub.route"
+                  class="home-nav-mobile__subitem"
+                  @click="closeMobileMenu"
+                >{{ sub.label }}</router-link>
+              </div>
+            </transition>
+          </template>
+
         </div>
       </nav>
 
@@ -191,10 +217,7 @@ const navItems = [
   },
   {
     label: 'Información',
-    children: [
-      { label: 'Cómo jugar', route: '/' },
-      { label: 'Contacto', route: '/' },
-    ]
+    route: { name: 'info.index' } // <- directo a /info, sin dropdown
   },
 ];
 

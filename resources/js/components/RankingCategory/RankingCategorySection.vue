@@ -458,7 +458,7 @@ onMounted(async () => {
 .ranking-table {
   width: 100%;
   table-layout: fixed;
-      --bs-table-bg: transparent;            /* antes: var(--bs-body-bg) */
+      --bs-table-bg: transparent;           
   --bs-table-accent-bg: transparent;
   --bs-table-striped-bg: transparent;
   --bs-table-active-bg: transparent;
@@ -472,7 +472,7 @@ onMounted(async () => {
   table-layout: fixed;
   margin-bottom: 0;
 
-  --bs-table-bg: transparent;            /* antes: var(--bs-body-bg) */
+  --bs-table-bg: transparent;           
   --bs-table-accent-bg: transparent;
   --bs-table-striped-bg: transparent;
   --bs-table-active-bg: transparent;
