@@ -54,7 +54,7 @@
     </div>
 
     <div class="d-flex justify-content-end mt-4">
-      <RouterLink to="/categorias" class="home-btn-play normas-cta">
+      <RouterLink to="/mis-salas" class="home-btn-play normas-cta">
         Ver salas disponibles
         <span>›</span>
       </RouterLink>

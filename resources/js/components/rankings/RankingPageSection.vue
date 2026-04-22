@@ -337,7 +337,7 @@ const rankClass = (index) => {
 
 .ranking-table thead th {
   background: #5f6d96 !important;
-  color: #ff744f !important;
+  color: #ffb58b !important;
 }
 
 .ranking-table tbody td {

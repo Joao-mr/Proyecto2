@@ -36,8 +36,8 @@
                 <p class="categories-description">{{ current.description }}</p>
                 <div class="categories-divider"></div>
 
-                <button class="categories-btn" @click="goToRooms">
-                  <span>›</span> ¡Jugar ahora!
+                <button class="categories-btn">
+                  <a href="/categorias"><span>›</span> ¡Jugar ahora!</a>
                 </button>
               </div>
             </div>

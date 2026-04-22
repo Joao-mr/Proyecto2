@@ -3,10 +3,15 @@
     <HomeNavbar />
 
     <main class="main-content">
-      <div class="misalas-header">
-        <h1 class="misalas-title">Tus salas</h1>
-        <p class="misalas-subtitle">Crea, edita o elimina tus salas de juego</p>
-        <button class="btn-primary" @click="showForm('create')">+ Nueva sala</button>
+      <div class="misalas-header row g-3 align-items-start">
+        <div class="col-12 col-lg">
+          <h1 class="misalas-title mb-1">Tus salas</h1>
+          <p class="misalas-subtitle mb-0">Crea, edita o elimina tus salas de juego</p>
+        </div>
+
+        <div class="col-12 col-lg-auto d-grid d-lg-block">
+          <button class="btn btn-primary" @click="showForm('create')">+ Nueva sala</button>
+        </div>
       </div>
 
       <!-- Formulario crear / editar -->
@@ -65,22 +70,24 @@
         <p>No tienes salas creadas todavía.</p>
       </div>
 
-      <div v-else class="salas-grid">
-        <div v-for="s in misSalas" :key="s.id" class="sala-card">
-          <div class="sala-card__header">
-            <h3 class="sala-card__name">{{ s.nombre }}</h3>
-            <span class="sala-card__code">{{ s.codigo }}</span>
-          </div>
-          <div class="sala-card__meta">
-            <span class="sala-card__time">⏱ {{ s.tiempo_respuesta }}s por respuesta</span>
-            <span class="sala-card__cats">
-              {{ s.categorias?.length ? s.categorias.map(c => c.nombre).join(', ') : 'Sin categorías' }}
-            </span>
-          </div>
-          <div class="sala-card__actions">
-            <button class="btn-play" @click="jugarSala(s.id)">▶ Jugar</button>
-            <button class="btn-edit" @click="showForm('edit', s)">Editar</button>
-            <button class="btn-delete" @click="handleDelete(s.id)">Eliminar</button>
+      <div v-else class="row g-4">
+        <div v-for="s in misSalas" :key="s.id" class="col-12 col-md-6 col-xl-4">
+          <div class="sala-card h-100">
+            <div class="sala-card__header">
+              <h3 class="sala-card__name">{{ s.nombre }}</h3>
+              <span class="sala-card__code">{{ s.codigo }}</span>
+            </div>
+            <div class="sala-card__meta">
+              <span class="sala-card__time">⏱ {{ s.tiempo_respuesta }}s por respuesta</span>
+              <span class="sala-card__cats">
+                {{ s.categorias?.length ? s.categorias.map(c => c.nombre).join(', ') : 'Sin categorías' }}
+              </span>
+            </div>
+            <div class="sala-card__actions">
+              <button class="btn-play" @click="jugarSala(s.id)">▶ Jugar</button>
+              <button class="btn-edit" @click="showForm('edit', s)">Editar</button>
+              <button class="btn-delete" @click="handleDelete(s.id)">Eliminar</button>
+            </div>
           </div>
         </div>
       </div>
@@ -188,11 +195,7 @@ function jugarSala(id) {
 
 /* Header */
 .misalas-header {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
   margin-bottom: 2.5rem;
-  flex-wrap: wrap;
 }
 .misalas-title {
   font-size: 2.5rem;
@@ -307,11 +310,7 @@ function jugarSala(id) {
 }
 
 /* Grid de salas */
-.salas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
+/* .salas-grid { ... } -> puedes eliminarlo si ya no se usa */
 
 .sala-card {
   background: rgba(255,255,255,0.10);

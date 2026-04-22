@@ -203,21 +203,18 @@ const toggleMobileDropdown = (label) => {
 const navItems = [
   {
     label: 'Juegos',
-    children: [
-      { label: 'Tus salas', route: '/mis-salas' },
-      { label: 'Categorías individuales', route: '/categorias' },
-    ]
+    route: { name: 'categorias' }
   },
   {
     label: 'Rankings',
     children: [
       { label: 'Ranking global', route: { name: 'public.rankings' } },
-      { label: 'Por categoria', route: { name: 'ranking.category' } },
+      { label: 'Por categoría', route: { name: 'ranking.category' } },
     ]
   },
   {
     label: 'Información',
-    route: { name: 'info.index' } // <- directo a /info, sin dropdown
+    route: { name: 'info.index' }
   },
 ];
 

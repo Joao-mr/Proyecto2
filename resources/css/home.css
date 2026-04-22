@@ -224,6 +224,11 @@
   font-weight: 600;
 }
 
+a{
+  text-decoration: none;
+  color: white;
+}
+
 /* Botones navbar */
 .home-btn-register,
 .home-btn-play {
@@ -272,6 +277,7 @@
   margin-left: 10px;
   color: #fff;
   background: var(--brand-secondary);
+  text-decoration: none;
 }
 
 .home-btn-register:hover,
@@ -739,7 +745,7 @@
 
 .ranking-head {
   background: #5f6d96;
-  color: #ff6f4e;
+  color: #ffb58b;
   font-weight: 800;
   padding: 1.1rem 1.4rem;
   letter-spacing: 0.04em;

@@ -3,49 +3,71 @@
     <HomeNavbar />
 
     <main class="main-content">
-      <div class="categorias-header">
-        <h1 class="categorias-title">Categorías</h1>
-        <p class="categorias-subtitle">Elige una categoría para jugar</p>
+      <div class="categorias-header row g-3 align-items-start mb-5">
+        <div class="col-12 col-md">
+          <h1 class="categorias-title mb-3">Categorías</h1>
+          <p class="categorias-subtitle mb-0">Elige una categoría para jugar</p>
+        </div>
+
+        <div class="col-12 col-md-auto d-grid d-md-block">
+          <button class="btn btn-create-room fw-bold" @click="irACrearSala">
+            Crear tu sala
+          </button>
+        </div>
       </div>
 
-      <div class="categorias-grid">
+      <div class="row g-4 mb-5">
         <div
-          class="categoria-card"
+          class="col-12 col-sm-6 col-lg-4 col-xl-3"
           v-for="categoria in categorias"
           :key="categoria.id"
-          @click="jugarCategoria(categoria.id)"
-          role="button"
-          tabindex="0"
-          @keydown.enter="jugarCategoria(categoria.id)"
         >
-          <div class="card-image-wrapper">
-            <div class="card-image placeholder">
-              <img v-if="categoria.imagen" :src="categoria.imagen" :alt="categoria.nombre" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
-              <span v-else>{{ categoria.nombre }}</span>
+          <div
+            class="categoria-card h-100"
+            @click="jugarCategoria(categoria.id)"
+            role="button"
+            tabindex="0"
+            @keydown.enter="jugarCategoria(categoria.id)"
+          >
+            <div class="card-image-wrapper">
+              <div class="card-image placeholder">
+                <img
+                  v-if="categoria.imagen"
+                  :src="categoria.imagen"
+                  :alt="categoria.nombre"
+                  style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
+                />
+                <span v-else>{{ categoria.nombre }}</span>
+              </div>
             </div>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">{{ categoria.nombre }}</h3>
-          </div>
-          <div class="card-overlay">
-            <span class="card-overlay-text">Jugar</span>
+
+            <div class="card-content">
+              <h3 class="card-title">{{ categoria.nombre }}</h3>
+            </div>
+
+            <div class="card-overlay">
+              <span class="card-overlay-text">Jugar</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="info-section">
-        <div class="info-card ranking-card">
-          <span class="info-card-icon">🏆</span>
-          <div>
-            <h4 class="info-title">Ranking Individual</h4>
-            <p class="info-subtitle">Compite y escala posiciones globalmente</p>
-          </div>
-        </div>
-        <div class="info-card rewards-card">
-          <span class="info-card-icon">🎁</span>
-          <div>
-            <h4 class="info-title">Recompensas</h4>
-            <p class="info-subtitle">Gana premios por tus logros en el juego</p>
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+          <div class="info-card ranking-card">
+            <i class="info-card-icon"></i>
+            <div>
+              <h4 class="info-title mb-1">Ranking Global</h4>
+              <p class="info-subtitle mb-0">Compite y escala posiciones globalmente</p>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-ranking ms-auto"
+              @click="irARankingGlobal"
+            >
+              Ver rankings
+            </button>
           </div>
         </div>
       </div>
@@ -67,6 +89,15 @@ onMounted(() => getCategorias());
 function jugarCategoria(id) {
   router.push({ name: 'game.categoria', params: { id } });
 }
+
+function irACrearSala() {
+  router.push({ name: 'mis-salas' });
+}
+
+function irARankingGlobal() {
+  const target = router.resolve({ name: 'public.rankings' });
+  router.push(target.matched.length ? { name: 'public.rankings' } : { path: '/rankings' });
+}
 </script>
 
 <style scoped>
@@ -85,31 +116,30 @@ function jugarCategoria(id) {
   padding: 3rem 0;
 }
 
-.categorias-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
 .categorias-title {
   font-size: 3rem;
-  font-weight: 900;
+  font-weight: 800;
   color: #eef2ff;
-  margin: 0 0 0.75rem 0;
-  letter-spacing: 1px;
 }
 
 .categorias-subtitle {
   font-size: 1.1rem;
   color: rgba(238, 242, 255, 0.7);
-  font-weight: 500;
-  margin: 0;
+  font-weight: 300;
 }
 
-.categorias-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+.btn-create-room {
+  background: #ff724f;
+  border-color: #ff724f;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+}
+
+.btn-create-room:hover {
+  background: #e05c38;
+  border-color: #e05c38;
+  color: #fff;
 }
 
 .categoria-card {
@@ -156,7 +186,7 @@ function jugarCategoria(id) {
   padding: 0.6rem 2rem;
   border-radius: 8px;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .card-image-wrapper {
@@ -193,14 +223,6 @@ function jugarCategoria(id) {
   margin: 0;
 }
 
-/* Info section */
-.info-section {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
 .info-card {
   background: rgba(255, 255, 255, 0.10);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -210,21 +232,71 @@ function jugarCategoria(id) {
   display: flex;
   align-items: center;
   gap: 1rem;
-  min-width: 260px;
 }
 
-.info-card-icon { font-size: 2rem; }
+.ranking-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.ranking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.info-card-icon {
+  font-size: 2rem;
+  color: #ffc107;
+  line-height: 1;
+}
 
 .info-title {
   color: #eef2ff;
   font-weight: 700;
-  margin: 0 0 0.2rem;
   font-size: 1rem;
 }
 
 .info-subtitle {
   color: rgba(238, 242, 255, 0.65);
-  font-size: 0.85rem;
-  margin: 0;
+  font-size: 0.9rem;
+}
+
+.btn-ranking {
+  background: #ff724f;
+  border: 1px solid #ff724f;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+
+.btn-ranking:hover,
+.btn-ranking:focus {
+  background: #e05c38;
+  border-color: #e05c38;
+  color: #fff;
+}
+
+.btn-ranking:active {
+  background: #cf4f2f !important;
+  border-color: #cf4f2f !important;
+  color: #fff !important;
+}
+
+@media (max-width: 575.98px) {
+  .ranking-card {
+    flex-wrap: wrap;
+  }
+
+  .btn-ranking {
+    margin-left: 0 !important;
+    width: 100%;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .categorias-title { font-size: 2.3rem; }
 }
 </style>
