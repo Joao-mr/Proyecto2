@@ -1,5 +1,6 @@
 <?php
-
+use App\Http\Controllers\Api\CategoryPublicController;
+use App\Http\Controllers\Api\RankingPublicController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\ImagenController;
@@ -18,32 +19,39 @@ use App\Http\Controllers\Api\UsuarioSalaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    //usuarios
+/*
+Public API (sin auth)
+*/
+Route::prefix('public')->name('public.')->group(function () {
+    Route::get('categories', [CategoryPublicController::class, 'index'])->name('categories.index');
+    Route::get('rankings', [RankingPublicController::class, 'index'])->name('rankings.index');
+});
+
+/*
+Private API (auth:sanctum)
+*/
+Route::middleware('auth:sanctum')->group(function () {
+    // usuarios
     Route::apiResource('users', UserController::class);
     Route::post('users/updateimg', [UserController::class, 'updateimg']);
 
-    //Route::apiResource('categories', CategoryController::class);
-
-    //categorias
+    // categorias
     Route::apiResource('categorias', CategoriaController::class);
 
-    //salas
+    // salas
     Route::apiResource('salas', SalaController::class);
 
-    // Relación N:M Sala - Categoría
+    // relación N:M sala-categoría
     Route::apiResource('sala-categorias', SalaCategoriaController::class);
 
-    //roles y permisos
+    // roles y permisos
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
-
     Route::get('role-list', [RoleController::class, 'getList']);
     Route::get('role-permissions/{id}', [PermissionController::class, 'getRolePermissions']);
     Route::put('role-permissions', [PermissionController::class, 'updateRolePermissions']);
 
-
-    //imagenes
+    // imagenes
     Route::post('imagenes/store-with-upload', [ImagenController::class, 'storeWithUpload'])->name('imagenes.store-upload');
     Route::apiResource('imagenes', ImagenController::class)->parameters(['imagenes' => 'imagen']);
     Route::get('imagenes-list', [ImagenController::class, 'getList']);
@@ -51,41 +59,40 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('imagenes/{imagen}/media-info', [ImagenController::class, 'getMediaInfo'])->name('imagenes.media-info');
     Route::get('imagenes/{imagen}/all-media', [ImagenController::class, 'getAllMedia'])->name('imagenes.all-media');
 
-    //usuario-partida
+    // usuario-partida
     Route::get('usuario-partidas', [UsuarioPartidaController::class, 'index']);
     Route::post('usuario-partidas', [UsuarioPartidaController::class, 'store']);
     Route::get('usuario-partidas/{idPartida}', [UsuarioPartidaController::class, 'show']);
     Route::put('usuario-partidas/{idPartida}', [UsuarioPartidaController::class, 'update']);
     Route::delete('usuario-partidas/{idPartida}', [UsuarioPartidaController::class, 'destroy']);
 
-    //partida-imagen
+    // partida-imagen
     Route::get('partida-imagenes', [PartidaImagenController::class, 'index']);
     Route::post('partida-imagenes', [PartidaImagenController::class, 'store']);
     Route::get('partida-imagenes/{idPartida}', [PartidaImagenController::class, 'show']);
     Route::delete('partida-imagenes/{idPartida}/{idImagen}', [PartidaImagenController::class, 'destroy']);
 
-    //imagen-categoria
+    // imagen-categoria
     Route::get('imagen-categorias', [ImagenCategoriaController::class, 'index']);
     Route::post('imagen-categorias', [ImagenCategoriaController::class, 'store']);
     Route::get('imagen-categorias/{idImagen}', [ImagenCategoriaController::class, 'show']);
     Route::delete('imagen-categorias/{idImagen}/{idCategoria}', [ImagenCategoriaController::class, 'destroy']);
 
-    //usuario-sala
+    // usuario-sala
     Route::get('usuario-salas', [UsuarioSalaController::class, 'index']);
     Route::post('usuario-salas', [UsuarioSalaController::class, 'store']);
     Route::get('usuario-salas/{idSala}', [UsuarioSalaController::class, 'show']);
     Route::delete('usuario-salas/{idSala}', [UsuarioSalaController::class, 'destroy']);
 
-    //partidas
+    // partidas
     Route::apiResource('partidas', PartidaController::class);
 
-    //perfil
+    // perfil
     Route::get('user', [ProfileController::class, 'user']);
     Route::get('user/signin', [ProfileController::class, 'user']);
     Route::put('user', [ProfileController::class, 'update']);
 
-
-    //permiso
+    // permisos del usuario autenticado
     Route::get('abilities', function (Request $request) {
         return $request->user()->roles()->with('permissions')
             ->get()
@@ -97,25 +104,3 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             ->toArray();
     });
 });
-/*
-Route::get('category-list', [CategoryController::class, 'getList']);
-
-Route::apiResource('posts', PostController::class);
-Route::apiResource('categorias', CategoriaController::class);
-Route::get('categorias-list', [CategoriaController::class, 'getList']);
-Route::apiResource('imagenes', ImagenController::class)->parameters(['imagenes' => 'imagen']);
-Route::get('imagenes-list', [ImagenController::class, 'getList']);
-Route::post('imagenes/{imagen}/upload', [ImagenController::class, 'uploadImage'])->name('imagenes.upload');
-Route::post('imagenes/store-with-upload', [ImagenController::class, 'storeWithUpload'])->name('imagenes.store-upload');
-Route::get('imagenes/{imagen}/media-info', [ImagenController::class, 'getMediaInfo'])->name('imagenes.media-info');
-Route::get('imagenes/{imagen}/all-media', [ImagenController::class, 'getAllMedia'])->name('imagenes.all-media');
-Route::apiResource('salas', SalaController::class);
-Route::apiResource('partidas', PartidaController::class);
-Route::get('sala-categorias', [SalaCategoriaController::class, 'index']);
-Route::post('sala-categorias', [SalaCategoriaController::class, 'store']);
-Route::get('sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'show']);
-Route::match(['put', 'patch'], 'sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'update']);
-Route::delete('sala-categorias/{id_sala}/{id_categoria}', [SalaCategoriaController::class, 'destroy']);
-
-
-*/
