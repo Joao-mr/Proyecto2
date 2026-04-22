@@ -5,11 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUsuarioPartidaRequest;
 use App\Http\Requests\UpdateUsuarioPartidaRequest;
+use App\Services\UserStatsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UsuarioPartidaController extends Controller
 {
+    public function __construct(private readonly UserStatsService $userStatsService)
+    {
+    }
+
     public function index()
     {
         $registros = DB::table('usuario_partida')
@@ -26,7 +31,17 @@ class UsuarioPartidaController extends Controller
         $data = $request->validated();
         $data['id_usuario'] = Auth::id();
 
-        DB::table('usuario_partida')->insert($data);
+        DB::table('usuario_partida')->updateOrInsert(
+            [
+                'id_usuario' => $data['id_usuario'],
+                'id_partida' => $data['id_partida'],
+            ],
+            [
+                'puntuacion' => $data['puntuacion'],
+            ]
+        );
+
+        $this->userStatsService->syncForUser((int) $data['id_usuario']);
 
         return response()->json($data, 201);
     }
@@ -52,6 +67,8 @@ class UsuarioPartidaController extends Controller
             ->where('id_partida', $idPartida)
             ->update($data);
 
+        $this->userStatsService->syncForUser((int) $idUsuario);
+
         return response()->json(['message' => 'Actualizado correctamente']);
     }
 
@@ -63,6 +80,8 @@ class UsuarioPartidaController extends Controller
             ->where('id_usuario', $idUsuario)
             ->where('id_partida', $idPartida)
             ->delete();
+
+        $this->userStatsService->syncForUser((int) $idUsuario);
 
         return response()->json(null, 204);
     }

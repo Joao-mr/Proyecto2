@@ -23,7 +23,15 @@ export default function useProfile() {
       slug: '',
       label: '',
       min_elo: 0
-    }
+    },
+    resumen: {
+      promedio_puntos: 0,
+      mejor_puntuacion: 0,
+      ultima_puntuacion: 0,
+      consistencia_pct: 0,
+      progreso_siguiente_titulo_pct: 0
+    },
+    actividad_reciente: []
   }
 
   const profile = ref({ ...initialProfile })
@@ -73,7 +81,15 @@ export default function useProfile() {
         slug: data.titulo?.slug ?? '',
         label: data.titulo?.label ?? '',
         min_elo: data.titulo?.min_elo ?? 0
-      }
+      },
+      resumen: {
+        promedio_puntos: data.resumen?.promedio_puntos ?? 0,
+        mejor_puntuacion: data.resumen?.mejor_puntuacion ?? 0,
+        ultima_puntuacion: data.resumen?.ultima_puntuacion ?? 0,
+        consistencia_pct: data.resumen?.consistencia_pct ?? 0,
+        progreso_siguiente_titulo_pct: data.resumen?.progreso_siguiente_titulo_pct ?? 0
+      },
+      actividad_reciente: Array.isArray(data.actividad_reciente) ? data.actividad_reciente : []
     }
   }
 

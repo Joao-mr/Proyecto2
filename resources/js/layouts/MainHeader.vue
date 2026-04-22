@@ -35,7 +35,7 @@
 
                     <!-- User Dropdown -->
                     <li>
-                        <div class="position-relative">
+                        <div ref="dropdownRef" class="position-relative">
                             <button @click="toggleDropdown" class="header-user-button d-flex align-items-center gap-2 rounded px-2 py-1">
                                 <span class="d-none d-lg-block text-end" style="min-width: 80px;">
                                     <span class="d-block small fw-semibold lh-sm user-name">{{ user?.name || 'Usuario' }}</span>
@@ -112,6 +112,7 @@ const { toggleDarkMode, isDarkTheme } = useLayout();
 const { logout: logoutAuth } = useAuth();
 const auth = authStore();
 const dropdownOpen = ref(false);
+const dropdownRef = ref(null);
 
 const user = computed(() => auth.user);
 const canAccessDashboard = computed(() => {
@@ -132,7 +133,11 @@ const logout = () => {
 };
 
 const handleClickOutside = (event) => {
-    if (dropdownOpen.value && !event.target.closest('.relative')) {
+    if (!dropdownOpen.value) {
+        return;
+    }
+
+    if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
         dropdownOpen.value = false;
     }
 };

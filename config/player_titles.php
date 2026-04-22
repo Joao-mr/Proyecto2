@@ -3,32 +3,32 @@
 return [
     'bronze' => [
         'slug' => 'bronze',
-        'label' => 'Bronze',
+        'label' => 'Bronce',
         'min_elo' => 0,
     ],
     'silver' => [
         'slug' => 'silver',
-        'label' => 'Silver',
+        'label' => 'Plata',
         'min_elo' => 500,
     ],
     'gold' => [
         'slug' => 'gold',
-        'label' => 'Gold',
+        'label' => 'Oro',
         'min_elo' => 1200,
     ],
     'platinum' => [
         'slug' => 'platinum',
-        'label' => 'Platinum',
+        'label' => 'Platino',
         'min_elo' => 2200,
     ],
     'diamond' => [
         'slug' => 'diamond',
-        'label' => 'Diamond',
+        'label' => 'Diamante',
         'min_elo' => 3500,
     ],
     'master' => [
         'slug' => 'master',
-        'label' => 'Master',
+        'label' => 'Maestro',
         'min_elo' => 5000,
     ],
 ];

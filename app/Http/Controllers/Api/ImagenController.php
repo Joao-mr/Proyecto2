@@ -53,10 +53,7 @@ class ImagenController extends Controller
     {
         $imagen = Imagen::create($request->validated());
         $imagen->load('categoria');
-        return response()->json(array_merge(
-            $imagen->toArray(),
-            ['categoria_nombre' => $imagen->categoria?->nombre]
-        ), 201);
+        return response()->json($this->formatImagenPayload($imagen), 201);
     }
 
     // Obtener una imagen específica con todas sus URLs y datos
@@ -92,12 +89,20 @@ class ImagenController extends Controller
 
     public function update(UpdateImagenRequest $request, Imagen $imagen)
     {
-        $imagen->update($request->validated());
+        $validated = $request->validated();
+
+        // Blindaje defensivo: no sobreescribir columnas NOT NULL con null.
+        if (array_key_exists('url', $validated) && $validated['url'] === null) {
+            unset($validated['url']);
+        }
+
+        if (array_key_exists('respuesta_correcta', $validated) && $validated['respuesta_correcta'] === null) {
+            unset($validated['respuesta_correcta']);
+        }
+
+        $imagen->update($validated);
         $imagen->load('categoria');
-        return response()->json(array_merge(
-            $imagen->toArray(),
-            ['categoria_nombre' => $imagen->categoria?->nombre]
-        ));
+        return response()->json($this->formatImagenPayload($imagen));
     }
 
     public function destroy(Imagen $imagen)
@@ -288,5 +293,24 @@ class ImagenController extends Controller
         $bytes /= (1 << (10 * $pow));
 
         return round($bytes, $precision) . ' ' . $units[$pow];
+    }
+
+    private function formatImagenPayload(Imagen $imagen): array
+    {
+        return [
+            'id' => $imagen->id,
+            'url' => $imagen->url,
+            'respuesta_correcta' => $imagen->respuesta_correcta,
+            'categoria_id' => $imagen->categoria_id,
+            'categoria_nombre' => $imagen->categoria?->nombre,
+            'urls' => [
+                'original' => $imagen->getFirstMediaUrl('imagenes'),
+                'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb'),
+                'preview' => $imagen->getFirstMediaUrl('imagenes', 'preview'),
+            ],
+            'has_media' => $imagen->hasMedia('imagenes'),
+            'created_at' => $imagen->created_at,
+            'updated_at' => $imagen->updated_at,
+        ];
     }
 }

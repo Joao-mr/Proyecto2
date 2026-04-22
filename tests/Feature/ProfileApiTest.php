@@ -31,7 +31,7 @@ class ProfileApiTest extends TestCase
                 'imagenes_acertadas' => 0,
                 'titulo' => [
                     'slug' => 'bronze',
-                    'label' => 'Bronze',
+                    'label' => 'Bronce',
                     'min_elo' => 0,
                 ],
             ]);
@@ -59,7 +59,7 @@ class ProfileApiTest extends TestCase
                 'imagenes_acertadas' => 3,
                 'titulo' => [
                     'slug' => 'bronze',
-                    'label' => 'Bronze',
+                    'label' => 'Bronce',
                     'min_elo' => 0,
                 ],
             ]);
@@ -84,7 +84,7 @@ class ProfileApiTest extends TestCase
                 'imagenes_acertadas' => 10,
                 'titulo' => [
                     'slug' => 'silver',
-                    'label' => 'Silver',
+                    'label' => 'Plata',
                     'min_elo' => 500,
                 ],
             ]);
@@ -122,10 +122,59 @@ class ProfileApiTest extends TestCase
                 'imagenes_acertadas' => 7,
                 'titulo' => [
                     'slug' => 'bronze',
-                    'label' => 'Bronze',
+                    'label' => 'Bronce',
                     'min_elo' => 0,
                 ],
             ]);
+    }
+
+    public function test_user_stats_returns_extended_profile_payload(): void
+    {
+        $user = $this->makeUser();
+        Sanctum::actingAs($user);
+
+        $sala = $this->createSala($user);
+        $partida1 = $this->createPartida($sala->id, now()->subMinutes(30), now()->subMinutes(28));
+        $partida2 = $this->createPartida($sala->id, now()->subMinutes(20), now()->subMinutes(18));
+        $partida3 = $this->createPartida($sala->id, now()->subMinutes(10), now()->subMinutes(8));
+
+        $user->partidas()->attach($partida1->id, ['puntuacion' => 120]);
+        $user->partidas()->attach($partida2->id, ['puntuacion' => 280]);
+        $user->partidas()->attach($partida3->id, ['puntuacion' => 80]);
+
+        $response = $this->getJson('/api/user/stats');
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'partidas_jugadas',
+                'elo_total',
+                'imagenes_acertadas',
+                'titulo' => ['slug', 'label', 'min_elo'],
+                'resumen' => [
+                    'promedio_puntos',
+                    'mejor_puntuacion',
+                    'ultima_puntuacion',
+                    'consistencia_pct',
+                    'progreso_siguiente_titulo_pct',
+                ],
+                'actividad_reciente' => [
+                    '*' => ['id_partida', 'puntuacion', 'fecha_inicio', 'fecha_fin'],
+                ],
+            ])
+            ->assertJson([
+                'partidas_jugadas' => 3,
+                'elo_total' => 480,
+                'imagenes_acertadas' => 9,
+                'resumen' => [
+                    'promedio_puntos' => 160,
+                    'mejor_puntuacion' => 280,
+                    'ultima_puntuacion' => 80,
+                    'consistencia_pct' => 57,
+                ],
+            ])
+            ->assertJsonPath('actividad_reciente.0.id_partida', $partida3->id)
+            ->assertJsonPath('actividad_reciente.1.id_partida', $partida2->id)
+            ->assertJsonPath('actividad_reciente.2.id_partida', $partida1->id);
     }
 
     public function test_user_can_change_password_from_profile(): void
@@ -198,10 +247,12 @@ class ProfileApiTest extends TestCase
         ]);
     }
 
-    private function createPartida(int $salaId): Partida
+    private function createPartida(int $salaId, $fechaInicio = null, $fechaFin = null): Partida
     {
         return Partida::create([
             'id_sala' => $salaId,
+            'fecha_inicio' => $fechaInicio,
+            'fecha_fin' => $fechaFin,
         ]);
     }
 }

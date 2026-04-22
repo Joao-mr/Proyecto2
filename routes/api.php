@@ -77,6 +77,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('usuario-salas/{idSala}', [UsuarioSalaController::class, 'destroy']);
 
     //partidas
+    Route::post('partidas/registrar-resultado', [PartidaController::class, 'storeResult']);
     Route::apiResource('partidas', PartidaController::class);
 
     //perfil

@@ -201,7 +201,7 @@ const navItems = [
 const userPanelRoute = computed(() => {
   const roles = store.user?.roles ?? [];
   const isAdmin = roles.some(role => role?.name?.toLowerCase().includes('admin'));
-  return isAdmin ? 'admin.index' : 'app';
+  return isAdmin ? 'admin.index' : 'app.profile';
 });
 
 const openDropdown = (label) => { activeDropdown.value = label; };

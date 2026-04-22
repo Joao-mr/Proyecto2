@@ -49,6 +49,7 @@ import Tooltip from 'primevue/tooltip';
 import Ripple from 'primevue/ripple';
 import FloatLabel from 'primevue/floatlabel';
 import Password from 'primevue/password';
+import ProgressBar from 'primevue/progressbar';
 
 
 const app = createApp(App);
@@ -119,6 +120,7 @@ app.component('Editor', Editor);
 app.component('IconField', IconField);
 app.component('InputIcon', InputIcon);
 app.component('Password', Password);
+app.component('ProgressBar', ProgressBar);
 app.component('SplitButton', SplitButton);
 
 app.directive('tooltip', Tooltip);

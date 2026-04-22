@@ -104,7 +104,8 @@ export default function useImagen() {
   const setImagen = (data = {}) => {
     imagen.value = {
       id: data.id ?? null,
-      url: data.url ?? '',
+      // En listados de admin la URL viene en data.urls.original
+      url: data.url ?? data.urls?.original ?? '',
       respuesta_correcta: data.respuesta_correcta ?? '',
       categoria_id: data.categoria_id ?? null
     }
@@ -172,12 +173,21 @@ export default function useImagen() {
     }
 
     try {
+      const payload = {
+        categoria_id: imagen.value.categoria_id ?? null
+      }
+
+      // Evitamos enviar strings vacios porque Laravel los convierte a null.
+      if (typeof imagen.value.url === 'string' && imagen.value.url.trim() !== '') {
+        payload.url = imagen.value.url.trim()
+      }
+
+      if (typeof imagen.value.respuesta_correcta === 'string' && imagen.value.respuesta_correcta.trim() !== '') {
+        payload.respuesta_correcta = imagen.value.respuesta_correcta.trim()
+      }
+
       const response = await withLoading(() =>
-        axios.post('/api/imagenes', {
-          url: imagen.value.url,
-          respuesta_correcta: imagen.value.respuesta_correcta,
-          categoria_id: imagen.value.categoria_id ?? null
-        })
+        axios.post('/api/imagenes', payload)
       )
       const data = response.data
       toast.crud.created('Imagen')
@@ -205,12 +215,21 @@ export default function useImagen() {
     }
 
     try {
+      const payload = {
+        categoria_id: imagen.value.categoria_id ?? null
+      }
+
+      // Evitamos enviar strings vacios porque Laravel los convierte a null.
+      if (typeof imagen.value.url === 'string' && imagen.value.url.trim() !== '') {
+        payload.url = imagen.value.url.trim()
+      }
+
+      if (typeof imagen.value.respuesta_correcta === 'string' && imagen.value.respuesta_correcta.trim() !== '') {
+        payload.respuesta_correcta = imagen.value.respuesta_correcta.trim()
+      }
+
       const response = await withLoading(() =>
-        axios.put(`/api/imagenes/${imagen.value.id}`, {
-          url: imagen.value.url,
-          respuesta_correcta: imagen.value.respuesta_correcta,
-          categoria_id: imagen.value.categoria_id ?? null
-        })
+        axios.put(`/api/imagenes/${imagen.value.id}`, payload)
       )
       const data = response.data
       toast.crud.updated('Imagen')

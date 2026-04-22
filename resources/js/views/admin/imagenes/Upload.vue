@@ -8,7 +8,7 @@
                         icon="pi pi-times"
                         class="p-button-rounded p-button-text p-button-plain"
                         severity="secondary"
-                        @click="resetForm"
+                        @click="goBackToIndex"
                     />
                 </div>
             </template>
@@ -91,7 +91,7 @@
                             class="p-button-outlined"
                             severity="secondary"
                             :disabled="isLoading || uploadProgress > 0"
-                            @click="resetForm"
+                            @click="goBackToIndex"
                         />
                         <Button
                             label="Subir Imagen"
@@ -164,6 +164,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import useImagen from '@/composables/useImagen'
 
 const fileInput = ref(null)
@@ -172,8 +173,13 @@ const previewUrl = ref(null)
 const respuestaCorrecta = ref('')
 const viewDialogVisible = ref(false)
 const selectedImageToView = ref(null)
+const router = useRouter()
 
 const { imagenes, isLoading, uploadProgress, getImagenes, uploadImagenNew, deleteImagen, getImageUrl } = useImagen()
+
+const goBackToIndex = () => {
+    router.push({ name: 'imagenes-juego.index' })
+}
 
 /**
  * Manejador de selecci├│n de archivo

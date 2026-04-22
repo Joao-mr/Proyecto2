@@ -145,7 +145,6 @@ export default [
     {
         path: '/app',
         component: AuthenticatedUserLayout,
-        name: 'app',
         beforeEnter: requireAppUser,
         meta: { breadCrumb: '.' },
         children: [

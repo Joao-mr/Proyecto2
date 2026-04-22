@@ -11,6 +11,15 @@
               <p class="text-white-50 mb-4">Has completado todas las rondas de <strong>{{ salaName }}</strong></p>
               <div class="display-4 fw-black text-warning mb-1">{{ score }}</div>
               <p class="text-white-50 small mb-4">puntos totales</p>
+              <div v-if="statsSaveState === 'saving'" class="alert alert-info py-2 small mb-3">
+                Guardando estadisticas...
+              </div>
+              <div v-else-if="statsSaveState === 'saved'" class="alert alert-success py-2 small mb-3">
+                Estadisticas guardadas correctamente.
+              </div>
+              <div v-else-if="statsSaveState === 'error'" class="alert alert-danger py-2 small mb-3">
+                {{ statsSaveMessage || 'No se pudieron guardar las estadisticas.' }}
+              </div>
               <RouterLink to="/mis-salas" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
                 <i class="pi pi-arrow-left me-2"></i>Volver a tus salas
               </RouterLink>
@@ -146,6 +155,10 @@ const revealAnswer   = ref(false);
 const answerDisabled = ref(false);
 const gameOver       = ref(false);
 const answerInputRef = ref(null);
+const statsSaveState = ref('idle');
+const statsSaveMessage = ref('');
+const matchStartedAt = ref(null);
+const matchPersisted = ref(false);
 
 const currentRound = computed(() => rounds.value[round.value - 1] ?? null);
 
@@ -196,7 +209,7 @@ function handleAnswer(value) {
 function scheduleNextRound() {
   setTimeout(() => {
     if (round.value >= totalRounds.value) {
-      gameOver.value = true;
+      finishGame();
     } else {
       round.value++;
       feedback.value       = null;
@@ -208,6 +221,35 @@ function scheduleNextRound() {
       });
     }
   }, 2200);
+}
+
+function finishGame() {
+  gameOver.value = true;
+  void persistMatchResult();
+}
+
+async function persistMatchResult() {
+  if (matchPersisted.value) return;
+
+  matchPersisted.value = true;
+  statsSaveState.value = 'saving';
+  statsSaveMessage.value = '';
+
+  try {
+    await axios.post('/api/partidas/registrar-resultado', {
+      id_sala: Number(salaId.value),
+      puntuacion: score.value,
+      fecha_inicio: matchStartedAt.value ?? new Date().toISOString(),
+      fecha_fin: new Date().toISOString(),
+    });
+
+    statsSaveState.value = 'saved';
+  } catch (error) {
+    console.error('Error saving match stats:', error);
+    statsSaveState.value = 'error';
+    statsSaveMessage.value = 'Error al guardar tus estadisticas. Intentalo de nuevo.';
+    matchPersisted.value = false;
+  }
 }
 
 /* ── Exit ── */
@@ -257,6 +299,7 @@ onMounted(async () => {
   }
 
   if (rounds.value.length > 0) {
+    matchStartedAt.value = new Date().toISOString();
     startTimer();
     nextTick(() => answerInputRef.value?.focus());
   }
