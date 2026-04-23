@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUsuarioPartidaRequest;
 use App\Http\Requests\UpdateUsuarioPartidaRequest;
+use App\Models\Partida;
+use App\Models\User;
 use App\Services\UserStatsService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -33,15 +36,19 @@ class UsuarioPartidaController extends Controller
         $idUsuario = Auth::id();
         $data['id_usuario'] = $idUsuario;
 
-        DB::table('usuario_partida')->updateOrInsert(
-            [
-                'id_usuario' => $data['id_usuario'],
-                'id_partida' => $data['id_partida'],
-            ],
-            [
-                'puntuacion' => $data['puntuacion'],
-            ]
-        );
+        DB::transaction(function () use ($data, $idUsuario) {
+            DB::table('usuario_partida')->updateOrInsert(
+                [
+                    'id_usuario' => $data['id_usuario'],
+                    'id_partida' => $data['id_partida'],
+                ],
+                [
+                    'puntuacion' => $data['puntuacion'],
+                ]
+            );
+
+            $this->recalculateUserStats((int) $idUsuario);
+        });
 
         $this->userStatsService->syncForUser((int) $data['id_usuario']);
 
