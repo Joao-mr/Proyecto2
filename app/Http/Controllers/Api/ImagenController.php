@@ -22,7 +22,13 @@ class ImagenController extends Controller
             $query->where('categoria_id', $request->categoria_id);
         }
 
-        $imagenes = $query->paginate(min((int) $request->get('per_page', 10), 200))->through(fn($imagen) => [
+        if ($request->boolean('random')) {
+            $query->inRandomOrder();
+        } else {
+            $query->latest('id');
+        }
+
+        $imagenes = $query->paginate(min((int) $request->get('per_page', 10), 1000))->through(fn($imagen) => [
             'id' => $imagen->id,
             'respuesta_correcta' => $imagen->respuesta_correcta,
             'categoria_id' => $imagen->categoria_id,

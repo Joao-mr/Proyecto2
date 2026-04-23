@@ -864,7 +864,7 @@ a{
 .categories-image-box {
   width: 100%;
   min-height: 430px;
-  background: #3d4b7a;
+  background: #000;
   border-radius: 28px;
   display: flex;
   align-items: center;
@@ -875,7 +875,9 @@ a{
 .categories-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  background: #000;
 }
 
 .categories-content {

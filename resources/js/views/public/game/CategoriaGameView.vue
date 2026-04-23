@@ -137,12 +137,7 @@ const categoriaName = computed(() => {
 })
 const playerName = computed(() => auth.user?.name ?? 'Jugador')
 
-const rounds = computed(() =>
-  imagenes.value.map((img) => ({
-    image: img.urls?.preview || img.urls?.original || img.url || null,
-    answer: img.respuesta_correcta,
-  })),
-)
+const rounds = ref([])
 
 const TOTAL_TIME = 30
 const round = ref(1)
@@ -163,6 +158,18 @@ const loadError = ref('')
 const currentRound = computed(() => rounds.value[round.value - 1] ?? null)
 
 let timerInterval = null
+let wrongFeedbackTimeout = null
+
+function shuffleArray(list = []) {
+  const result = [...list]
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const tmp = result[i]
+    result[i] = result[j]
+    result[j] = tmp
+  }
+  return result
+}
 
 function startTimer() {
   clearInterval(timerInterval)
@@ -182,6 +189,7 @@ function stopTimer() {
 }
 
 function onTimeout() {
+  clearTimeout(wrongFeedbackTimeout)
   answerDisabled.value = true
   revealAnswer.value = true
   feedback.value = 'timeout'
@@ -189,21 +197,28 @@ function onTimeout() {
 }
 
 function handleAnswer(value) {
-  stopTimer()
-  answerDisabled.value = true
-  revealAnswer.value = true
-
   const correct = (value ?? '').toLowerCase().trim()
   const expected = (currentRound.value?.answer ?? '').toLowerCase().trim()
 
   if (correct === expected) {
+    clearTimeout(wrongFeedbackTimeout)
+    stopTimer()
+    answerDisabled.value = true
+    revealAnswer.value = true
     score.value += 50
     feedback.value = 'correct'
+    scheduleNextRound()
   } else {
+    // Intentos ilimitados hasta que acabe el tiempo: no pasamos de ronda al fallar.
     feedback.value = 'wrong'
+    revealAnswer.value = false
+    answerDisabled.value = false
+    clearTimeout(wrongFeedbackTimeout)
+    wrongFeedbackTimeout = setTimeout(() => {
+      if (feedback.value === 'wrong') feedback.value = null
+    }, 900)
+    nextTick(() => answerInputRef.value?.focus())
   }
-
-  scheduleNextRound()
 }
 
 function scheduleNextRound() {
@@ -259,7 +274,17 @@ function handleExit() {
 
 onMounted(async () => {
   try {
-    await Promise.all([getImagenes({ categoria_id: categoriaId.value }), getCategorias()])
+    await Promise.all([
+      getImagenes({ categoria_id: categoriaId.value, per_page: 1000, random: 1 }),
+      getCategorias(),
+    ])
+
+    rounds.value = shuffleArray(
+      imagenes.value.map((img) => ({
+        image: img.urls?.preview || img.urls?.original || img.url || null,
+        answer: img.respuesta_correcta,
+      })),
+    )
 
     if (rounds.value.length > 0) {
       matchStartedAt.value = new Date().toISOString()
@@ -271,6 +296,9 @@ onMounted(async () => {
   }
 })
 
-onUnmounted(() => stopTimer())
+onUnmounted(() => {
+  stopTimer()
+  clearTimeout(wrongFeedbackTimeout)
+})
 </script>
 

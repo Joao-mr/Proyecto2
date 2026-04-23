@@ -35,7 +35,7 @@
                   v-if="categoria.imagen"
                   :src="categoria.imagen"
                   :alt="categoria.nombre"
-                  style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
+                  class="card-image__img"
                 />
                 <span v-else>{{ categoria.nombre }}</span>
               </div>
@@ -201,7 +201,7 @@ function irARankingGlobal() {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,6 +209,16 @@ function irARankingGlobal() {
   font-weight: 700;
   color: #eef2ff;
   text-align: center;
+}
+
+.card-image__img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: contain;
+  object-position: center;
+  background: #000;
+  display: block;
 }
 
 .card-content {

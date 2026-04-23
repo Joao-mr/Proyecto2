@@ -66,7 +66,7 @@
                                 v-if="slotProps.data.urls?.thumb || slotProps.data.urls?.original"
                                 :src="slotProps.data.urls.thumb || slotProps.data.urls.original"
                                 :alt="`Imagen #${slotProps.data.id}`"
-                                class="rounded border object-fit-cover" style="width: 64px; height: 64px;"
+                                class="rounded border img-frame img-frame--full" style="width: 64px; height: 64px;"
                             />
                             <div v-else class="d-flex align-items-center justify-content-center rounded border bg-light" style="width: 64px; height: 64px;">
                                 <i class="pi pi-image text-gray-400 text-xl"></i>

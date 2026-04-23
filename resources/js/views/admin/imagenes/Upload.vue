@@ -42,7 +42,7 @@
                                 v-if="previewUrl"
                                 :src="previewUrl"
                                 :alt="selectedFile.name"
-                                class="preview-image"
+                                class="preview-image img-frame img-frame--full"
                             />
                             <div class="file-info">
                                 <p class="filename">{{ selectedFile.name }}</p>
@@ -122,7 +122,7 @@
                             v-if="getImageUrl(imagen, 'thumb')"
                             :src="getImageUrl(imagen, 'thumb')"
                             :alt="`Imagen ${imagen.id}`"
-                            class="thumbnail-image"
+                            class="thumbnail-image img-frame img-frame--full"
                         />
                         <div v-else class="thumbnail-placeholder">
                             <i class="pi pi-image"></i>
@@ -156,7 +156,7 @@
                 v-if="selectedImageToView"
                 :src="getImageUrl(selectedImageToView, 'preview')"
                 :alt="`Imagen ${selectedImageToView.id}`"
-                class="w-100"
+                class="w-100 img-frame img-frame--full"
             />
         </Dialog>
     </div>
@@ -324,10 +324,12 @@ onMounted(() => {
 }
 
 .preview-image {
-    max-width: 150px;
-    max-height: 150px;
+    width: 150px;
+    height: 150px;
     border-radius: 0.375rem;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
+    background: #000;
     border: 1px solid #e2e8f0;
 }
 
@@ -361,7 +363,9 @@ onMounted(() => {
 .thumbnail-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
+    background: #000;
 }
 
 .thumbnail-placeholder {
