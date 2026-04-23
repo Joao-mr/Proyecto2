@@ -12,7 +12,7 @@
                   type="button"
                   class="btn mode-btn px-4 py-2 rounded-pill fw-bold"
                   :class="{ active: mode === 'individual' }"
-                  @click="mode = 'individual'"
+                  @click="changeMode('individual')"
                 >
                   Individual
                 </button>
@@ -20,7 +20,7 @@
                   type="button"
                   class="btn mode-btn px-4 py-2 rounded-pill fw-bold"
                   :class="{ active: mode === 'multijugador' }"
-                  @click="mode = 'multijugador'"
+                  @click="changeMode('multijugador')"
                 >
                   Multijugador
                 </button>
@@ -47,7 +47,8 @@
                       <th>TÍTULO</th>
                     </tr>
                   </thead>
-                  <tbody>
+
+                  <tbody v-if="currentRows.length">
                     <tr
                       v-for="(player, index) in currentRows"
                       :key="`${mode}-${player.name}-${index}`"
@@ -56,22 +57,29 @@
                       <td>
                         <div class="d-flex align-items-center gap-2">
                           <span class="rank-num" :class="rankClass(index)">{{ index + 1 }}.</span>
-                          <span class="rank-avatar">👤</span>
                           <span class="fw-bold">{{ player.name }}</span>
                         </div>
                       </td>
                       <td class="fw-bold">
-                        <span class="elo-dot me-2"></span>{{ player.elo }}
+                        <span class="elo-dot me-2"></span>{{ formatElo(player.elo) }}
                       </td>
                       <td class="fw-bold">{{ player.matches }}</td>
                       <td class="fw-bold">{{ player.title }}</td>
+                    </tr>
+                  </tbody>
+
+                  <tbody v-else>
+                    <tr>
+                      <td colspan="4" class="text-center py-4 text-white fw-semibold">
+                        {{ loading ? 'Cargando ranking...' : (errorGlobal || 'No hay datos de ranking.') }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
               <!-- Mobile -->
-              <div class="d-md-none p-3 ranking-mobile-list">
+              <div class="d-md-none p-3 ranking-mobile-list" v-if="currentRows.length">
                 <article
                   v-for="(player, index) in currentRows"
                   :key="`mobile-${mode}-${player.name}-${index}`"
@@ -81,7 +89,6 @@
                   <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-2">
                       <span class="rank-num" :class="rankClass(index)">{{ index + 1 }}.</span>
-                      <span class="rank-avatar">👤</span>
                       <span class="fw-bold text-white">{{ player.name }}</span>
                     </div>
                     <span class="ranking-mobile-title">{{ player.title }}</span>
@@ -91,7 +98,7 @@
                     <div class="col-6">
                       <div class="ranking-mobile-meta">ELO</div>
                       <div class="ranking-mobile-value fw-bold">
-                        <span class="elo-dot me-2"></span>{{ player.elo }}
+                        <span class="elo-dot me-2"></span>{{ formatElo(player.elo) }}
                       </div>
                     </div>
                     <div class="col-6 text-end">
@@ -100,6 +107,10 @@
                     </div>
                   </div>
                 </article>
+              </div>
+
+              <div v-else class="d-md-none p-3 text-center text-white fw-semibold">
+                {{ loading ? 'Cargando ranking...' : (errorGlobal || 'No hay datos de ranking.') }}
               </div>
             </div>
           </div>
@@ -110,58 +121,21 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { onMounted } from 'vue'
+import { useRanking } from '@/composables/useRanking'
 
-const mode = ref('individual')
+const { mode, currentRows, loading, errorGlobal, fetchRanking, formatElo } = useRanking()
 
-const rankingData = {
-  individual: [
-    { name: 'ROBER', elo: '13.749', matches: 567, title: 'RADIANT' },
-    { name: 'LAURA', elo: '11.026', matches: 435, title: 'MASTER' },
-    { name: 'JOAO', elo: '9.925', matches: 530, title: 'UNREAL' },
-    { name: 'CARLOS', elo: '9.335', matches: 386, title: 'CHALLENGER' },
-    { name: 'XD', elo: '8.932', matches: 324, title: 'CHAMPION' },
-    { name: 'MARTA', elo: '8.771', matches: 301, title: 'DIAMOND' },
-    { name: 'IVÁN', elo: '8.420', matches: 289, title: 'DIAMOND' },
-    { name: 'NEREA', elo: '8.122', matches: 277, title: 'PLATINUM' },
-    { name: 'JULIO', elo: '7.980', matches: 265, title: 'PLATINUM' },
-    { name: 'ALBA', elo: '7.811', matches: 252, title: 'PLATINUM' },
-    { name: 'RUBÉN', elo: '7.655', matches: 244, title: 'GOLD' },
-    { name: 'ANA', elo: '7.502', matches: 233, title: 'GOLD' },
-    { name: 'PABLO', elo: '7.311', matches: 220, title: 'GOLD' },
-    { name: 'SARA', elo: '7.140', matches: 214, title: 'GOLD' },
-    { name: 'DANIEL', elo: '6.995', matches: 206, title: 'SILVER' },
-    { name: 'ELENA', elo: '6.802', matches: 198, title: 'SILVER' },
-    { name: 'MIGUEL', elo: '6.677', matches: 187, title: 'SILVER' },
-    { name: 'LUCÍA', elo: '6.511', matches: 179, title: 'SILVER' },
-    { name: 'ADRIÁN', elo: '6.300', matches: 166, title: 'BRONZE' },
-    { name: 'PAULA', elo: '6.145', matches: 158, title: 'BRONZE' }
-  ],
-  multijugador: [
-    { name: 'MARIO', elo: '14.201', matches: 612, title: 'RADIANT' },
-    { name: 'NORA', elo: '12.488', matches: 502, title: 'MASTER' },
-    { name: 'ALAN', elo: '10.114', matches: 447, title: 'UNREAL' },
-    { name: 'SOFÍA', elo: '9.604', matches: 399, title: 'CHALLENGER' },
-    { name: 'LUIS', elo: '9.020', matches: 341, title: 'CHAMPION' },
-    { name: 'IRENE', elo: '8.864', matches: 330, title: 'DIAMOND' },
-    { name: 'HUGO', elo: '8.502', matches: 314, title: 'DIAMOND' },
-    { name: 'NOA', elo: '8.290', matches: 300, title: 'PLATINUM' },
-    { name: 'DIEGO', elo: '8.111', matches: 288, title: 'PLATINUM' },
-    { name: 'LAIA', elo: '7.922', matches: 275, title: 'PLATINUM' },
-    { name: 'BRUNO', elo: '7.760', matches: 261, title: 'GOLD' },
-    { name: 'OLGA', elo: '7.604', matches: 250, title: 'GOLD' },
-    { name: 'SERGIO', elo: '7.433', matches: 241, title: 'GOLD' },
-    { name: 'LARA', elo: '7.299', matches: 228, title: 'GOLD' },
-    { name: 'RAÚL', elo: '7.122', matches: 214, title: 'SILVER' },
-    { name: 'CARMEN', elo: '6.980', matches: 206, title: 'SILVER' },
-    { name: 'MATEO', elo: '6.811', matches: 194, title: 'SILVER' },
-    { name: 'JIMENA', elo: '6.670', matches: 186, title: 'SILVER' },
-    { name: 'ERIC', elo: '6.501', matches: 172, title: 'BRONZE' },
-    { name: 'VEGA', elo: '6.340', matches: 160, title: 'BRONZE' }
-  ]
+const changeMode = async (nextMode) => {
+  if (mode.value === nextMode) return
+  mode.value = nextMode
+  await fetchRanking(nextMode, { limit: 20 })
 }
 
-const currentRows = computed(() => rankingData[mode.value])
+onMounted(async () => {
+  await fetchRanking('individual', { limit: 20, force: true })
+  fetchRanking('multijugador', { limit: 20 })
+})
 
 const rankClass = (index) => {
   if (index === 0) return 'first'
