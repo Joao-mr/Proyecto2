@@ -46,8 +46,6 @@ class UsuarioPartidaController extends Controller
                     'puntuacion' => $data['puntuacion'],
                 ]
             );
-
-            $this->recalculateUserStats((int) $idUsuario);
         });
 
         $this->userStatsService->syncForUser((int) $data['id_usuario']);
@@ -76,8 +74,6 @@ class UsuarioPartidaController extends Controller
                 ->where('id_usuario', $idUsuario)
                 ->where('id_partida', $idPartida)
                 ->update($data);
-
-            $this->recalculateUserStats($idUsuario);
         });
 
         $this->userStatsService->syncForUser((int) $idUsuario);
@@ -94,8 +90,6 @@ class UsuarioPartidaController extends Controller
                 ->where('id_usuario', $idUsuario)
                 ->where('id_partida', $idPartida)
                 ->delete();
-
-            $this->recalculateUserStats($idUsuario);
         });
 
         $this->userStatsService->syncForUser((int) $idUsuario);
@@ -152,53 +146,19 @@ class UsuarioPartidaController extends Controller
                 ]
             );
 
-            $this->recalculateUserStats($idUsuario);
-            $user = User::query()->findOrFail($idUsuario);
-
             return [
                 'partida_id' => $partida->id,
                 'id_sala' => $idSala,
-                'elo' => (int) $user->elo,
-                'partidas_jugadas' => (int) $user->partidas_jugadas,
-                'titulo' => $user->titulo,
             ];
         });
 
+        $this->userStatsService->syncForUser((int) $idUsuario);
+        $user = User::query()->findOrFail($idUsuario);
+
+        $result['elo'] = (int) ($user->elo ?? $user->elo_total ?? 0);
+        $result['partidas_jugadas'] = (int) ($user->partidas_jugadas ?? 0);
+        $result['titulo'] = $user->titulo;
+
         return response()->json($result, 201);
-    }
-
-    private function recalculateUserStats(int $idUsuario): void
-    {
-        $stats = DB::table('usuario_partida')
-            ->where('id_usuario', $idUsuario)
-            ->selectRaw('COUNT(*) as partidas_jugadas, COALESCE(SUM(puntuacion), 0) as elo')
-            ->first();
-
-        $elo = (int) ($stats->elo ?? 0);
-        $partidasJugadas = (int) ($stats->partidas_jugadas ?? 0);
-
-        User::query()
-            ->whereKey($idUsuario)
-            ->update([
-                'elo' => $elo,
-                'partidas_jugadas' => $partidasJugadas,
-                'titulo' => $this->resolveTitle($elo),
-            ]);
-    }
-
-    private function resolveTitle(int $elo): ?string
-    {
-        if ($elo >= 12000) return 'RADIANT';
-        if ($elo >= 10000) return 'MASTER';
-        if ($elo >= 8500) return 'UNREAL';
-        if ($elo >= 7500) return 'CHALLENGER';
-        if ($elo >= 6500) return 'CHAMPION';
-        if ($elo >= 5500) return 'DIAMOND';
-        if ($elo >= 4500) return 'PLATINUM';
-        if ($elo >= 3000) return 'GOLD';
-        if ($elo >= 1500) return 'SILVER';
-        if ($elo > 0) return 'BRONZE';
-
-        return null;
     }
 }

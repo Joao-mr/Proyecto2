@@ -1,11 +1,11 @@
-<template>
+﻿<template>
   <div v-if="gameOver" class="game-page d-flex align-items-center justify-content-center">
     <div class="container py-5">
       <div class="row justify-content-center">
         <div class="col-12 col-sm-10 col-md-7 col-lg-5">
           <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
             <div class="card-body p-5">
-              <div class="display-1 mb-3">🏆</div>
+              <div class="display-1 mb-3">ðŸ†</div>
               <h1 class="card-title fw-bold text-white mb-2">Partida finalizada</h1>
               <p class="text-white-50 mb-4">Has completado todas las rondas de <strong>{{ categoriaName }}</strong></p>
               <div class="display-4 fw-black text-warning mb-1">{{ score }}</div>
@@ -35,7 +35,7 @@
         <div class="col-12 col-sm-10 col-md-7 col-lg-5">
           <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
             <div class="card-body p-5">
-              <div class="display-1 mb-3">📭</div>
+              <div class="display-1 mb-3">ðŸ“­</div>
               <h1 class="card-title fw-bold text-white mb-2">Sin imagenes</h1>
               <p class="text-white-50 mb-4">Esta categoria no tiene imagenes disponibles todavia.</p>
               <RouterLink to="/categorias" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
@@ -52,6 +52,25 @@
     <div class="text-center text-white">
       <div class="spinner-border text-warning mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
       <p class="fs-5 fw-semibold">Cargando...</p>
+    </div>
+  </div>
+
+  <div v-else-if="loadError" class="game-page d-flex align-items-center justify-content-center">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
+            <div class="card-body p-5">
+              <div class="display-1 mb-3">⚠️</div>
+              <h1 class="card-title fw-bold text-white mb-2">Error al cargar la partida</h1>
+              <p class="text-white-50 mb-4">{{ loadError }}</p>
+              <RouterLink to="/categorias" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
+                <i class="pi pi-arrow-left me-2"></i>Volver a categorias
+              </RouterLink>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -139,6 +158,7 @@ const statsSaveState = ref('idle')
 const statsSaveMessage = ref('')
 const matchStartedAt = ref(null)
 const matchPersisted = ref(false)
+const loadError = ref('')
 
 const currentRound = computed(() => rounds.value[round.value - 1] ?? null)
 
@@ -232,49 +252,25 @@ async function persistMatchResult() {
   }
 }
 
-async function finishGame() {
-  stopTimer();
-  await persistMatchStats();
-  gameOver.value = true;
-}
-
-async function persistMatchStats() {
-  if (hasSavedStats.value || isSavingStats.value) {
-    return;
-  }
-
-  isSavingStats.value = true;
-  try {
-    await axios.post('/api/usuario-partidas/finalizar', {
-      id_categoria: Number(categoriaId.value),
-      fecha_inicio: new Date().toISOString(),
-      fecha_fin: new Date().toISOString(),
-      puntuacion: score.value,
-    });
-
-    await auth.getUser();
-    hasSavedStats.value = true;
-  } catch (error) {
-    console.error('Error al guardar estadísticas de partida:', error);
-  } finally {
-    isSavingStats.value = false;
-  }
-}
-
 function handleExit() {
   stopTimer()
   router.push('/categorias')
 }
 
 onMounted(async () => {
-  await Promise.all([getImagenes({ categoria_id: categoriaId.value }), getCategorias()])
+  try {
+    await Promise.all([getImagenes({ categoria_id: categoriaId.value }), getCategorias()])
 
-  if (rounds.value.length > 0) {
-    matchStartedAt.value = new Date().toISOString()
-    startTimer()
-    nextTick(() => answerInputRef.value?.focus())
+    if (rounds.value.length > 0) {
+      matchStartedAt.value = new Date().toISOString()
+      startTimer()
+      nextTick(() => answerInputRef.value?.focus())
+    }
+  } catch (error) {
+    loadError.value = error?.response?.data?.message ?? 'No fue posible cargar la partida en este momento.'
   }
 })
 
 onUnmounted(() => stopTimer())
 </script>
+

@@ -55,7 +55,7 @@ class UsuarioPartidaStatsTest extends TestCase
 
         $this->assertSame(550, $user->elo);
         $this->assertSame(2, $user->partidas_jugadas);
-        $this->assertSame('BRONZE', $user->titulo);
+        $this->assertSame('Plata', $user->titulo);
     }
 
     public function test_update_and_destroy_usuario_partida_recalculate_user_stats(): void
@@ -83,14 +83,14 @@ class UsuarioPartidaStatsTest extends TestCase
         $user->refresh();
         $this->assertSame(700, $user->elo);
         $this->assertSame(2, $user->partidas_jugadas);
-        $this->assertSame('BRONZE', $user->titulo);
+        $this->assertSame('Plata', $user->titulo);
 
         $this->deleteJson('/api/usuario-partidas/' . $secondPartida->id)->assertNoContent();
 
         $user->refresh();
         $this->assertSame(300, $user->elo);
         $this->assertSame(1, $user->partidas_jugadas);
-        $this->assertSame('BRONZE', $user->titulo);
+        $this->assertSame('Bronce', $user->titulo);
     }
 
     public function test_finish_endpoint_saves_match_and_updates_stats_by_sala(): void
@@ -115,7 +115,7 @@ class UsuarioPartidaStatsTest extends TestCase
         $user->refresh();
         $this->assertSame(420, $user->elo);
         $this->assertSame(1, $user->partidas_jugadas);
-        $this->assertSame('BRONZE', $user->titulo);
+        $this->assertSame('Bronce', $user->titulo);
     }
 
     public function test_finish_endpoint_resolves_sala_by_category(): void
@@ -141,7 +141,7 @@ class UsuarioPartidaStatsTest extends TestCase
         $user->refresh();
         $this->assertSame(530, $user->elo);
         $this->assertSame(1, $user->partidas_jugadas);
-        $this->assertSame('BRONZE', $user->titulo);
+        $this->assertSame('Plata', $user->titulo);
     }
 
     private function createPartidaForUser(User $user): Partida

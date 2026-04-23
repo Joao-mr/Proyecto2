@@ -41,4 +41,22 @@ class PostController extends Controller
         $post->categories()->attach($data['categories']);
         return $post;
     }
+
+    public function update(Request $request, Post $post)
+    {
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255', 'min:2'],
+            'content' => ['required', 'string', 'min:2'],
+            'categories' => 'required|array',
+            'categories.*' => 'exists:categories,id',
+        ]);
+
+        $post->update([
+            'title' => $data['title'],
+            'content' => $data['content'],
+        ]);
+        $post->categories()->sync($data['categories']);
+
+        return $post->load('user:id,name,surname1', 'categories');
+    }
 }

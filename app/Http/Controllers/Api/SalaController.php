@@ -8,12 +8,17 @@ use App\Http\Requests\UpdateSalaRequest;
 use App\Models\Sala;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class SalaController extends Controller
 {
     public function index(Request $request)
     {
         $this->authorize('viewAny', Sala::class);
+        $requestedSort = (string) $request->get('sort', 'created_at');
+        $direction = strtolower((string) $request->get('direction', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $sort = Schema::hasColumn('salas', $requestedSort) ? $requestedSort : 'id';
+
         $salas = Sala::with('categorias')
             ->when($request->filled('search'), fn($q) =>
                 $q->where('nombre', 'like', "%{$request->search}%")
@@ -21,7 +26,7 @@ class SalaController extends Controller
             ->when($request->filled('categoria_id'), fn($q) =>
                 $q->whereHas('categorias', fn($qq) =>
                     $qq->where('id', $request->categoria_id)))
-            ->orderBy($request->get('sort', 'created_at'), $request->get('direction', 'desc'))
+            ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         return response()->json($salas);

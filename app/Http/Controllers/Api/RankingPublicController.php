@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Support\PlayerTitleResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Schema;
 
 class RankingPublicController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, PlayerTitleResolver $resolver): JsonResponse
     {
         $mode = $request->query('mode', 'individual');
         if (!in_array($mode, ['individual', 'multijugador'], true)) {
@@ -68,9 +69,11 @@ class RankingPublicController extends Controller
         $data = $rows
             ->limit($limit)
             ->get()
-            ->map(function ($row) {
+            ->map(function ($row) use ($resolver) {
                 $elo = (int) ($row->elo ?? 0);
                 $name = trim((string) ($row->name ?? ''));
+                $storedTitle = trim((string) ($row->title ?? ''));
+                $resolvedTitle = (string) ($resolver->resolve($elo)['label'] ?? 'Bronce');
 
                 if ($name === '') $name = 'SIN NOMBRE';
 
@@ -78,7 +81,7 @@ class RankingPublicController extends Controller
                     'name' => strtoupper($name),
                     'elo' => $elo,
                     'matches' => (int) ($row->matches ?? 0),
-                    'title' => strtoupper((string) ($row->title ?? $this->titleByElo($elo))),
+                    'title' => strtoupper($storedTitle !== '' ? $storedTitle : $resolvedTitle),
                 ];
             })
             ->values();
@@ -159,17 +162,6 @@ class RankingPublicController extends Controller
             'category_id' => $categoriaId,
             'data' => $rows,
         ]);
-    }
-
-    private function titleByElo(int $elo): string
-    {
-        return match (true) {
-            $elo >= 13000 => 'RADIANT',
-            $elo >= 11000 => 'MASTER',
-            $elo >= 10000 => 'UNREAL',
-            $elo >= 9000 => 'CHALLENGER',
-            default => 'CHAMPION',
-        };
     }
 
     private function firstExistingTable(array $tables): ?string
