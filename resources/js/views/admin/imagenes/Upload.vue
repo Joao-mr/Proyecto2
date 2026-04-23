@@ -220,13 +220,16 @@ const generatePreview = (file) => {
 const handleUpload = async () => {
     if (!selectedFile.value) return
 
-    const result = await uploadImagenNew(selectedFile.value, respuestaCorrecta.value)
-
-    if (result) {
-        resetForm()
+    try {
+        const result = await uploadImagenNew(selectedFile.value, respuestaCorrecta.value)
+        if (result) {
+            resetForm()
+            await getImagenes()
+        }
+    } catch (error) {
+        // El composable ya muestra el toast de error; evitamos romper el handler UI.
+        console.error('Error al subir imagen en Upload.vue:', error)
     }
-
-    await getImagenes()
 }
 
 /**

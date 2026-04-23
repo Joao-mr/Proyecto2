@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // categorias
     Route::apiResource('categorias', CategoriaController::class);
+    Route::get('categorias-list', [CategoriaController::class, 'getList']);
 
     // salas
     Route::apiResource('salas', SalaController::class);
