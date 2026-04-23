@@ -656,12 +656,16 @@
   margin-bottom: 15px;
   position: relative;
   z-index: 3;
+  overflow: hidden; /* recorta al círculo */
 }
 
 .icon-placeholder {
-  color: #000;
+  width: 62%;
+  height: 62%;
+  display: block;
+  object-fit: contain;
+  object-position: center;
   line-height: 1;
-  font-size: 1.45rem;
 }
 
 .shadow-effect {
@@ -1004,23 +1008,33 @@
   gap: 0.65rem;
 }
 
-.home-footer__social-btn {
-  width: 38px;
-  height: 38px;
+.home-footer__social-link {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
   border-radius: 50%;
+  overflow: hidden;
   background: #e8ebf4;
-  color: #161a2b;
-  text-decoration: none;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  transition: background 0.15s;
+  padding: 8px;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
-.home-footer__social-btn:hover {
+.home-footer__social-link:hover {
   background: #cdd3e8;
+  transform: translateY(-1px);
+}
+
+.home-footer__social-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
 }
 
 /* =========================

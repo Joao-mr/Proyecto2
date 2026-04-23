@@ -41,7 +41,6 @@
         </div>
       </nav>
 
-      <!-- AUTH DESKTOP (solo visible en desktop) -->
       <div class="home-auth d-none d-lg-flex" :class="{ 'home-auth--open': mobileMenuOpen }">
         <template v-if="!store.authenticated">
           <router-link :to="{ name: 'auth.login' }" class="home-link" @click="closeMobileMenu">Login</router-link>
@@ -56,18 +55,17 @@
             </button>
             <div v-if="userMenuOpen" class="home-user-menu">
               <router-link :to="{ name: userPanelRoute }" class="home-user-menu-item" @click="userMenuOpen = false; closeMobileMenu()">
-                <span class="home-user-menu-icon">👤</span> Mi perfil
+                Mi perfil
               </router-link>
               <div class="home-user-menu-divider"></div>
               <button class="home-user-menu-item home-user-menu-logout" @click="handleLogout">
-                <span class="home-user-menu-icon">🚪</span> Cerrar sesión
+                Cerrar sesión
               </button>
             </div>
           </div>
         </template>
       </div>
 
-      <!-- MOBILE NAV MENU (solo visible en móvil) -->
       <nav class="home-nav-mobile d-lg-none" v-show="mobileMenuOpen">
         <div v-for="item in navItems" :key="`mobile-${item.label}`" class="home-nav-mobile__item">
 
@@ -105,21 +103,17 @@
         </div>
       </nav>
 
-      <!-- MOBILE AUTH MENU (solo visible en móvil cuando está autenticado) -->
       <div v-if="mobileMenuOpen && store.authenticated" class="home-auth-mobile d-lg-none">
         <div class="home-auth-mobile__user">
           <span class="home-auth-mobile__avatar">{{ store.user?.name?.[0]?.toUpperCase() }}</span>
           <span class="home-auth-mobile__name">{{ store.user?.name }}</span>
         </div>
         <router-link :to="{ name: userPanelRoute }" class="home-auth-mobile__link" @click="closeMobileMenu">
-          <span>👤</span> Mi perfil
         </router-link>
         <button class="home-auth-mobile__link home-auth-mobile__logout" @click="handleLogout">
-          <span>🚪</span> Cerrar sesión
         </button>
       </div>
 
-      <!-- MOBILE AUTH BUTTONS (solo visible en móvil cuando NO está autenticado) -->
       <div v-if="mobileMenuOpen && !store.authenticated" class="home-auth-mobile-buttons d-lg-none">
         <router-link :to="{ name: 'auth.login' }" class="home-auth-mobile-btn home-auth-mobile-btn--login" @click="closeMobileMenu">
           Login
@@ -129,7 +123,6 @@
         </router-link>
       </div>
 
-      <!-- Hamburger (solo móvil) -->
       <button
         class="home-hamburger d-lg-none"
         @click="mobileMenuOpen = !mobileMenuOpen"
@@ -162,14 +155,12 @@ const userMenuOpen = ref(false);
 const mobileMenuOpen = ref(false);
 const scrolled = ref(false);
 
-// Close mobile menu on route change
 watch(() => route.path, () => {
   mobileMenuOpen.value = false;
   activeDropdown.value = null;
   activeMobileDropdown.value = null;
 });
 
-// Scroll-aware navbar
 const handleScroll = () => {
   scrolled.value = window.scrollY > 20;
 };
@@ -217,7 +208,7 @@ const navItems = [
   },
   {
     label: 'Información',
-    route: { name: 'info.index' } // <- directo a /info, sin dropdown
+    route: { name: 'info.index' } 
   },
 ];
 
