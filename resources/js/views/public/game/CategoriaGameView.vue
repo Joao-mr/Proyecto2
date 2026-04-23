@@ -1,76 +1,63 @@
-﻿<template>
-  <div v-if="gameOver" class="game-page d-flex align-items-center justify-content-center">
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
-          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
-            <div class="card-body p-5">
-              <div class="display-1 mb-3">ðŸ†</div>
-              <h1 class="card-title fw-bold text-white mb-2">Partida finalizada</h1>
-              <p class="text-white-50 mb-4">Has completado todas las rondas de <strong>{{ categoriaName }}</strong></p>
-              <div class="display-4 fw-black text-warning mb-1">{{ score }}</div>
-              <p class="text-white-50 small mb-4">puntos totales</p>
-              <div v-if="statsSaveState === 'saving'" class="alert alert-info py-2 small mb-3">
-                Guardando estadisticas...
-              </div>
-              <div v-else-if="statsSaveState === 'saved'" class="alert alert-success py-2 small mb-3">
-                Estadisticas guardadas correctamente.
-              </div>
-              <div v-else-if="statsSaveState === 'error'" class="alert alert-danger py-2 small mb-3">
-                {{ statsSaveMessage || 'No se pudieron guardar las estadisticas.' }}
-              </div>
-              <RouterLink to="/categorias" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
-                <i class="pi pi-arrow-left me-2"></i>Volver a categorias
-              </RouterLink>
-            </div>
-          </div>
-        </div>
+<template>
+  <div v-if="gameOver" class="game-page game-state-page">
+    <div class="game-state-card">
+      <div class="game-state-icon-wrap">
+        <i class="pi pi-trophy game-state-icon"></i>
       </div>
+      <h1 class="game-state-title">Partida finalizada</h1>
+      <p class="game-state-subtitle">Has completado todas las rondas de <strong>{{ categoriaName }}</strong></p>
+      <div class="game-state-score">{{ score }}</div>
+      <p class="game-state-score-label">puntos totales</p>
+
+      <div v-if="statsSaveState === 'saving'" class="game-state-alert game-state-alert--info">
+        Guardando estadisticas...
+      </div>
+      <div v-else-if="statsSaveState === 'saved'" class="game-state-alert game-state-alert--ok">
+        Estadisticas guardadas correctamente.
+      </div>
+      <div v-else-if="statsSaveState === 'error'" class="game-state-alert game-state-alert--error">
+        {{ statsSaveMessage || 'No se pudieron guardar las estadisticas.' }}
+      </div>
+
+      <RouterLink to="/categorias" class="game-state-btn">
+        <i class="pi pi-arrow-left"></i>
+        Volver a categorias
+      </RouterLink>
     </div>
   </div>
 
-  <div v-else-if="!isLoading && rounds.length === 0" class="game-page d-flex align-items-center justify-content-center">
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
-          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
-            <div class="card-body p-5">
-              <div class="display-1 mb-3">ðŸ“­</div>
-              <h1 class="card-title fw-bold text-white mb-2">Sin imagenes</h1>
-              <p class="text-white-50 mb-4">Esta categoria no tiene imagenes disponibles todavia.</p>
-              <RouterLink to="/categorias" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
-                <i class="pi pi-arrow-left me-2"></i>Volver a categorias
-              </RouterLink>
-            </div>
-          </div>
-        </div>
+  <div v-else-if="!isLoading && rounds.length === 0" class="game-page game-state-page">
+    <div class="game-state-card">
+      <div class="game-state-icon-wrap">
+        <i class="pi pi-images game-state-icon"></i>
       </div>
+      <h1 class="game-state-title">Sin imagenes</h1>
+      <p class="game-state-subtitle">Esta categoria no tiene imagenes disponibles todavia.</p>
+      <RouterLink to="/categorias" class="game-state-btn">
+        <i class="pi pi-arrow-left"></i>
+        Volver a categorias
+      </RouterLink>
     </div>
   </div>
 
-  <div v-else-if="isLoading" class="game-page d-flex align-items-center justify-content-center">
-    <div class="text-center text-white">
-      <div class="spinner-border text-warning mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-      <p class="fs-5 fw-semibold">Cargando...</p>
+  <div v-else-if="isLoading" class="game-page game-state-page">
+    <div class="game-loading-card">
+      <div class="game-loading-ring"></div>
+      <p class="game-loading-text">Cargando partida...</p>
     </div>
   </div>
 
-  <div v-else-if="loadError" class="game-page d-flex align-items-center justify-content-center">
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
-          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
-            <div class="card-body p-5">
-              <div class="display-1 mb-3">⚠️</div>
-              <h1 class="card-title fw-bold text-white mb-2">Error al cargar la partida</h1>
-              <p class="text-white-50 mb-4">{{ loadError }}</p>
-              <RouterLink to="/categorias" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
-                <i class="pi pi-arrow-left me-2"></i>Volver a categorias
-              </RouterLink>
-            </div>
-          </div>
-        </div>
+  <div v-else-if="loadError" class="game-page game-state-page">
+    <div class="game-state-card">
+      <div class="game-state-icon-wrap game-state-icon-wrap--warn">
+        <i class="pi pi-exclamation-triangle game-state-icon"></i>
       </div>
+      <h1 class="game-state-title">Error al cargar la partida</h1>
+      <p class="game-state-subtitle">{{ loadError }}</p>
+      <RouterLink to="/categorias" class="game-state-btn">
+        <i class="pi pi-arrow-left"></i>
+        Volver a categorias
+      </RouterLink>
     </div>
   </div>
 
@@ -80,19 +67,17 @@
     <div class="game-progress-bar">
       <div class="game-progress-bar__inner">
         <span class="game-progress-bar__label">Progreso</span>
-        <div class="progress flex-grow-1" style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 999px;">
+        <div class="game-progress-bar__track">
           <div
-            class="progress-bar bg-warning"
+            class="game-progress-bar__fill"
             role="progressbar"
-            :style="{ width: `${((round - 1) / totalRounds) * 100}%`, borderRadius: '999px' }"
+            :style="{ width: `${progressPercent}%` }"
             :aria-valuenow="round - 1"
             :aria-valuemin="0"
             :aria-valuemax="totalRounds"
           ></div>
         </div>
-        <span class="game-progress-bar__round">
-          <span class="badge bg-light text-dark">Ronda {{ round }} / {{ totalRounds }}</span>
-        </span>
+        <span class="game-progress-bar__round">Ronda {{ round }} / {{ totalRounds }}</span>
       </div>
     </div>
 
@@ -142,6 +127,11 @@ const rounds = ref([])
 const TOTAL_TIME = 30
 const round = ref(1)
 const totalRounds = computed(() => rounds.value.length)
+const progressPercent = computed(() => {
+  if (!totalRounds.value) return 0
+  const value = ((round.value - 1) / totalRounds.value) * 100
+  return Math.max(0, Math.min(100, value))
+})
 const score = ref(0)
 const timeLeft = ref(TOTAL_TIME)
 const feedback = ref(null)
@@ -301,4 +291,3 @@ onUnmounted(() => {
   clearTimeout(wrongFeedbackTimeout)
 })
 </script>
-

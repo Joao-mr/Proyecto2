@@ -4,7 +4,7 @@
       <input
         ref="inputRef"
         v-model="answer"
-        class="game-answer-panel__input form-control form-control-lg"
+        class="game-answer-panel__input"
         type="text"
         placeholder="¿Qué hay en la imagen?"
         maxlength="120"
@@ -13,7 +13,7 @@
       />
       <button
         type="submit"
-        class="game-answer-panel__btn btn btn-warning btn-lg fw-bold d-inline-flex align-items-center gap-2"
+        class="game-answer-panel__btn"
         :disabled="disabled || !answer.trim()"
       >
         <i class="pi pi-send"></i>
