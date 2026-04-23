@@ -1,4 +1,3 @@
-<!-- filepath: c:\xampp\htdocs\Proyecto2\Laravel-VUE-API-Base-Clase\resources\js\components\home\HomeFooter.vue -->
 <template>
   <footer class="home-footer">
     <div class="container-home">
@@ -18,10 +17,45 @@
 
         <!-- Social -->
         <div class="home-footer__social">
-          <a href="#" class="home-footer__social-btn" aria-label="Discord">◉</a>
-          <a href="#" class="home-footer__social-btn" aria-label="Instagram">◎</a>
-          <a href="#" class="home-footer__social-btn" aria-label="X">✕</a>
-          <a href="#" class="home-footer__social-btn" aria-label="TikTok">◍</a>
+          <a
+            class="home-footer__social-link"
+            href="https://discord.com/invite/whatizit"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Discord"
+          >
+            <img src="/images/discord.svg" alt="Discord" class="home-footer__social-icon" />
+          </a>
+
+          <a
+            class="home-footer__social-link"
+            href="https://instagram.com/whatizit"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+          >
+            <img src="/images/instagram.svg" alt="Instagram" class="home-footer__social-icon" />
+          </a>
+
+          <a
+            class="home-footer__social-link"
+            href="https://x.com/whatizit"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="X"
+          >
+            <img src="/images/x.svg" alt="X" class="home-footer__social-icon" />
+          </a>
+
+          <a
+            class="home-footer__social-link"
+            href="https://tiktok.com/@whatizit"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TikTok"
+          >
+            <img src="/images/tiktok.svg" alt="TikTok" class="home-footer__social-icon" />
+          </a>
         </div>
       </div>
     </div>

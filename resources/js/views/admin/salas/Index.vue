@@ -2,9 +2,9 @@
     <div class="salas-page">
         <Card>
             <template #title>
-                <div class="flex items-center justify-between w-full">
+                <div class="d-flex align-items-center justify-content-between w-100">
                     <span>Gestión de Salas (Juego)</span>
-                    <div class="flex items-center gap-2">
+                    <div class="d-flex align-items-center gap-2">
                         <Button
                             label="Actualizar"
                             icon="pi pi-refresh"
@@ -56,11 +56,11 @@
                             <span class="table-cell-id">#{{ slotProps.data.id }}</span>
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" placeholder="ID" class="w-full" />
+                            <InputText v-model="filterModel.value" placeholder="ID" class="w-100" />
                         </template>
                     </Column>
 
-                    <Column field="nombre" header="Nombre" sortable filter class="min-w-[220px]">
+                    <Column field="nombre" header="Nombre" sortable filter class="" style="min-width: 220px;">
                         <template #body="slotProps">
                             <span class="table-cell-name">{{ slotProps.data.nombre || '-' }}</span>
                         </template>
@@ -69,7 +69,7 @@
                         </template>
                     </Column>
 
-                    <Column field="codigo" header="Código" sortable filter class="min-w-[160px]">
+                    <Column field="codigo" header="Código" sortable filter class="" style="min-width: 160px;">
                         <template #body="slotProps">
                             <Tag :value="slotProps.data.codigo || '-'" severity="contrast" />
                         </template>
@@ -78,21 +78,21 @@
                         </template>
                     </Column>
 
-                    <Column header="Categorías" class="min-w-[240px]">
+                    <Column header="Categorías" class="" style="min-width: 240px;">
                         <template #body="slotProps">
-                            <div class="flex flex-wrap gap-1">
+                            <div class="d-flex flex-wrap gap-1">
                                 <Tag
                                     v-for="categoria in (slotProps.data.categorias || [])"
                                     :key="`${slotProps.data.id}-${categoria.id}`"
                                     :value="categoria.nombre"
                                     severity="info"
                                 />
-                                <span v-if="!(slotProps.data.categorias || []).length" class="text-gray-400 text-sm">Sin categorías</span>
+                                <span v-if="!(slotProps.data.categorias || []).length" class="text-muted small">Sin categorías</span>
                             </div>
                         </template>
                     </Column>
 
-                    <Column field="created_at" header="Fecha de Creación" sortable class="min-w-[180px]">
+                    <Column field="created_at" header="Fecha de Creación" sortable class="" style="min-width: 180px;">
                         <template #body="slotProps">
                             <span class="text-sm table-cell-date">
                                 <i class="pi pi-calendar mr-2 text-xs opacity-70"></i>
@@ -103,7 +103,7 @@
 
                     <Column header="Acciones" class="w-[160px]">
                         <template #body="slotProps">
-                            <div class="flex gap-2">
+                            <div class="d-flex gap-2">
                                 <Button
                                     v-tooltip.top="'Editar sala'"
                                     icon="pi pi-pencil"

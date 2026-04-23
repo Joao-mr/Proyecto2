@@ -10,7 +10,7 @@ export default function useImagen() {
   // STATE
   // ============================================
   const imagenes = ref([])
-  const imagen = ref({ id: null, url: '', respuesta_correcta: '' })
+  const imagen = ref({ id: null, url: '', respuesta_correcta: '', categoria_id: null })
   const isLoading = ref(false)
   const uploadProgress = ref(0)
   const toast = useToast()
@@ -97,7 +97,7 @@ export default function useImagen() {
   // FUNCIONES DE ESTADO (CRUD b├ísico)
   // ============================================
   const resetImagen = () => {
-    imagen.value = { id: null, url: '', respuesta_correcta: '' }
+    imagen.value = { id: null, url: '', respuesta_correcta: '', categoria_id: null }
     clearErrors()
   }
 
@@ -105,7 +105,8 @@ export default function useImagen() {
     imagen.value = {
       id: data.id ?? null,
       url: data.url ?? '',
-      respuesta_correcta: data.respuesta_correcta ?? ''
+      respuesta_correcta: data.respuesta_correcta ?? '',
+      categoria_id: data.categoria_id ?? null
     }
     clearErrors()
   }
@@ -174,7 +175,8 @@ export default function useImagen() {
       const response = await withLoading(() =>
         axios.post('/api/imagenes', {
           url: imagen.value.url,
-          respuesta_correcta: imagen.value.respuesta_correcta
+          respuesta_correcta: imagen.value.respuesta_correcta,
+          categoria_id: imagen.value.categoria_id ?? null
         })
       )
       const data = response.data
@@ -206,7 +208,8 @@ export default function useImagen() {
       const response = await withLoading(() =>
         axios.put(`/api/imagenes/${imagen.value.id}`, {
           url: imagen.value.url,
-          respuesta_correcta: imagen.value.respuesta_correcta
+          respuesta_correcta: imagen.value.respuesta_correcta,
+          categoria_id: imagen.value.categoria_id ?? null
         })
       )
       const data = response.data

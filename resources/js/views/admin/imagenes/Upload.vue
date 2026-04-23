@@ -2,7 +2,7 @@
     <div class="imagen-upload-container">
         <Card class="upload-card">
             <template #title>
-                <div class="flex items-center justify-between w-full">
+                <div class="d-flex align-items-center justify-content-between w-100">
                     <span><i class="pi pi-upload mr-2"></i>Subir Nueva Imagen</span>
                     <Button
                         icon="pi pi-times"
@@ -18,7 +18,7 @@
             </template>
 
             <template #content>
-                <form @submit.prevent="handleUpload" class="space-y-6">
+                <form @submit.prevent="handleUpload" class="vstack gap-4">
                     <!-- File Upload Area -->
                     <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop">
                         <input
@@ -26,15 +26,15 @@
                             type="file"
                             accept="image/*"
                             @change="handleFileSelect"
-                            class="hidden"
+                            class="d-none"
                             aria-label="Seleccionar imagen"
                         />
 
                         <div v-if="!selectedFile" class="upload-placeholder" @click="$refs.fileInput?.click()">
                             <i class="pi pi-cloud-upload"></i>
-                            <p class="text-lg font-semibold">Arrastra o haz clic para seleccionar</p>
-                            <p class="text-sm text-gray-500">Formatos permitidos: JPG, PNG, GIF, WebP, SVG</p>
-                            <p class="text-xs text-gray-400">Tama├▒o m├íximo: 5MB</p>
+                            <p class="fs-5 fw-semibold">Arrastra o haz clic para seleccionar</p>
+                            <p class="small text-muted">Formatos permitidos: JPG, PNG, GIF, WebP, SVG</p>
+                            <p class="small text-muted">Tamaño máximo: 5MB</p>
                         </div>
 
                         <div v-else class="selected-file">
@@ -60,31 +60,31 @@
                     <!-- Upload Progress -->
                     <div v-if="uploadProgress > 0" class="progress-container">
                         <ProgressBar :value="uploadProgress" />
-                        <p class="text-sm text-center text-gray-600 mt-2">{{ uploadProgress }}% completado</p>
+                        <p class="small text-center text-muted mt-2">{{ uploadProgress }}% completado</p>
                     </div>
 
                     <!-- Respuesta Correcta Input -->
                     <div>
-                        <label for="respuesta" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="respuesta" class="d-block small fw-medium text-dark mb-2">
                             Respuesta Correcta
-                            <span class="text-red-500">*</span>
+                            <span class="text-danger">*</span>
                         </label>
                         <InputText
                             v-model="respuestaCorrecta"
                             id="respuesta"
                             type="text"
                             placeholder="Ej: Manzana, Gato, Capital de Francia"
-                            class="w-full"
+                            class="w-100"
                             :disabled="isLoading || uploadProgress > 0"
                             maxlength="255"
                         />
-                        <small class="text-gray-500 block mt-1">
+                        <small class="text-muted d-block mt-1">
                             Ingresa la respuesta correcta asociada a esta imagen
                         </small>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex gap-2 justify-end">
+                    <div class="d-flex gap-2 justify-content-end">
                         <Button
                             label="Cancelar"
                             icon="pi pi-times"
@@ -112,7 +112,7 @@
             </template>
 
             <template #content>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
                     <div
                         v-for="imagen in imagenes.slice(0, 8)"
                         :key="imagen.id"
@@ -150,13 +150,13 @@
             v-model:visible="viewDialogVisible"
             header="Vista Previa"
             :modal="true"
-            class="w-full md:w-1/2"
+            class="w-100"
         >
             <img
                 v-if="selectedImageToView"
                 :src="getImageUrl(selectedImageToView, 'preview')"
                 :alt="`Imagen ${selectedImageToView.id}`"
-                class="w-full"
+                class="w-100"
             />
         </Dialog>
     </div>

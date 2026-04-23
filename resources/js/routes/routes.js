@@ -52,6 +52,12 @@ export default [
         component: () => import('../views/CategoriasView.vue'),
     },
     {
+        path: '/mis-salas',
+        name: 'mis-salas',
+        component: () => import('../views/user/MisSalasView.vue'),
+        beforeEnter: requireLogin,
+    },
+    {
         path: '/',
         component: GuestLayout,
         children: [
@@ -92,14 +98,43 @@ export default [
                 beforeEnter: guest,
             },
             {
+                path: 'game/sala/:id',
+                name: 'game.sala',
+                component: () => import('../views/public/game/SalaView.vue'),
+                beforeEnter: requireLogin,
+            },
+            {
+                path: 'game/categoria/:id',
+                name: 'game.categoria',
+                component: () => import('../views/public/game/CategoriaGameView.vue'),
+                beforeEnter: requireLogin,
+            },
+            {
                 path: 'ranking-category',
                 name: 'ranking.category',
                 component: () => import('@/views/public/ranking_category/index.vue'),
                 meta: { requiresAuth: false }
             },
             {
-                path: 'ranking.category',
-                redirect: { name: 'ranking.category' }
+                path: 'info',
+                name: 'info.index',
+                component: () => import('@/views/public/Information/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: 'info/como-jugar',
+                name: 'como-jugar',
+                redirect: { name: 'info.index', query: { tab: 'como-jugar' } }
+            },
+            {
+                path: 'info/normas',
+                name: 'normas',
+                redirect: { name: 'info.index', query: { tab: 'normas' } }
+            },
+            {
+                path: 'info/ranking',
+                name: 'ranking-info',
+                redirect: { name: 'info.index', query: { tab: 'ranking' } }
             }
         ]
     },
@@ -190,7 +225,7 @@ export default [
                         component: () => import('../views/admin/users/Index.vue'),
                         meta: {
                             breadCrumb: 'Usuarios',
-                            hideBreadcrumb: true // Ocultar breadcrumb del layout porque la Card tiene su propio header
+                            hideBreadcrumb: true 
                         }
                     },
                     {

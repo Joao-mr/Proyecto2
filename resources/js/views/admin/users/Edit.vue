@@ -19,7 +19,7 @@
                     >
                         <template #header="{ chooseCallback, uploadCallback, clearCallback, files, uploadedFiles }">
                             <div class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
-                                <div class="flex gap-2">
+                                <div class="d-flex gap-2">
                                     <Button @click="chooseCallback()" icon="pi pi-images" rounded outlined></Button>
                                     <Button @click="uploadEvent(uploadCallback, uploadedFiles)" icon="pi pi-cloud-upload" rounded outlined severity="success" :disabled="!files || files.length === 0"></Button>
                                     <Button @click="clearCallback()" icon="pi pi-times" rounded outlined severity="danger" :disabled="!files || files.length === 0"></Button>
@@ -52,7 +52,7 @@
             <div>
                 <h6 class="mb-4 text-lg font-bold">Datos personales</h6>
                 <div class="mb-4">
-                    <div class="flex items-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
                         <label for="name">Nombre:</label>
                         <InputText 
                             v-model="user.name" 
@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <div class="flex items-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
                         <label for="surname1">Primer apellido:</label>
                         <InputText 
                             v-model="user.surname1" 
@@ -84,7 +84,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <div class="flex items-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
                         <label for="surname2">Segundo apellido:</label>
                         <InputText 
                             v-model="user.surname2" 
@@ -100,7 +100,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <div class="flex items-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
                         <label for="email">Email:</label>
                         <InputText 
                             v-model="user.email" 
@@ -116,7 +116,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <div class="flex items-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
                         <label for="password">Password:</label>
                         <InputText 
                             v-model="user.password" 
@@ -132,7 +132,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <div class="flex items-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
                          <label for="roles">Roles:</label>
                         <MultiSelect 
                             id="roles" 
