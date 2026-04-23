@@ -1,18 +1,17 @@
-<?php
-use App\Http\Controllers\Api\CategoryPublicController;
-use App\Http\Controllers\Api\RankingPublicController;
-use App\Http\Controllers\Api\CategoryController;
+﻿<?php
+
 use App\Http\Controllers\Api\CategoriaController;
-use App\Http\Controllers\Api\ImagenController;
+use App\Http\Controllers\Api\CategoryPublicController;
 use App\Http\Controllers\Api\ImagenCategoriaController;
-use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\ImagenController;
 use App\Http\Controllers\Api\PartidaController;
 use App\Http\Controllers\Api\PartidaImagenController;
-use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\RankingPublicController;
 use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\SalaController;
 use App\Http\Controllers\Api\SalaCategoriaController;
+use App\Http\Controllers\Api\SalaController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UsuarioPartidaController;
 use App\Http\Controllers\Api\UsuarioSalaController;
@@ -25,13 +24,12 @@ Public API (sin auth)
 Route::prefix('public')->name('public.')->group(function () {
     Route::get('categories', [CategoryPublicController::class, 'index'])->name('categories.index');
 
-
     Route::get('rankings', [RankingPublicController::class, 'index'])->name('rankings.index');
 
     Route::get('rankings/category/{categoria}', [RankingPublicController::class, 'category'])
         ->whereNumber('categoria')
         ->name('rankings.category');
-    Route::get('rankings/category', [RankingPublicController::class, 'category']); 
+    Route::get('rankings/category', [RankingPublicController::class, 'category']);
 });
 
 /*
@@ -48,7 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // salas
     Route::apiResource('salas', SalaController::class);
 
-    // relación N:M sala-categoría
+    // relacion N:M sala-categoria
     Route::apiResource('sala-categorias', SalaCategoriaController::class);
 
     // roles y permisos
@@ -69,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // usuario-partida
     Route::get('usuario-partidas', [UsuarioPartidaController::class, 'index']);
     Route::post('usuario-partidas', [UsuarioPartidaController::class, 'store']);
+    Route::post('usuario-partidas/finalizar', [UsuarioPartidaController::class, 'finish']);
     Route::get('usuario-partidas/{idPartida}', [UsuarioPartidaController::class, 'show']);
     Route::put('usuario-partidas/{idPartida}', [UsuarioPartidaController::class, 'update']);
     Route::delete('usuario-partidas/{idPartida}', [UsuarioPartidaController::class, 'destroy']);
@@ -92,11 +91,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('usuario-salas/{idSala}', [UsuarioSalaController::class, 'destroy']);
 
     // partidas
+    Route::post('partidas/registrar-resultado', [PartidaController::class, 'storeResult']);
     Route::apiResource('partidas', PartidaController::class);
 
     // perfil
     Route::get('user', [ProfileController::class, 'user']);
     Route::get('user/signin', [ProfileController::class, 'user']);
+    Route::get('user/stats', [ProfileController::class, 'stats']);
     Route::put('user', [ProfileController::class, 'update']);
 
     // permisos del usuario autenticado

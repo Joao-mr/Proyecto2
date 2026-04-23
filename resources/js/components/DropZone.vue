@@ -76,24 +76,7 @@ const emit = defineEmits(['update:modelValue'])
 const onChange = (() => {
     thumbnail.value = refFiles.value.files;
     img = URL.createObjectURL(refFiles.value.files[0]);
-    //console.log(img);
 })
-
-/*
-const generateThumbnail = ((file) => {
-    return URL.createObjectURL(file);
-    if (props.modelValue) {
-        return props.modelValue
-    } else  {
-        let fileSrc = URL.createObjectURL(file);
-
-        setTimeout(() => {
-            URL.revokeObjectURL(fileSrc);
-        }, 1000);
-        return fileSrc;
-    }
-})
-*/
 const makeName = ((name) => {
     if (!props.modelValue) {
         return (
@@ -129,58 +112,6 @@ const drop = ((e) => {
 watch(thumbnail, () => {
     emit('update:modelValue', thumbnail.value[0])
 })
-
-/*export default {
-    props: ['thefile'],
-    data() {
-        return {
-            isDragging: false,
-            files: [],
-        };
-    },
-    methods: {
-        onChange() {
-            this.files = [...this.$refs.file.files];
-            console.log(thefile)
-        },
-
-        generateThumbnail(file) {
-            let fileSrc = URL.createObjectURL(file);
-            setTimeout(() => {
-                URL.revokeObjectURL(fileSrc);
-            }, 1000);
-            return fileSrc;
-        },
-
-        makeName(name) {
-            return (
-                name.split(".")[0].substring(0, 3) +
-                "..." +
-                name.split(".")[name.split(".").length - 1]
-            );
-        },
-
-        remove(i) {
-            this.files.splice(i, 1);
-        },
-
-        dragover(e) {
-            e.preventDefault();
-            this.isDragging = true;
-        },
-
-        dragleave() {
-            this.isDragging = false;
-        },
-
-        drop(e) {
-            e.preventDefault();
-            this.$refs.file.files = e.dataTransfer.files;
-            this.onChange();
-            this.isDragging = false;
-        },
-    },
-};*/
 </script>
 
 <style scoped>

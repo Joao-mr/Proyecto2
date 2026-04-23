@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="categorias-page">
     <HomeNavbar />
 
@@ -300,3 +300,4 @@ function irARankingGlobal() {
   .categorias-title { font-size: 2.3rem; }
 }
 </style>
+

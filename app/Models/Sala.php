@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sala extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = ['nombre', 'codigo', 'id_creador', 'tiempo_respuesta'];
 
     public function categorias()

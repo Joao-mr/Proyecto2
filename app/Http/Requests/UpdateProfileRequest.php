@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateProfileRequest extends FormRequest
 {
@@ -24,8 +25,9 @@ class UpdateProfileRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|min:5',
-            // 'email' => 'required|email|unique:users,email,'.$this->user()->id
+            'name' => ['required', 'string', 'min:3', 'max:255'],
+            'current_password' => ['nullable', 'required_with:password,password_confirmation', 'current_password'],
+            'password' => ['nullable', 'confirmed', Password::min(8)],
         ];
     }
 }

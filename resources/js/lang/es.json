@@ -33,5 +33,37 @@
     "login_with": "Iniciar Sesión con",
     "register_with": "Registro con",
     "surname1": "Primer Apellido",
-    "surname2": "Segundo Apellido"
+    "surname2": "Segundo Apellido",
+    "profile_ui": {
+        "hero_subtitle": "Tu progreso competitivo en Whatizit",
+        "personal_data": "Datos personales",
+        "email_note": "El email se muestra solo como referencia.",
+        "change_avatar": "Cambiar avatar",
+        "avatar_note": "Formato recomendado: imagen cuadrada, maximo 1.5MB.",
+        "password_change": "Cambio de contrasena",
+        "password_note": "Deja estos campos vacios si no quieres cambiarla.",
+        "current_password": "Contrasena actual",
+        "save_changes": "Guardar cambios",
+        "reset": "Restablecer",
+        "recent_activity": "Actividad reciente",
+        "recent_empty": "Aun no tienes partidas recientes.",
+        "tabs": {
+            "personal": "Datos personales",
+            "stats": "Estadisticas"
+        },
+        "stats": {
+            "matches": "Partidas jugadas",
+            "elo": "ELO total",
+            "hits": "Imagenes acertadas",
+            "title": "Titulo actual"
+        },
+        "performance": {
+            "title": "Rendimiento",
+            "average": "Promedio",
+            "best": "Mejor",
+            "last": "Ultima",
+            "consistency": "Consistencia",
+            "progress": "Progreso al siguiente titulo"
+        }
+    }
 }

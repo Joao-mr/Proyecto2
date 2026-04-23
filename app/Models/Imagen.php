@@ -12,6 +12,7 @@ class Imagen extends Model implements HasMedia
     use InteractsWithMedia; //permite usar media library
 
     protected $table = 'imagenes';
+    public $timestamps = false;
 
     //que datos guardara la tabla imagenes
     protected $fillable = [
@@ -33,6 +34,11 @@ class Imagen extends Model implements HasMedia
     public function partidas()
     {
         return $this->belongsToMany(Partida::class, 'partida_imagen', 'id_imagen', 'id_partida')->withPivot('ronda');
+    }
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 
     //se crea una carpeta "logica" que se llama imagenes

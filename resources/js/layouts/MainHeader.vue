@@ -35,7 +35,7 @@
 
                     <!-- User Dropdown -->
                     <li>
-                        <div class="position-relative">
+                        <div ref="dropdownRef" class="position-relative">
                             <button @click="toggleDropdown" class="header-user-button d-flex align-items-center gap-2 rounded px-2 py-1">
                                 <span class="d-none d-lg-block text-end" style="min-width: 80px;">
                                     <span class="d-block small fw-semibold lh-sm user-name">{{ user?.name || 'Usuario' }}</span>
@@ -58,21 +58,15 @@
                                     </div>
                                     <ul class="list-unstyled mb-0 p-2">
                                         <li>
-                                            <router-link :to="route.path.startsWith('/app') ? '/app/profile' : '/admin/profile'" class="dropdown-menu-item">
+                                            <router-link :to="route.path.startsWith('/admin') ? '/admin/profile' : '/app/profile'" class="dropdown-menu-item">
                                                 <i class="pi pi-user"></i>
                                                 <span>Mi Perfil</span>
                                             </router-link>
                                         </li>
                                         <li>
-                                            <router-link v-if="auth.is('admin') || auth.is('docent')" to="/admin" class="dropdown-menu-item">
+                                            <router-link v-if="canAccessDashboard" to="/admin" class="dropdown-menu-item">
                                                 <i class="pi pi-shield"></i>
                                                 <span>Panel Admin</span>
-                                            </router-link>
-                                        </li>
-                                        <li>
-                                            <router-link to="/app" class="dropdown-menu-item">
-                                                <i class="pi pi-graduation-cap"></i>
-                                                <span>Panel Usuario</span>
                                             </router-link>
                                         </li>
                                     </ul>
@@ -118,8 +112,15 @@ const { toggleDarkMode, isDarkTheme } = useLayout();
 const { logout: logoutAuth } = useAuth();
 const auth = authStore();
 const dropdownOpen = ref(false);
+const dropdownRef = ref(null);
 
 const user = computed(() => auth.user);
+const canAccessDashboard = computed(() => {
+    return user.value?.roles?.some((role) => {
+        const roleName = role?.name?.toLowerCase() || '';
+        return roleName.includes('admin') || roleName === 'docent';
+    }) || false;
+});
 
 
 const toggleDropdown = () => {
@@ -132,7 +133,11 @@ const logout = () => {
 };
 
 const handleClickOutside = (event) => {
-    if (dropdownOpen.value && !event.target.closest('.relative')) {
+    if (!dropdownOpen.value) {
+        return;
+    }
+
+    if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
         dropdownOpen.value = false;
     }
 };

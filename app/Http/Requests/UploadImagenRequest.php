@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Requests;
 
@@ -35,7 +35,7 @@ class UploadImagenRequest extends FormRequest
     {
         return [
             'image.required' => 'La imagen es requerida.',
-            'image.file' => 'Debe ser un archivo v├ílido.',
+            'image.file' => 'Debe ser un archivo válido.',
             'image.image' => 'El archivo debe ser una imagen.',
             'image.mimes' => 'La imagen debe ser de tipo: jpeg, jpg, png, gif, webp o svg.',
             'image.max' => 'La imagen no debe exceder los 5MB.',
@@ -44,3 +44,4 @@ class UploadImagenRequest extends FormRequest
         ];
     }
 }
+

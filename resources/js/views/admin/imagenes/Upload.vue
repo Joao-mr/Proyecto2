@@ -8,13 +8,13 @@
                         icon="pi pi-times"
                         class="p-button-rounded p-button-text p-button-plain"
                         severity="secondary"
-                        @click="resetForm"
+                        @click="goBackToIndex"
                     />
                 </div>
             </template>
 
             <template #subtitle>
-                Carga una imagen para agregar al banco de im├ígenes del juego
+                Carga una imagen para agregar al banco de imagenes del juego
             </template>
 
             <template #content>
@@ -91,7 +91,7 @@
                             class="p-button-outlined"
                             severity="secondary"
                             :disabled="isLoading || uploadProgress > 0"
-                            @click="resetForm"
+                            @click="goBackToIndex"
                         />
                         <Button
                             label="Subir Imagen"
@@ -108,7 +108,7 @@
         <!-- Recently Uploaded -->
         <Card v-if="imagenes.length > 0" class="mt-6">
             <template #title>
-                <span><i class="pi pi-images mr-2"></i>Im├ígenes Recientes</span>
+                <span><i class="pi pi-images mr-2"></i>Imagenes Recientes</span>
             </template>
 
             <template #content>
@@ -164,6 +164,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import useImagen from '@/composables/useImagen'
 
 const fileInput = ref(null)
@@ -172,11 +173,16 @@ const previewUrl = ref(null)
 const respuestaCorrecta = ref('')
 const viewDialogVisible = ref(false)
 const selectedImageToView = ref(null)
+const router = useRouter()
 
 const { imagenes, isLoading, uploadProgress, getImagenes, uploadImagenNew, deleteImagen, getImageUrl } = useImagen()
 
+const goBackToIndex = () => {
+    router.push({ name: 'imagenes-juego.index' })
+}
+
 /**
- * Manejador de selecci├│n de archivo
+ * Manejador de seleccion de archivo
  */
 const handleFileSelect = (event) => {
     const file = event.target.files?.[0]
@@ -256,7 +262,7 @@ const deleteImage = async (id) => {
 }
 
 /**
- * Formatear tama├▒o de archivo
+ * Formatear tamano de archivo
  */
 const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes'
@@ -266,7 +272,7 @@ const formatFileSize = (bytes) => {
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
 }
 
-// Cargar im├ígenes al montar
+// Cargar imagenes al montar
 onMounted(() => {
     getImagenes()
 })

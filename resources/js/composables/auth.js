@@ -53,7 +53,6 @@ export default function useAuth() {
         await axios.post('/login', loginForm)
             .then(async response => {
                 await auth.getUser()
-                //await store.dispatch('auth/getUser')
                 await loginUser()
                 await router.push({ name: 'home' })
             })
@@ -73,8 +72,6 @@ export default function useAuth() {
 
         await axios.post('/register', registerForm)
             .then(async response => {
-                // await store.dispatch('auth/getUser')
-                // await loginUser()
                 swal({
                     icon: 'success',
                     title: 'Registration successfully',
@@ -140,16 +137,12 @@ export default function useAuth() {
     }
 
     const loginUser = () => {
-        //const auth = authStore(); //TODO test
-        console.log('GettingUserSignIn: loginUser')
         user = auth.user
-        // Cookies.set('loggedIn', true)
         getAbilities()
     }
 
     const getUser = async () => {
         const auth = authStore();
-        console.log('GettingUser')
 
         if (auth.authenticated) {
             await auth.getUser()
@@ -159,7 +152,6 @@ export default function useAuth() {
 
     const getUserSignIn = async () => {
         const auth = authStore();
-        console.log('GettingUserSignIn')
 
         if (auth.authenticated) {
             await auth.getUserSignIn()
@@ -177,7 +169,6 @@ export default function useAuth() {
                 user.name = ''
                 user.email = ''
                 auth.logout()
-                //store.dispatch('auth/logout')
                 router.push({ name: 'auth.login' })
             })
             .catch(error => {
@@ -189,7 +180,6 @@ export default function useAuth() {
             })
             .finally(() => {
                 processing.value = false
-                // Cookies.remove('loggedIn')
             })
     }
 

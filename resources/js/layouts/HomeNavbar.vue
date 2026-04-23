@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <header class="home-header" :class="{ 'home-header--scrolled': scrolled }">
     <div class="container-home home-header__inner">
 
@@ -44,7 +44,7 @@
       <div class="home-auth d-none d-lg-flex" :class="{ 'home-auth--open': mobileMenuOpen }">
         <template v-if="!store.authenticated">
           <router-link :to="{ name: 'auth.login' }" class="home-link" @click="closeMobileMenu">Login</router-link>
-          <router-link :to="{ name: 'auth.register' }" class="home-btn-register" @click="closeMobileMenu">Registrarse <span>›</span></router-link>
+          <router-link :to="{ name: 'auth.register' }" class="home-btn-register" @click="closeMobileMenu">Registrarse <span>&rsaquo;</span></router-link>
         </template>
         <template v-else>
           <div class="home-user-dropdown" @mouseenter="userMenuOpen = true" @mouseleave="userMenuOpen = false">
@@ -119,7 +119,7 @@
           Login
         </router-link>
         <router-link :to="{ name: 'auth.register' }" class="home-auth-mobile-btn home-auth-mobile-btn--register" @click="closeMobileMenu">
-          Registrarse ›
+          Registrarse &rsaquo;
         </router-link>
       </div>
 
@@ -212,7 +212,7 @@ const navItems = [
 const userPanelRoute = computed(() => {
   const roles = store.user?.roles ?? [];
   const isAdmin = roles.some(role => role?.name?.toLowerCase().includes('admin'));
-  return isAdmin ? 'admin.index' : 'app';
+  return isAdmin ? 'admin.index' : 'app.profile';
 });
 
 const openDropdown = (label) => { activeDropdown.value = label; };
@@ -227,4 +227,5 @@ const handleLogout = () => {
   logout();
 };
 </script>
+
 

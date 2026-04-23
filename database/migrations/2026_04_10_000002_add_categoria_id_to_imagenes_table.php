@@ -8,13 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('imagenes')) {
+        if (! Schema::hasTable('imagenes')) {
             return;
         }
 
-        if (!Schema::hasColumn('imagenes', 'categoria_id')) {
+        if (! Schema::hasColumn('imagenes', 'categoria_id')) {
             Schema::table('imagenes', function (Blueprint $table) {
                 $table->unsignedBigInteger('categoria_id')->nullable()->after('respuesta_correcta');
+
+                $table->foreign('categoria_id')
+                    ->references('id')
+                    ->on('categorias')
+                    ->onDelete('set null');
             });
         }
     }
