@@ -1,5 +1,6 @@
 import { ref, reactive, inject } from 'vue'
 import { useRouter } from "vue-router";
+import axios from 'axios';
 import { AbilityBuilder, createMongoAbility } from '@casl/ability';
 import { ABILITY_TOKEN } from '@casl/vue';
 import { authStore } from "../store/auth";
@@ -54,13 +55,7 @@ export default function useAuth() {
                 await auth.getUser()
                 //await store.dispatch('auth/getUser')
                 await loginUser()
-                swal({
-                    icon: 'success',
-                    title: 'Login correcto',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                await router.push({ name: 'admin.index' })
+                await router.push({ name: 'home' })
             })
             .catch(error => {
                 if (error.response?.data) {

@@ -165,7 +165,7 @@
 import { ref, onMounted } from "vue";
 import useUsers from "../../composables/users";
 import usePosts from "../../composables/posts";
-import useCategories from "../../composables/categories";
+import useCategorias from "../../composables/categorias";
 import useRoles from "../../composables/roles";
 
 const stats = ref({
@@ -175,9 +175,9 @@ const stats = ref({
     roles: 0
 });
 
+const { categorias, getCategorias } = useCategorias();
 const { users, getUsers } = useUsers();
 const { posts, getPosts } = usePosts();
-const { categories, getCategories } = useCategories();
 const { roles, getRoles } = useRoles();
 
 const loadStats = async () => {
@@ -185,14 +185,14 @@ const loadStats = async () => {
         await Promise.all([
             getUsers(),
             getPosts(),
-            getCategories(),
+            getCategorias(),
             getRoles()
         ]);
         
         stats.value = {
             users: users.value?.total || users.value?.data?.length || 0,
             posts: posts.value?.total || posts.value?.data?.length || 0,
-            categories: categories.value?.total || categories.value?.data?.length || 0,
+            categories: categorias.value?.total || categorias.value?.data?.length || 0,
             roles: roles.value?.total || roles.value?.data?.length || 0
         };
     } catch (error) {

@@ -2,9 +2,9 @@
     <div class="imagenes-page">
         <Card>
             <template #title>
-                <div class="flex items-center justify-between w-full">
-                    <span>Gesti√≥n de Im√°genes (Juego)</span>
-                    <div class="flex items-center gap-2">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <span>Gesti+¶n de Im+Ìgenes (Juego)</span>
+                    <div class="d-flex align-items-center gap-2">
                         <Button
                             label="Actualizar"
                             icon="pi pi-refresh"
@@ -26,7 +26,7 @@
             </template>
 
             <template #subtitle>
-                Administra las im√°genes y su respuesta correcta.
+                Administra las im+Ìgenes y su respuesta correcta.
             </template>
 
             <template #content>
@@ -42,12 +42,12 @@
                     :loading="isLoading"
                     filter-display="menu"
                     :filter-delay="300"
-                    :global-filter-fields="['id', 'url', 'respuesta_correcta', 'created_at']"
+                    :global-filter-fields="['id', 'respuesta_correcta', 'created_at']"
                 >
                     <template #empty>
                         <div class="table-empty-state">
                             <i class="pi pi-inbox empty-state-icon"></i>
-                            <p class="empty-state-text">No se encontraron im√°genes</p>
+                            <p class="empty-state-text">No se encontraron im+Ìgenes</p>
                         </div>
                     </template>
 
@@ -56,27 +56,25 @@
                             <span class="table-cell-id">#{{ slotProps.data.id }}</span>
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" placeholder="ID" class="w-full" />
+                            <InputText v-model="filterModel.value" placeholder="ID" class="w-100" />
                         </template>
                     </Column>
 
-                    <Column field="url" header="URL" sortable filter class="min-w-[320px]">
+                    <Column header="Imagen" class="w-[120px]">
                         <template #body="slotProps">
-                            <a
-                                :href="slotProps.data.url"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="text-blue-600 hover:underline break-all"
-                            >
-                                {{ slotProps.data.url || '-' }}
-                            </a>
-                        </template>
-                        <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" type="text" placeholder="Buscar por URL" />
+                            <img
+                                v-if="slotProps.data.urls?.thumb || slotProps.data.urls?.original"
+                                :src="slotProps.data.urls.thumb || slotProps.data.urls.original"
+                                :alt="`Imagen #${slotProps.data.id}`"
+                                class="rounded border object-fit-cover" style="width: 64px; height: 64px;"
+                            />
+                            <div v-else class="d-flex align-items-center justify-content-center rounded border bg-light" style="width: 64px; height: 64px;">
+                                <i class="pi pi-image text-gray-400 text-xl"></i>
+                            </div>
                         </template>
                     </Column>
 
-                    <Column field="respuesta_correcta" header="Respuesta Correcta" sortable filter class="min-w-[220px]">
+                    <Column field="respuesta_correcta" header="Respuesta Correcta" sortable filter class="" style="min-width: 220px;">
                         <template #body="slotProps">
                             <Tag :value="slotProps.data.respuesta_correcta || '-'" severity="info" />
                         </template>
@@ -85,7 +83,14 @@
                         </template>
                     </Column>
 
-                    <Column field="created_at" header="Fecha de Creaci√≥n" sortable class="min-w-[180px]">
+                    <Column field="categoria_nombre" header="CategorÌa" sortable class="" style="min-width: 160px;">
+                        <template #body="slotProps">
+                            <Tag v-if="slotProps.data.categoria_nombre" :value="slotProps.data.categoria_nombre" severity="secondary" />
+                            <span v-else class="text-sm opacity-50">Sin categorÌa</span>
+                        </template>
+                    </Column>
+
+                    <Column field="created_at" header="Fecha de Creaci+¶n" sortable class="" style="min-width: 180px;">
                         <template #body="slotProps">
                             <span class="text-sm table-cell-date">
                                 <i class="pi pi-calendar mr-2 text-xs opacity-70"></i>
@@ -96,7 +101,7 @@
 
                     <Column header="Acciones" class="w-[160px]">
                         <template #body="slotProps">
-                            <div class="flex gap-2">
+                            <div class="d-flex gap-2">
                                 <Button
                                     v-tooltip.top="'Editar imagen'"
                                     icon="pi pi-pencil"
@@ -129,33 +134,32 @@
             :style="{ width: '600px' }"
             class="imagen-dialog"
         >
-            <div class="flex flex-col gap-4">
-                <div>
-                    <label for="imagen-url" class="dialog-label">URL de la imagen</label>
-                    <InputText
-                        v-model="imagen.url"
-                        id="imagen-url"
-                        class="w-full"
-                        :class="{ 'p-invalid': hasError('url') }"
-                        placeholder="Ej: https://example.com/imagen.jpg"
-                    />
-                    <small v-if="hasError('url')" class="dialog-error">
-                        {{ getError('url') }}
-                    </small>
-                </div>
-
+            <div class="vstack gap-3">
                 <div>
                     <label for="imagen-respuesta" class="dialog-label">Respuesta correcta</label>
                     <InputText
                         v-model="imagen.respuesta_correcta"
                         id="imagen-respuesta"
-                        class="w-full"
+                        class="w-100"
                         :class="{ 'p-invalid': hasError('respuesta_correcta') }"
                         placeholder="Ej: Cristiano Ronaldo"
                     />
                     <small v-if="hasError('respuesta_correcta')" class="dialog-error">
                         {{ getError('respuesta_correcta') }}
                     </small>
+                </div>
+                <div>
+                    <label for="imagen-categoria" class="dialog-label">CategorÌa</label>
+                    <select
+                        v-model="imagen.categoria_id"
+                        id="imagen-categoria"
+                        class="w-full border rounded px-3 py-2 text-sm"
+                    >
+                        <option :value="null">Sin categorÌa</option>
+                        <option v-for="cat in categorias" :key="cat.id" :value="cat.id">
+                            {{ cat.nombre }}
+                        </option>
+                    </select>
                 </div>
             </div>
             <template #footer>
@@ -186,7 +190,9 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, inject } from 'vue';
-import useImagenes from '@/composables/imagenes';
+import { useRouter } from 'vue-router';
+import useImagen from '@/composables/useImagen';
+import useCategorias from '@/composables/categorias';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 
 const {
@@ -202,14 +208,15 @@ const {
     getError,
     upsertImagenRecord,
     isLoading
-} = useImagenes();
+} = useImagen();
+
+const { categorias, getCategorias } = useCategorias();
 
 const swal = inject('$swal');
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     id: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    url: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
     respuesta_correcta: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
 });
 
@@ -220,10 +227,10 @@ const imagenDialog = reactive({
 
 const isSubmitting = computed(() => isLoading.value);
 
+const router = useRouter();
+
 const openCreateDialog = () => {
-    resetImagen();
-    imagenDialog.type = 'create';
-    imagenDialog.open = true;
+    router.push({ name: 'imagenes-juego.upload' });
 };
 
 const openEditDialog = (currentImagen) => {
@@ -273,10 +280,10 @@ const confirmDeleteImagen = (currentImagen) => {
 
     swal({
         icon: 'warning',
-        title: '¬øEliminar imagen?',
-        text: `La imagen #${currentImagen.id} se eliminar√° de forma permanente.`,
+        title: '-+Eliminar imagen?',
+        text: `La imagen #${currentImagen.id} se eliminar+Ì de forma permanente.`,
         showCancelButton: true,
-        confirmButtonText: 'S√≠, eliminar',
+        confirmButtonText: 'S+°, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
     }).then((result) => {
@@ -298,5 +305,6 @@ const formatDate = (dateString) => {
 
 onMounted(() => {
     getImagenes();
+    getCategorias();
 });
 </script>

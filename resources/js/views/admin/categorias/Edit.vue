@@ -1,6 +1,6 @@
 <template>
-  <div class="categorias-edit-page max-w-xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-xl font-bold mb-4">Editar Categoría</h2>
+  <div class="categorias-edit-page container py-4">
+    <h2 class="fs-4 fw-bold mb-4">Editar Categoría</h2>
     <div v-if="isLoading" class="mb-4">Cargando...</div>
     <form v-else @submit.prevent="submitUpdate">
       <div class="mb-4">
@@ -8,13 +8,13 @@
         <InputText
           v-model="categoria.nombre"
           id="categoria-nombre"
-          class="w-full"
+          class="w-100"
           :class="{ 'p-invalid': hasError('nombre') }"
           placeholder="Ej: Famosos"
         />
         <small v-if="hasError('nombre')" class="text-red-500">{{ getError('nombre') }}</small>
       </div>
-      <div class="flex gap-2 justify-end">
+      <div class="d-flex gap-2 justify-content-end">
         <Button label="Cancelar" severity="secondary" @click="goBack" />
         <Button label="Guardar" type="submit" :loading="isSubmitting" :disabled="isSubmitting" />
       </div>

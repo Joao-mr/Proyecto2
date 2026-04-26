@@ -9,6 +9,9 @@ import useAuth from './composables/auth';
 import { installI18n, loadMessages } from "./plugins/i18n";
 import { langStore } from "@/store/lang";
 import './plugins/axios.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../css/app.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import App from './main.vue'
 
 /*PRIMEVUE */
@@ -47,8 +50,6 @@ import Ripple from 'primevue/ripple';
 import FloatLabel from 'primevue/floatlabel';
 import Password from 'primevue/password';
 
-
-import "../css/app.css";
 
 const app = createApp(App);
 // {

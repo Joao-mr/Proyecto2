@@ -1,12 +1,8 @@
 <template>
-    <div class="min-h-screen flex flex-col">
-        <Navbar/>
-        <main class="flex-grow">
+    <div class="min-vh-100 d-flex flex-column">
+        <main class="flex-grow-1">
             <router-view></router-view>
         </main>
     </div>
 </template>
-<script setup>
-import Navbar from './LandingNavbar.vue'
 
-</script>

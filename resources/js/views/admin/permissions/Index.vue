@@ -2,9 +2,9 @@
     <div class="permissions-page">
         <Card>
             <template #title>
-                <div class="flex items-center justify-between w-full">
+                <div class="d-flex align-items-center justify-content-between w-100">
                     <span>Gestión de Permisos</span>
-                    <div class="flex items-center gap-2">
+                    <div class="d-flex align-items-center gap-2">
                         <Button
                             label="Actualizar"
                             icon="pi pi-refresh"
@@ -35,12 +35,12 @@
                     <div
                         v-for="row in skeletonRows"
                         :key="row"
-                        class="flex gap-3 items-center"
+                        class="d-flex gap-3 align-items-center"
                     >
                         <Skeleton width="60px" height="1.25rem" />
                         <Skeleton width="200px" height="1.25rem" />
                         <Skeleton width="140px" height="1.25rem" />
-                        <div class="flex gap-2 ml-auto">
+                        <div class="d-flex gap-2 ms-auto">
                             <Skeleton width="2.5rem" height="2.5rem" shape="circle" />
                             <Skeleton width="2.5rem" height="2.5rem" shape="circle" />
                         </div>
@@ -75,21 +75,21 @@
                             <span v-else class="table-cell-id">#{{ slotProps.data.id }}</span>
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" placeholder="ID" class="w-full" />
+                            <InputText v-model="filterModel.value" placeholder="ID" class="w-100" />
                         </template>
                     </Column>
 
-                    <Column field="name" header="Nombre" sortable filter class="min-w-[200px]">
+                    <Column field="name" header="Nombre" sortable filter class="" style="min-width: 200px;">
                         <template #body="slotProps">
                             <Skeleton v-if="isLoading" width="10rem" height="1rem" />
                             <span v-else class="table-cell-name">{{ slotProps.data.name || '-' }}</span>
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" placeholder="Nombre" class="w-full" />
+                            <InputText v-model="filterModel.value" placeholder="Nombre" class="w-100" />
                         </template>
                     </Column>
 
-                    <Column field="created_at" header="Fecha de Creación" sortable class="min-w-[170px]">
+                    <Column field="created_at" header="Fecha de Creación" sortable class="" style="min-width: 170px;">
                         <template #body="slotProps">
                             <Skeleton v-if="isLoading" width="8rem" height="1rem" />
                             <span v-else class="text-sm table-cell-date">
@@ -98,14 +98,14 @@
                             </span>
                         </template>
                         <template #filter="{ filterModel }">
-                            <InputText v-model="filterModel.value" placeholder="Nombre" class="w-full" />
+                            <InputText v-model="filterModel.value" placeholder="Nombre" class="w-100" />
                         </template>
                     </Column>
 
                     <Column header="Acciones" class="w-[150px]">
                         <template #body="slotProps">
                             <Skeleton v-if="isLoading" width="4rem" height="2rem" />
-                            <div v-else class="flex gap-2">
+                            <div v-else class="d-flex gap-2">
                                 <Button
                                     v-if="can('permission-edit')"
                                     v-tooltip.top="'Editar permiso'"
@@ -140,14 +140,14 @@
             :style="{ width: '400px' }"
             class="permission-dialog"
         >
-            <div class="flex flex-col gap-4">
+            <div class="vstack gap-3">
                 <div>
                     <label for="permission-name" class="dialog-label">Nombre del permiso</label>
                     <InputText
                         id="permission-name"
                         v-model="permission.name"
                         placeholder="Nombre"
-                        class="w-full"
+                        class="w-100"
                         :class="{ 'p-invalid': hasError('name') }"
                     />
                     <small v-if="hasError('name')" class="dialog-error">

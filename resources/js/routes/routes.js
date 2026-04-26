@@ -47,6 +47,17 @@ async function requireAdmin(to, from, next) {
 
 export default [
     {
+        path: '/categorias',
+        name: 'categorias',
+        component: () => import('../views/CategoriasView.vue'),
+    },
+    {
+        path: '/mis-salas',
+        name: 'mis-salas',
+        component: () => import('../views/user/MisSalasView.vue'),
+        beforeEnter: requireLogin,
+    },
+    {
         path: '/',
         component: GuestLayout,
         children: [
@@ -54,6 +65,12 @@ export default [
                 path: '/',
                 name: 'home',
                 component: () => import('../views/public/home/index.vue'),
+            },
+
+            {
+                path: 'rankings',
+                name: 'public.rankings',
+                component: () => import('../views/public/rankings/index.vue'),
             },
 
             {
@@ -80,6 +97,28 @@ export default [
                 component: () => import('../views/auth/passwords/Reset.vue'),
                 beforeEnter: guest,
             },
+            {
+                path: 'game/sala/:id',
+                name: 'game.sala',
+                component: () => import('../views/public/game/SalaView.vue'),
+                beforeEnter: requireLogin,
+            },
+            {
+                path: 'game/categoria/:id',
+                name: 'game.categoria',
+                component: () => import('../views/public/game/CategoriaGameView.vue'),
+                beforeEnter: requireLogin,
+            },
+            {
+                path: 'ranking-category',
+                name: 'ranking.category',
+                component: () => import('@/views/public/ranking_category/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: 'ranking.category',
+                redirect: { name: 'ranking.category' }
+            }
         ]
     },
 
@@ -289,15 +328,33 @@ export default [
             {
                 name: 'partidas-juego',
                 path: 'partidas',
-                meta: { breadCrumb: 'Partidas Juego' },
+                meta: { breadCrumb: 'Partidas' },
                 children: [
                     {
                         name: 'partidas-juego.index',
                         path: '',
                         component: () => import('../views/admin/partidas/Index.vue'),
                         meta: {
-                            breadCrumb: 'Partidas Juego',
+                            breadCrumb: 'Partidas',
                             hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'partidas-juego.create',
+                        path: 'partidas/create',
+                        component: () => import('../views/admin/partidas/Create.vue'),
+                        meta: {
+                            breadCrumb: 'Crear Partida',
+                            linked: false
+                        }
+                    },
+                    {
+                        name: 'partidas-juego.edit',
+                        path: 'partidas/:id/edit',
+                        component: () => import('../views/admin/partidas/Edit.vue'),
+                        meta: {
+                            breadCrumb: 'Editar Partida',
+                            linked: false
                         }
                     }
                 ]
@@ -314,6 +371,15 @@ export default [
                         meta: {
                             breadCrumb: 'Imágenes Juego',
                             hideBreadcrumb: true
+                        }
+                    },
+                    {
+                        name: 'imagenes-juego.upload',
+                        path: 'upload',
+                        component: () => import('../views/admin/imagenes/Upload.vue'),
+                        meta: {
+                            breadCrumb: 'Subir Imagen',
+                            linked: false
                         }
                     }
                 ]

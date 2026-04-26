@@ -16,6 +16,7 @@ export default function useSalas() {
     id: null,
     nombre: '',
     codigo: '',
+    tiempo_respuesta: 30,
     categorias: []
   }
 
@@ -40,6 +41,12 @@ export default function useSalas() {
       .trim()
       .required('El código es obligatorio')
       .min(2, 'Debe tener al menos 2 caracteres'),
+    tiempo_respuesta: yup
+      .number()
+      .typeError('Debe ser un número')
+      .required('El tiempo es obligatorio')
+      .min(5, 'Mínimo 5 segundos')
+      .max(300, 'Máximo 300 segundos'),
     categorias: yup.array().nullable()
   })
 
@@ -63,6 +70,7 @@ export default function useSalas() {
       id: data.id ?? null,
       nombre: data.nombre ?? '',
       codigo: data.codigo ?? '',
+      tiempo_respuesta: data.tiempo_respuesta ?? 30,
       categorias: (data.categorias ?? []).map((categoria) => categoria.id)
     }
     clearErrors()
@@ -116,6 +124,7 @@ export default function useSalas() {
           nombre: sala.value.nombre,
           codigo: sala.value.codigo,
           id_creador: idCreador,
+          tiempo_respuesta: sala.value.tiempo_respuesta,
           categorias: sala.value.categorias
         })
       )
@@ -144,6 +153,7 @@ export default function useSalas() {
         axios.put(`/api/salas/${sala.value.id}`, {
           nombre: sala.value.nombre,
           codigo: sala.value.codigo,
+          tiempo_respuesta: sala.value.tiempo_respuesta,
           categorias: sala.value.categorias
         })
       )

@@ -8,7 +8,6 @@ export default function usePartidas() {
   const partidas = ref([])
   const salasDisponibles = ref([])
   const isLoading = ref(false)
-  const toast = useToast()
 
   const initialPartida = {
     id: null,
@@ -18,22 +17,13 @@ export default function usePartidas() {
   }
 
   const partida = ref({ ...initialPartida })
+  const toast = useToast()
 
-  const {
-    validate,
-    clearErrors,
-    hasError,
-    getError
-  } = useValidation()
+  const { errors, validate, handleRequestError, clearErrors, hasError, getError } = useValidation()
 
   const partidaSchema = yup.object({
-    id_sala: yup
-      .number()
-      .typeError('La sala es obligatoria')
-      .required('La sala es obligatoria'),
-    fecha_inicio: yup
-      .string()
-      .nullable(),
+    id_sala: yup.number().typeError('La sala es obligatoria').required('La sala es obligatoria'),
+    fecha_inicio: yup.string().nullable(),
     fecha_fin: yup
       .string()
       .nullable()
@@ -54,20 +44,6 @@ export default function usePartidas() {
     }
   }
 
-  const toInputDateTime = (dateValue) => {
-    if (!dateValue) return ''
-    const date = new Date(dateValue)
-    if (Number.isNaN(date.getTime())) return ''
-    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-    return localDate.toISOString().slice(0, 16)
-  }
-
-  const normalizePayload = () => ({
-    id_sala: Number(partida.value.id_sala),
-    fecha_inicio: partida.value.fecha_inicio || null,
-    fecha_fin: partida.value.fecha_fin || null
-  })
-
   const resetPartida = () => {
     partida.value = { ...initialPartida }
     clearErrors()
@@ -77,36 +53,28 @@ export default function usePartidas() {
     partida.value = {
       id: data.id ?? null,
       id_sala: data.id_sala ?? null,
-      fecha_inicio: toInputDateTime(data.fecha_inicio),
-      fecha_fin: toInputDateTime(data.fecha_fin)
+      fecha_inicio: data.fecha_inicio ? toDateTimeLocal(data.fecha_inicio) : '',
+      fecha_fin: data.fecha_fin ? toDateTimeLocal(data.fecha_fin) : ''
     }
     clearErrors()
   }
 
-  const upsertPartidaRecord = (partidaRecord) => {
-    if (!partidaRecord?.id) return
-    partidas.value = [
-      partidaRecord,
-      ...partidas.value.filter(item => item.id !== partidaRecord.id)
-    ]
+  const upsertPartidaRecord = (record) => {
+    if (!record?.id) return
+    partidas.value = [record, ...partidas.value.filter((item) => item.id !== record.id)]
   }
 
   const getPartidas = async (params = {}) => {
-    const defaultParams = { page: 1 }
-    const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
+    const query = new URLSearchParams({ page: 1, ...params }).toString()
     const response = await axios.get(`/api/partidas?${query}`)
     partidas.value = response.data?.data ?? []
     return response
   }
 
   const getSalasDisponibles = async () => {
-    try {
-      const response = await axios.get('/api/salas?page=1')
-      salasDisponibles.value = response.data?.data ?? []
-      return response
-    } catch {
-      toast.error('Error', 'No se pudo obtener la lista de salas')
-    }
+    const response = await axios.get('/api/salas?page=1')
+    salasDisponibles.value = response.data?.data ?? []
+    return response
   }
 
   const createPartida = async () => {
@@ -118,17 +86,17 @@ export default function usePartidas() {
 
     try {
       const response = await withLoading(() =>
-        axios.post('/api/partidas', normalizePayload())
+        axios.post('/api/partidas', {
+          id_sala: partida.value.id_sala,
+          fecha_inicio: partida.value.fecha_inicio || null,
+          fecha_fin: partida.value.fecha_fin || null
+        })
       )
-      const data = response.data
+      const data = response.data?.data ?? response.data
       toast.crud.created('Partida')
       return data
     } catch (error) {
-      if (error?.response?.status === 422) {
-        toast.error('Error de validación', 'Revisa los datos de la partida.')
-      } else {
-        toast.error('Error', 'No se pudo crear la partida')
-      }
+      handleRequestError(error, { fallbackMessage: 'No se pudo crear la partida' })
     }
   }
 
@@ -141,29 +109,36 @@ export default function usePartidas() {
 
     try {
       const response = await withLoading(() =>
-        axios.put(`/api/partidas/${partida.value.id}`, normalizePayload())
+        axios.put(`/api/partidas/${partida.value.id}`, {
+          id_sala: partida.value.id_sala,
+          fecha_inicio: partida.value.fecha_inicio || null,
+          fecha_fin: partida.value.fecha_fin || null
+        })
       )
-      const data = response.data
+      const data = response.data?.data ?? response.data
       toast.crud.updated('Partida')
       return data
     } catch (error) {
-      if (error?.response?.status === 422) {
-        toast.error('Error de validación', 'Revisa los datos de la partida.')
-      } else {
-        toast.error('Error', 'No se pudo actualizar la partida')
-      }
+      handleRequestError(error, { fallbackMessage: 'No se pudo actualizar la partida' })
     }
   }
 
   const deletePartida = async (id) => {
     try {
       const response = await withLoading(() => axios.delete(`/api/partidas/${id}`))
-      partidas.value = partidas.value.filter(item => item.id !== id)
+      partidas.value = partidas.value.filter((item) => item.id !== id)
       toast.crud.deleted('Partida')
       return response
-    } catch {
-      toast.error('Error', 'No se pudo eliminar la partida')
+    } catch (error) {
+      handleRequestError(error, { fallbackMessage: 'No se pudo eliminar la partida' })
     }
+  }
+
+  const getPartida = async (id) => {
+    const response = await axios.get(`/api/partidas/${id}`)
+    const data = response.data?.data ?? response.data
+    setPartida(data)
+    return response
   }
 
   return {
@@ -171,15 +146,25 @@ export default function usePartidas() {
     partida,
     salasDisponibles,
     isLoading,
+    errors,
     hasError,
     getError,
-    resetPartida,
-    setPartida,
-    upsertPartidaRecord,
     getPartidas,
     getSalasDisponibles,
     createPartida,
     updatePartida,
-    deletePartida
+    deletePartida,
+    setPartida,
+    resetPartida,
+    upsertPartidaRecord,
+    getPartida
   }
+}
+
+function toDateTimeLocal(value) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  const offset = date.getTimezoneOffset()
+  const local = new Date(date.getTime() - offset * 60000)
+  return local.toISOString().slice(0, 16)
 }

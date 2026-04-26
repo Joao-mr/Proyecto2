@@ -19,14 +19,14 @@
 
     {{posts}}
 
-    <div class="w-full space-y-4">
+    <div class="w-100 vstack gap-3">
     <div class="flex items-center justify-between">
       <div>
         <h2 class="text-lg font-semibold">Gestión de Posts</h2>
-        <p class="text-sm text-gray-600">Lista simple de posts</p>
+        <p class="small text-muted">Lista simple de posts</p>
       </div>
-      <div class="flex gap-2">
-        <button class="px-3 py-2 text-sm border rounded hover:bg-gray-50 bg-white">
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-secondary btn-sm">
           Actualizar'
         </button>
       </div>
@@ -34,7 +34,7 @@
 
     <div class="overflow-x-auto border rounded bg-white shadow-sm">
       <table class="w-full text-sm text-left">
-        <thead class="bg-gray-50 text-gray-700 font-medium border-b">
+        <thead class="table-light">
           <tr>
             <th class="px-4 py-3 w-16">ID</th>
             <th class="px-4 py-3">Título</th>
@@ -45,19 +45,19 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
-          <tr  v-for="post in posts" class="hover:bg-gray-50">
-            <td class="px-4 py-3 text-gray-500"{{ post.id }}></td>
+          <tr  v-for="post in posts" class="">
+            <td class="px-4 py-3 text-muted"{{ post.id }}></td>
             
-            <td class="px-4 py-3 font-medium text-gray-900">{{ post.title }}</td>
+            <td class="px-4 py-3 fw-medium">{{ post.title }}</td>
             <td class="px-4 py-3">
               {{ post.categories }}
             </td>
-            <td class="px-4 py-3 text-gray-600">
+            <td class="px-4 py-3 text-secondary">
               <div class="line-clamp-2">{{ post.title }}</div>
             </td>
-            <td class="px-4 py-3 whitespace-nowrap text-gray-500">{{formatDate(post.create_at) }}</td>
+            <td class="px-4 py-3 text-muted">{{formatDate(post.create_at) }}</td>
             <td class="px-4 py-3 text-right space-x-2">
-              <button class="text-blue-600 hover:text-blue-800 font-medium">
+              <button class="text-primary fw-medium">
                 Editar
               </button>
               <button class="text-red-600 hover:text-red-800 font-medium" >
