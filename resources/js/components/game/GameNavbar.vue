@@ -7,7 +7,12 @@
 
       <span class="game-navbar__sala-name">{{ salaName }}</span>
 
-      <button class="game-navbar__exit" @click="emit('exit')">
+      <button
+        type="button"
+        class="game-navbar__exit"
+        aria-label="Salir de la partida"
+        @click="emit('exit')"
+      >
         <i class="pi pi-sign-out"></i>
         Salir
       </button>

@@ -7,13 +7,16 @@
         class="game-answer-panel__input"
         type="text"
         placeholder="¿Qué hay en la imagen?"
+        aria-label="Respuesta de la imagen"
         maxlength="120"
         autocomplete="off"
+        enterkeyhint="send"
         :disabled="disabled"
       />
       <button
         type="submit"
         class="game-answer-panel__btn"
+        aria-label="Enviar respuesta"
         :disabled="disabled || !answer.trim()"
       >
         <i class="pi pi-send"></i>

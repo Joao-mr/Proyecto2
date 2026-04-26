@@ -23,10 +23,17 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $token = $request->user()->createToken($request->userAgent())->plainTextToken;
+        $user = $request->user()->loadMissing('roles.permissions');
+        $token = $user->createToken($request->userAgent())->plainTextToken;
 
         if ($request->wantsJson()) {
-            return response()->json(['user' => $request->user(), 'token' => $token]);
+            return response()->json([
+                'user' => array_merge($user->toArray(), [
+                    'roles' => $user->roles->values(),
+                    'permissions' => $user->getAllPermissions()->pluck('name')->values(),
+                ]),
+                'token' => $token,
+            ]);
         }
 
         return redirect()->intended(RouteServiceProvider::HOME);

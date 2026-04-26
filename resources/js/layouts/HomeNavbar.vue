@@ -109,8 +109,15 @@
           <span class="home-auth-mobile__name">{{ store.user?.name }}</span>
         </div>
         <router-link :to="{ name: userPanelRoute }" class="home-auth-mobile__link" @click="closeMobileMenu">
+          Mi perfil
         </router-link>
-        <button class="home-auth-mobile__link home-auth-mobile__logout" @click="handleLogout">
+        <button
+          class="home-auth-mobile__link home-auth-mobile__logout"
+          type="button"
+          aria-label="Cerrar sesion"
+          @click="handleLogout"
+        >
+          Cerrar sesion
         </button>
       </div>
 
@@ -140,12 +147,11 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { authStore } from '@/store/auth';
 import useAuth from '@/composables/auth';
 
 const store = authStore();
-const router = useRouter();
 const route = useRoute();
 const { logout } = useAuth();
 

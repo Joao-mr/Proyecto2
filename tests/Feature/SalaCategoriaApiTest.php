@@ -7,6 +7,7 @@ use App\Models\Sala;
 use App\Models\SalaCategoria;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class SalaCategoriaApiTest extends TestCase
@@ -22,6 +23,7 @@ class SalaCategoriaApiTest extends TestCase
             'email' => 'tester'.uniqid().'@example.com',
             'password' => bcrypt('password'),
         ]);
+        Sanctum::actingAs($user);
 
         $sala = Sala::create([
             'nombre' => 'Sala '.uniqid(),

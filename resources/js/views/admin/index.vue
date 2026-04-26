@@ -1,6 +1,5 @@
 <template>
     <div class="dashboard-container">
-        <!-- Page Header Card -->
         <Card class="page-header-card">
             <template #content>
                 <div class="page-header-content">
@@ -10,14 +9,13 @@
                             Dashboard
                         </h1>
                         <p class="page-description">
-                            Bienvenido al panel de administración. Desde aquí puedes gestionar usuarios, posts, categorías y más.
+                            Bienvenido al panel de administracion. Desde aqui puedes gestionar usuarios, categorias, salas, partidas e imagenes.
                         </p>
                     </div>
                 </div>
             </template>
         </Card>
 
-        <!-- Stats Cards -->
         <div class="dashboard-stats-grid">
             <Card class="dashboard-stat-card">
                 <template #content>
@@ -37,24 +35,10 @@
                 <template #content>
                     <div class="stat-card-content">
                         <div class="stat-card-icon stat-icon-success">
-                            <i class="pi pi-file"></i>
-                        </div>
-                        <div class="stat-card-info">
-                            <p class="stat-card-label">Posts</p>
-                            <p class="stat-card-value">{{ stats.posts || 0 }}</p>
-                        </div>
-                    </div>
-                </template>
-            </Card>
-
-            <Card class="dashboard-stat-card">
-                <template #content>
-                    <div class="stat-card-content">
-                        <div class="stat-card-icon stat-icon-success">
                             <i class="pi pi-tags"></i>
                         </div>
                         <div class="stat-card-info">
-                            <p class="stat-card-label">Categorías</p>
+                            <p class="stat-card-label">Categorias</p>
                             <p class="stat-card-value">{{ stats.categories || 0 }}</p>
                         </div>
                     </div>
@@ -76,19 +60,15 @@
             </Card>
         </div>
 
-        <!-- Quick Actions Card -->
         <Card class="dashboard-actions-card">
             <template #content>
                 <div class="dashboard-actions-content">
                     <h2 class="dashboard-actions-title">
                         <i class="pi pi-bolt"></i>
-                        Acciones Rápidas
+                        Acciones Rapidas
                     </h2>
                     <div class="dashboard-actions-grid">
-                        <router-link
-                            to="/admin/users"
-                            class="dashboard-action-item"
-                        >
+                        <router-link to="/admin/users" class="dashboard-action-item">
                             <div class="dashboard-action-icon stat-icon-primary">
                                 <i class="pi pi-users"></i>
                             </div>
@@ -99,38 +79,18 @@
                             <i class="pi pi-chevron-right dashboard-action-arrow"></i>
                         </router-link>
 
-                        <router-link
-                            to="/admin/posts"
-                            class="dashboard-action-item"
-                        >
-                            <div class="dashboard-action-icon stat-icon-success">
-                                <i class="pi pi-file"></i>
-                            </div>
-                            <div class="dashboard-action-info">
-                                <p class="dashboard-action-title">Gestionar Posts</p>
-                                <p class="dashboard-action-description">Ver y editar posts</p>
-                            </div>
-                            <i class="pi pi-chevron-right dashboard-action-arrow"></i>
-                        </router-link>
-
-                        <router-link
-                            to="/admin/categories"
-                            class="dashboard-action-item"
-                        >
+                        <router-link to="/admin/categorias" class="dashboard-action-item">
                             <div class="dashboard-action-icon stat-icon-success">
                                 <i class="pi pi-tags"></i>
                             </div>
                             <div class="dashboard-action-info">
-                                <p class="dashboard-action-title">Gestionar Categorías</p>
-                                <p class="dashboard-action-description">Ver y editar categorías</p>
+                                <p class="dashboard-action-title">Gestionar Categorias</p>
+                                <p class="dashboard-action-description">Ver y editar categorias</p>
                             </div>
                             <i class="pi pi-chevron-right dashboard-action-arrow"></i>
                         </router-link>
 
-                        <router-link
-                            to="/admin/roles"
-                            class="dashboard-action-item"
-                        >
+                        <router-link to="/admin/roles" class="dashboard-action-item">
                             <div class="dashboard-action-icon stat-icon-warning">
                                 <i class="pi pi-shield"></i>
                             </div>
@@ -141,10 +101,7 @@
                             <i class="pi pi-chevron-right dashboard-action-arrow"></i>
                         </router-link>
 
-                        <router-link
-                            to="/admin/permissions"
-                            class="dashboard-action-item"
-                        >
+                        <router-link to="/admin/permissions" class="dashboard-action-item">
                             <div class="dashboard-action-icon stat-icon-danger">
                                 <i class="pi pi-key"></i>
                             </div>
@@ -164,34 +121,29 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import useUsers from "../../composables/users";
-import usePosts from "../../composables/posts";
 import useCategorias from "../../composables/categorias";
 import useRoles from "../../composables/roles";
 
 const stats = ref({
     users: 0,
-    posts: 0,
     categories: 0,
     roles: 0
 });
 
 const { categorias, getCategorias } = useCategorias();
 const { users, getUsers } = useUsers();
-const { posts, getPosts } = usePosts();
 const { roles, getRoles } = useRoles();
 
 const loadStats = async () => {
     try {
         await Promise.all([
             getUsers(),
-            getPosts(),
             getCategorias(),
             getRoles()
         ]);
-        
+
         stats.value = {
             users: users.value?.total || users.value?.data?.length || 0,
-            posts: posts.value?.total || posts.value?.data?.length || 0,
             categories: categorias.value?.total || categorias.value?.data?.length || 0,
             roles: roles.value?.total || roles.value?.data?.length || 0
         };

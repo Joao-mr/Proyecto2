@@ -12,18 +12,17 @@ class CategoryPublicController extends Controller
 {
     public function index(): JsonResponse
     {
-        $table = $this->resolveCategoryTable();
-
-        if (!$table) {
+        if (!Schema::hasTable('categorias')) {
             return response()->json(['data' => []]);
         }
 
-        $idCol = $this->firstExistingColumn($table, ['id', 'idCategoria', 'categoria_id']) ?? 'id';
-        $nameCol = $this->firstExistingColumn($table, ['nombre', 'name', 'titulo', 'title']);
-        $slugCol = $this->firstExistingColumn($table, ['slug', 'codigo']);
-        $descCol = $this->firstExistingColumn($table, ['descripcion', 'description', 'detalle']);
-        $imageCol = $this->firstExistingColumn($table, ['imagen', 'image', 'image_url', 'icono', 'thumbnail']);
-        $orderCol = $this->firstExistingColumn($table, ['orden', 'position', 'sort', 'id']) ?? 'id';
+        $table = 'categorias';
+        $idCol = 'id';
+        $nameCol = $this->firstExistingColumn($table, ['nombre']);
+        $slugCol = $this->firstExistingColumn($table, ['slug']);
+        $descCol = $this->firstExistingColumn($table, ['descripcion']);
+        $imageCol = $this->firstExistingColumn($table, ['imagen']);
+        $orderCol = $this->firstExistingColumn($table, ['orden', 'id']) ?? 'id';
 
         $rows = DB::table($table)
             ->orderBy($orderCol)
@@ -49,13 +48,6 @@ class CategoryPublicController extends Controller
             ->values();
 
         return response()->json(['data' => $rows]);
-    }
-
-    private function resolveCategoryTable(): ?string
-    {
-        if (Schema::hasTable('categorias')) return 'categorias';
-        if (Schema::hasTable('categories')) return 'categories';
-        return null;
     }
 
     private function firstExistingColumn(string $table, array $columns): ?string

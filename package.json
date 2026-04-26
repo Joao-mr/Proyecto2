@@ -3,7 +3,11 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "test": "npm run test:frontend",
+        "test:frontend": "node tests/router-profile-route.test.mjs",
+        "test:backend": "php vendor/bin/phpunit",
+        "lint:php": "php vendor/bin/pint --test"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.8",
