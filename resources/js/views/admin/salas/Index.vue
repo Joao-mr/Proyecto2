@@ -129,35 +129,25 @@
             </template>
         </Card>
 
-        <!-- Diálogo eliminado: edición y creación ahora son navegación clásica -->
     </div>
 </template>
 
 <script setup>
+import { ref, onMounted, inject } from "vue";
 import { useRouter } from 'vue-router';
+import useSalas from "@/composables/salas";
+import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
+
 const router = useRouter();
 
 const goToEditSala = (id) => {
     router.push(`/admin/salas/edit/${id}`);
 };
-import { ref, reactive, computed, onMounted, inject } from "vue";
-import useSalas from "@/composables/salas";
-import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
 
 const {
     salas,
-    sala,
-    categoriasDisponibles,
     getSalas,
-    getCategoriasDisponibles,
-    createSala,
-    updateSala,
     deleteSala,
-    resetSala,
-    setSala,
-    hasError,
-    getError,
-    upsertSalaRecord,
     isLoading
 } = useSalas();
 
@@ -170,51 +160,8 @@ const filters = ref({
     codigo: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
 });
 
-const salaDialog = reactive({
-    open: false,
-    type: 'create'
-});
-
-const isSubmitting = computed(() => isLoading.value);
-
-
 const goToCreateSala = () => {
     router.push('/admin/salas/create');
-};
-
-const openEditDialog = (currentSala) => {
-    setSala(currentSala);
-    salaDialog.type = 'edit';
-    salaDialog.open = true;
-};
-
-const closeDialog = () => {
-    salaDialog.open = false;
-    resetSala();
-};
-
-const submitCreate = () => {
-    if (isSubmitting.value) return;
-
-    createSala()
-        .then(createdSala => {
-            if (createdSala) {
-                upsertSalaRecord(createdSala);
-                closeDialog();
-            }
-        });
-};
-
-const submitUpdate = () => {
-    if (isSubmitting.value) return;
-
-    updateSala()
-        .then(updatedSala => {
-            if (updatedSala) {
-                upsertSalaRecord(updatedSala);
-                closeDialog();
-            }
-        });
 };
 
 const performDelete = (id) => {
@@ -253,9 +200,6 @@ const formatDate = (dateString) => {
 };
 
 onMounted(async () => {
-    await Promise.all([
-        getCategoriasDisponibles(),
-        getSalas()
-    ]);
+    await getSalas();
 });
 </script>

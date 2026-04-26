@@ -112,62 +112,19 @@
             </template>
         </Card>
 
-        <Dialog
-            v-model:visible="categoriaDialog.open"
-            modal
-            :header="categoriaDialog.type === 'create' ? 'Crear Categoría' : 'Editar Categoría'"
-            :style="{ width: '500px' }"
-            class="category-dialog"
-        >
-            <div class="vstack gap-3">
-                <div>
-                    <label for="categoria-nombre" class="dialog-label">Nombre de la categoría</label>
-                    <InputText
-                        v-model="categoria.nombre"
-                        id="categoria-nombre"
-                        class="w-100"
-                        :class="{ 'p-invalid': hasError('nombre') }"
-                        placeholder="Ej: Famosos"
-                    />
-                    <small v-if="hasError('nombre')" class="dialog-error">
-                        {{ getError('nombre') }}
-                    </small>
-                </div>
-            </div>
-            <template #footer>
-                <Button
-                    severity="secondary"
-                    label="Cancelar"
-                    @click="closeDialog"
-                    :disabled="isSubmitting"
-                />
-                <Button
-                    v-if="categoriaDialog.type === 'create'"
-                    label="Crear"
-                    @click="submitCreate"
-                    :loading="isSubmitting"
-                    :disabled="isSubmitting"
-                />
-                <Button
-                    v-else
-                    label="Guardar"
-                    @click="submitUpdate"
-                    :loading="isSubmitting"
-                    :disabled="isSubmitting"
-                />
-            </template>
-        </Dialog>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, inject } from "vue";
+import { ref, onMounted, inject } from "vue";
 import useCategorias from "@/composables/categorias";
 import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
+import { useRouter } from 'vue-router';
 
-const { categorias, categoria, getCategorias, createCategoria, updateCategoria, deleteCategoria, resetCategoria, setCategoria, hasError, getError, upsertCategoriaRecord, isLoading } = useCategorias();
+const { categorias, getCategorias, deleteCategoria, isLoading } = useCategorias();
 
 const swal = inject('$swal');
+const router = useRouter();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -175,52 +132,12 @@ const filters = ref({
     nombre: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
 });
 
-const categoriaDialog = reactive({
-    open: false,
-    type: 'create'
-});
-
-const isSubmitting = computed(() => isLoading.value);
-
-
-import { useRouter } from 'vue-router';
-const router = useRouter();
-
 const goToCreateCategoria = () => {
     router.push('/admin/categorias/create');
 };
 
 const goToEditCategoria = (id) => {
     router.push(`/admin/categorias/edit/${id}`);
-};
-
-const closeDialog = () => {
-    categoriaDialog.open = false;
-    resetCategoria();
-};
-
-const submitCreate = () => {
-    if (isSubmitting.value) return;
-
-    createCategoria()
-        .then(createdCategoria => {
-            if (createdCategoria) {
-                upsertCategoriaRecord(createdCategoria);
-                closeDialog();
-            }
-        });
-};
-
-const submitUpdate = () => {
-    if (isSubmitting.value) return;
-
-    updateCategoria()
-        .then(updatedCategoria => {
-            if (updatedCategoria) {
-                upsertCategoriaRecord(updatedCategoria);
-                closeDialog();
-            }
-        });
 };
 
 const performDelete = (id) => {
