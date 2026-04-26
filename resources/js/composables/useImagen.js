@@ -25,7 +25,7 @@ export default function useImagen() {
   } = useValidation()
 
   // ============================================
-  // SCHEMA DE VALIDACI├ôN
+  // SCHEMA DE VALIDACION
   // ============================================
   const imagenSchema = yup.object({
     url: yup
@@ -44,7 +44,7 @@ export default function useImagen() {
   // UTILIDADES
   // ============================================
   const withLoading = async (fn) => {
-    if (isLoading.value) throw new Error('Operaci├│n en curso')
+    if (isLoading.value) throw new Error('Operacion en curso')
     isLoading.value = true
     try {
       return await fn()
@@ -58,7 +58,7 @@ export default function useImagen() {
     const maxSize = 5 * 1024 * 1024 // 5MB
 
     if (!file) {
-      throw new Error('No se seleccion├│ archivo')
+      throw new Error('No se selecciono archivo')
     }
 
     if (!allowedTypes.includes(file.type)) {
@@ -94,7 +94,7 @@ export default function useImagen() {
   }
 
   // ============================================
-  // FUNCIONES DE ESTADO (CRUD b├ísico)
+  // FUNCIONES DE ESTADO (CRUD basico)
   // ============================================
   const resetImagen = () => {
     imagen.value = { id: null, url: '', respuesta_correcta: '', categoria_id: null }
@@ -104,7 +104,8 @@ export default function useImagen() {
   const setImagen = (data = {}) => {
     imagen.value = {
       id: data.id ?? null,
-      url: data.url ?? '',
+      // En listados de admin la URL viene en data.urls.original
+      url: data.url ?? data.urls?.original ?? '',
       respuesta_correcta: data.respuesta_correcta ?? '',
       categoria_id: data.categoria_id ?? null
     }
@@ -124,20 +125,20 @@ export default function useImagen() {
   // ============================================
   
   /**
-   * Obtener lista de im├ígenes
+   * Obtener lista de imagenes
    */
   const getImagenes = async (params = {}) => {
     isLoading.value = true
     try {
       let response
       
-      // Si tiene par├ímetros (Index.vue con paginaci├│n)
+      // Si tiene parametros (Index.vue con paginacion)
       if (Object.keys(params).length > 0) {
         const defaultParams = { page: 1 }
         const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
         response = await axios.get(`/api/imagenes?${query}`)
       } else {
-        // Sin par├ímetros (Upload.vue, simple list)
+        // Sin parametros (Upload.vue, simple list)
         response = await axios.get('/api/imagenes', {
           headers: {
             Authorization: `Bearer ${auth.token}`
@@ -146,14 +147,14 @@ export default function useImagen() {
       }
 
       imagenes.value = response.data?.data ?? response.data ?? []
-      if (!Object.keys(params).length > 0) {
-        toast.success('Im├ígenes cargadas correctamente')
+      if (!(Object.keys(params).length > 0)) {
+        toast.success('Imagenes cargadas correctamente')
       }
       return response
     } catch (error) {
-      console.error('Error al obtener im├ígenes:', error)
-      if (!Object.keys(params).length > 0) {
-        toast.error(error.response?.data?.message || 'Error al cargar im├ígenes')
+      console.error('Error al obtener imagenes:', error)
+      if (!(Object.keys(params).length > 0)) {
+        toast.error(error.response?.data?.message || 'Error al cargar imagenes')
       }
       throw error
     } finally {
@@ -162,22 +163,31 @@ export default function useImagen() {
   }
 
   /**
-   * Crear imagen (CRUD b├ísico)
+   * Crear imagen (CRUD basico)
    */
   const createImagen = async () => {
     const { isValid } = await validate(imagenSchema, imagen.value)
     if (!isValid) {
-      toast.error('Error de validaci├│n', 'Revisa los campos resaltados.')
-      throw new Error('Validaci├│n')
+      toast.error('Error de validacion', 'Revisa los campos resaltados.')
+      throw new Error('Validacion')
     }
 
     try {
+      const payload = {
+        categoria_id: imagen.value.categoria_id ?? null
+      }
+
+      // Evitamos enviar strings vacios porque Laravel los convierte a null.
+      if (typeof imagen.value.url === 'string' && imagen.value.url.trim() !== '') {
+        payload.url = imagen.value.url.trim()
+      }
+
+      if (typeof imagen.value.respuesta_correcta === 'string' && imagen.value.respuesta_correcta.trim() !== '') {
+        payload.respuesta_correcta = imagen.value.respuesta_correcta.trim()
+      }
+
       const response = await withLoading(() =>
-        axios.post('/api/imagenes', {
-          url: imagen.value.url,
-          respuesta_correcta: imagen.value.respuesta_correcta,
-          categoria_id: imagen.value.categoria_id ?? null
-        })
+        axios.post('/api/imagenes', payload)
       )
       const data = response.data
       toast.crud.created('Imagen')
@@ -187,7 +197,7 @@ export default function useImagen() {
       handleRequestError(error, {
         fallbackMessage: 'No se pudo crear la imagen',
         onValidationError: () =>
-          toast.error('Error de validaci├│n', 'Revisa los campos resaltados.'),
+          toast.error('Error de validacion', 'Revisa los campos resaltados.'),
         onGenericError: (message) => toast.error('Error', message)
       })
       throw error
@@ -195,22 +205,31 @@ export default function useImagen() {
   }
 
   /**
-   * Actualizar imagen (CRUD b├ísico)
+   * Actualizar imagen (CRUD basico)
    */
   const updateImagen = async () => {
     const { isValid } = await validate(imagenSchema, imagen.value)
     if (!isValid) {
-      toast.error('Error de validaci├│n', 'Revisa los campos resaltados.')
-      throw new Error('Validaci├│n')
+      toast.error('Error de validacion', 'Revisa los campos resaltados.')
+      throw new Error('Validacion')
     }
 
     try {
+      const payload = {
+        categoria_id: imagen.value.categoria_id ?? null
+      }
+
+      // Evitamos enviar strings vacios porque Laravel los convierte a null.
+      if (typeof imagen.value.url === 'string' && imagen.value.url.trim() !== '') {
+        payload.url = imagen.value.url.trim()
+      }
+
+      if (typeof imagen.value.respuesta_correcta === 'string' && imagen.value.respuesta_correcta.trim() !== '') {
+        payload.respuesta_correcta = imagen.value.respuesta_correcta.trim()
+      }
+
       const response = await withLoading(() =>
-        axios.put(`/api/imagenes/${imagen.value.id}`, {
-          url: imagen.value.url,
-          respuesta_correcta: imagen.value.respuesta_correcta,
-          categoria_id: imagen.value.categoria_id ?? null
-        })
+        axios.put(`/api/imagenes/${imagen.value.id}`, payload)
       )
       const data = response.data
       toast.crud.updated('Imagen')
@@ -220,7 +239,7 @@ export default function useImagen() {
       handleRequestError(error, {
         fallbackMessage: 'No se pudo actualizar la imagen',
         onValidationError: () =>
-          toast.error('Error de validaci├│n', 'Revisa los campos resaltados.'),
+          toast.error('Error de validacion', 'Revisa los campos resaltados.'),
         onGenericError: (message) => toast.error('Error', message)
       })
       throw error
@@ -231,7 +250,7 @@ export default function useImagen() {
    * Eliminar imagen
    */
   const deleteImagen = async (id) => {
-    if (!confirm('┬┐Est├ís seguro de que deseas eliminar esta imagen?')) {
+    if (!confirm('¿Estas seguro de que deseas eliminar esta imagen?')) {
       return
     }
 
@@ -299,7 +318,7 @@ export default function useImagen() {
   }
 
   /**
-   * Crear imagen y subir archivo en una sola petici├│n
+   * Crear imagen y subir archivo en una sola peticion
    * @param {File} file - El archivo de imagen
    * @param {string} respuestaCorrecta - Texto de la respuesta correcta (opcional)
    * @returns {Promise}
@@ -342,11 +361,11 @@ export default function useImagen() {
   }
 
   // ============================================
-  // FUNCIONES DE INFORMACI├ôN
+  // FUNCIONES DE INFORMACION
   // ============================================
 
   /**
-   * Obtener informaci├│n detallada de media de una imagen
+   * Obtener informacion detallada de media de una imagen
    */
   const getMediaInfo = async (imagenId) => {
     isLoading.value = true
@@ -357,11 +376,11 @@ export default function useImagen() {
         }
       })
       
-      toast.success('Informaci├│n de media obtenida')
+      toast.success('Informacion de media obtenida')
       return response.data.data
     } catch (error) {
       console.error('Error al obtener info de media:', error)
-      toast.error(error.response?.data?.message || 'Error al obtener informaci├│n')
+      toast.error(error.response?.data?.message || 'Error al obtener informacion')
       return null
     } finally {
       isLoading.value = false

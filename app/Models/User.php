@@ -28,7 +28,12 @@ class User extends Authenticatable implements HasMedia
         'email',
         'password',
         'surname1',
-        'surname2'
+        'surname2',
+        'alias',
+        'rol',
+        'elo',
+        'partidas_jugadas',
+        'titulo',
     ];
 
     /**
@@ -48,6 +53,13 @@ class User extends Authenticatable implements HasMedia
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'partidas_jugadas' => 'integer',
+        'elo_total' => 'integer',
+        'imagenes_acertadas' => 'integer',
+        'promedio_puntos' => 'integer',
+        'mejor_puntuacion' => 'integer',
+        'ultima_puntuacion' => 'integer',
+        'consistencia_pct' => 'integer',
     ];
 
     public function sendPasswordResetNotification($token)
@@ -69,12 +81,6 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(Sala::class, 'id_creador');
     }
-
-    public function respuestas()
-    {
-        return $this->hasMany(Respuesta::class, 'id_usuario');
-    }
-
 
     public function registerMediaCollections(): void
     {

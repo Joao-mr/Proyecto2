@@ -13,7 +13,7 @@
           <li>Gana puntos y sube en el ranking global</li>
         </ol>
         
-        <button class="action-btn">› Ver cómo jugar</button>
+        <button class="action-btn">› <a href="/info">Ver cómo jugar</a></button>
       </div>
 
       <div class="panel panel-right">
@@ -26,7 +26,7 @@
           Cada partida cuenta para tu posición en el ranking.
         </p>
         
-        <button class="action-btn">› Competir ahora</button>
+        <button class="action-btn">› <a href="/categorias">Competir ahora</a></button>
       </div>
     </div>
 
@@ -37,28 +37,28 @@
         
         <div class="feature-item">
           <div class="icon-wrapper shadow-effect">
-            <span class="icon-placeholder">🗂️</span> 
+            <img src="/images/icono1.svg" alt="icono1" class="icon-placeholder" />
           </div>
           <p>Categorías variadas</p>
         </div>
         
         <div class="feature-item">
           <div class="icon-wrapper shadow-effect">
-            <span class="icon-placeholder">🏆</span>
+            <img src="/images/icono2.svg" alt="icono2" class="icon-placeholder" />
           </div>
           <p>Ranking global</p>
         </div>
         
         <div class="feature-item">
           <div class="icon-wrapper shadow-effect">
-            <span class="icon-placeholder">⚡</span>
+            <img src="/images/icono3.svg" alt="icono3" class="icon-placeholder" />
           </div>
           <p>Responde rápido</p>
         </div>
         
         <div class="feature-item no-border">
           <div class="icon-wrapper shadow-effect">
-            <span class="icon-placeholder">🎮</span>
+            <img src="/images/icono4.svg" alt="icono4" class="icon-placeholder" />
           </div>
           <p>Salas en tiempo real</p>
         </div>

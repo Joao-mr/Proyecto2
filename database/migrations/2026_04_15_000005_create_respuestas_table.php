@@ -11,25 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('respuestas', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_usuario');
-            $table->unsignedBigInteger('id_imagen');
-            $table->string('respuesta');
-            $table->boolean('es_correcta')->default(false);
-            $table->integer('tiempo')->default(0);
-            $table->timestamps();
-
-            $table->foreign('id_usuario')
-                ->references('id')
-                ->on('users')
-                ->onDelete('cascade');
-
-            $table->foreign('id_imagen')
-                ->references('id')
-                ->on('imagenes')
-                ->onDelete('cascade');
-        });
+        // No-op: la tabla "respuestas" no forma parte del diagrama final.
     }
 
     /**
@@ -37,6 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('respuestas');
+        // No-op.
     }
 };

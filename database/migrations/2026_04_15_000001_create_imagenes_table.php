@@ -15,7 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('url');
             $table->string('respuesta_correcta');
-            $table->timestamps();
+            $table->unsignedBigInteger('categoria_id')->nullable();
+
+            $table->foreign('categoria_id')
+                ->references('id')
+                ->on('categorias')
+                ->onDelete('set null');
         });
     }
 

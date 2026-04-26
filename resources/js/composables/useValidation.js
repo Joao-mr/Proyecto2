@@ -68,10 +68,46 @@ export function useValidation() {
   const getError = (field) => field.includes('.') ? errors.value[field.split('.')[0]]?.[field.split('.')[1]] : errors.value[field]
   const hasErrors = () => Object.keys(errors.value).length > 0
 
+  /**
+   * Maneja errores de request HTTP de forma uniforme y evita repetir lógica en composables.
+   */
+  const handleRequestError = (error, options = {}) => {
+    const {
+      fallbackMessage = 'Ha ocurrido un error inesperado.',
+      onValidationError,
+      onGenericError
+    } = options
+
+    if (error?.response?.status === 422) {
+      const validationErrors = error.response.data?.errors ?? {}
+      errors.value = {}
+
+      Object.entries(validationErrors).forEach(([field, messages]) => {
+        const message = Array.isArray(messages) ? messages[0] : messages
+        setFieldError(field, message || 'Valor inválido')
+      })
+
+      if (typeof onValidationError === 'function') {
+        onValidationError(error)
+      }
+      return
+    }
+
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      fallbackMessage
+
+    if (typeof onGenericError === 'function') {
+      onGenericError(message, error)
+    }
+  }
+
   return {
     errors,
     validate,
     validateField,
+    handleRequestError,
     setFieldError,
     clearFieldError,
     clearErrors,

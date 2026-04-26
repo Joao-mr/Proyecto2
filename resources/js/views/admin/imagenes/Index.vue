@@ -1,9 +1,9 @@
-<template>
+ï»¿<template>
     <div class="imagenes-page">
         <Card>
             <template #title>
                 <div class="d-flex align-items-center justify-content-between w-100">
-                    <span>Gesti+¦n de Im+ígenes (Juego)</span>
+                    <span>Gestion de Imagenes (Juego)</span>
                     <div class="d-flex align-items-center gap-2">
                         <Button
                             label="Actualizar"
@@ -26,7 +26,7 @@
             </template>
 
             <template #subtitle>
-                Administra las im+ígenes y su respuesta correcta.
+                Administra las imagenes y su respuesta correcta.
             </template>
 
             <template #content>
@@ -47,7 +47,7 @@
                     <template #empty>
                         <div class="table-empty-state">
                             <i class="pi pi-inbox empty-state-icon"></i>
-                            <p class="empty-state-text">No se encontraron im+ígenes</p>
+                            <p class="empty-state-text">No se encontraron imagenes</p>
                         </div>
                     </template>
 
@@ -66,7 +66,7 @@
                                 v-if="slotProps.data.urls?.thumb || slotProps.data.urls?.original"
                                 :src="slotProps.data.urls.thumb || slotProps.data.urls.original"
                                 :alt="`Imagen #${slotProps.data.id}`"
-                                class="rounded border object-fit-cover" style="width: 64px; height: 64px;"
+                                class="rounded border img-frame img-frame--full" style="width: 64px; height: 64px;"
                             />
                             <div v-else class="d-flex align-items-center justify-content-center rounded border bg-light" style="width: 64px; height: 64px;">
                                 <i class="pi pi-image text-gray-400 text-xl"></i>
@@ -83,14 +83,14 @@
                         </template>
                     </Column>
 
-                    <Column field="categoria_nombre" header="Categoría" sortable class="" style="min-width: 160px;">
+                    <Column field="categoria_nombre" header="CategorÃ­a" sortable class="" style="min-width: 160px;">
                         <template #body="slotProps">
                             <Tag v-if="slotProps.data.categoria_nombre" :value="slotProps.data.categoria_nombre" severity="secondary" />
-                            <span v-else class="text-sm opacity-50">Sin categoría</span>
+                            <span v-else class="text-sm opacity-50">Sin categorÃ­a</span>
                         </template>
                     </Column>
 
-                    <Column field="created_at" header="Fecha de Creaci+¦n" sortable class="" style="min-width: 180px;">
+                    <Column field="created_at" header="Fecha de Creacion" sortable class="" style="min-width: 180px;">
                         <template #body="slotProps">
                             <span class="text-sm table-cell-date">
                                 <i class="pi pi-calendar mr-2 text-xs opacity-70"></i>
@@ -149,13 +149,13 @@
                     </small>
                 </div>
                 <div>
-                    <label for="imagen-categoria" class="dialog-label">Categoría</label>
+                    <label for="imagen-categoria" class="dialog-label">CategorÃ­a</label>
                     <select
-                        v-model="imagen.categoria_id"
+                        v-model.number="imagen.categoria_id"
                         id="imagen-categoria"
                         class="w-full border rounded px-3 py-2 text-sm"
                     >
-                        <option :value="null">Sin categoría</option>
+                        <option :value="null">Sin categorÃ­a</option>
                         <option v-for="cat in categorias" :key="cat.id" :value="cat.id">
                             {{ cat.nombre }}
                         </option>
@@ -280,10 +280,10 @@ const confirmDeleteImagen = (currentImagen) => {
 
     swal({
         icon: 'warning',
-        title: '-+Eliminar imagen?',
-        text: `La imagen #${currentImagen.id} se eliminar+í de forma permanente.`,
+        title: 'Eliminar imagen?',
+        text: `La imagen #${currentImagen.id} se eliminara de forma permanente.`,
         showCancelButton: true,
-        confirmButtonText: 'S+¡, eliminar',
+        confirmButtonText: 'Si, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
     }).then((result) => {
@@ -308,3 +308,4 @@ onMounted(() => {
     getCategorias();
 });
 </script>
+

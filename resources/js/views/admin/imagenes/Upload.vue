@@ -8,13 +8,13 @@
                         icon="pi pi-times"
                         class="p-button-rounded p-button-text p-button-plain"
                         severity="secondary"
-                        @click="resetForm"
+                        @click="goBackToIndex"
                     />
                 </div>
             </template>
 
             <template #subtitle>
-                Carga una imagen para agregar al banco de im├ígenes del juego
+                Carga una imagen para agregar al banco de imagenes del juego
             </template>
 
             <template #content>
@@ -42,7 +42,7 @@
                                 v-if="previewUrl"
                                 :src="previewUrl"
                                 :alt="selectedFile.name"
-                                class="preview-image"
+                                class="preview-image img-frame img-frame--full"
                             />
                             <div class="file-info">
                                 <p class="filename">{{ selectedFile.name }}</p>
@@ -91,7 +91,7 @@
                             class="p-button-outlined"
                             severity="secondary"
                             :disabled="isLoading || uploadProgress > 0"
-                            @click="resetForm"
+                            @click="goBackToIndex"
                         />
                         <Button
                             label="Subir Imagen"
@@ -108,7 +108,7 @@
         <!-- Recently Uploaded -->
         <Card v-if="imagenes.length > 0" class="mt-6">
             <template #title>
-                <span><i class="pi pi-images mr-2"></i>Im├ígenes Recientes</span>
+                <span><i class="pi pi-images mr-2"></i>Imagenes Recientes</span>
             </template>
 
             <template #content>
@@ -122,7 +122,7 @@
                             v-if="getImageUrl(imagen, 'thumb')"
                             :src="getImageUrl(imagen, 'thumb')"
                             :alt="`Imagen ${imagen.id}`"
-                            class="thumbnail-image"
+                            class="thumbnail-image img-frame img-frame--full"
                         />
                         <div v-else class="thumbnail-placeholder">
                             <i class="pi pi-image"></i>
@@ -156,7 +156,7 @@
                 v-if="selectedImageToView"
                 :src="getImageUrl(selectedImageToView, 'preview')"
                 :alt="`Imagen ${selectedImageToView.id}`"
-                class="w-100"
+                class="w-100 img-frame img-frame--full"
             />
         </Dialog>
     </div>
@@ -164,6 +164,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import useImagen from '@/composables/useImagen'
 
 const fileInput = ref(null)
@@ -172,11 +173,16 @@ const previewUrl = ref(null)
 const respuestaCorrecta = ref('')
 const viewDialogVisible = ref(false)
 const selectedImageToView = ref(null)
+const router = useRouter()
 
 const { imagenes, isLoading, uploadProgress, getImagenes, uploadImagenNew, deleteImagen, getImageUrl } = useImagen()
 
+const goBackToIndex = () => {
+    router.push({ name: 'imagenes-juego.index' })
+}
+
 /**
- * Manejador de selecci├│n de archivo
+ * Manejador de seleccion de archivo
  */
 const handleFileSelect = (event) => {
     const file = event.target.files?.[0]
@@ -214,13 +220,16 @@ const generatePreview = (file) => {
 const handleUpload = async () => {
     if (!selectedFile.value) return
 
-    const result = await uploadImagenNew(selectedFile.value, respuestaCorrecta.value)
-
-    if (result) {
-        resetForm()
+    try {
+        const result = await uploadImagenNew(selectedFile.value, respuestaCorrecta.value)
+        if (result) {
+            resetForm()
+            await getImagenes()
+        }
+    } catch (error) {
+        // El composable ya muestra el toast de error; evitamos romper el handler UI.
+        console.error('Error al subir imagen en Upload.vue:', error)
     }
-
-    await getImagenes()
 }
 
 /**
@@ -256,7 +265,7 @@ const deleteImage = async (id) => {
 }
 
 /**
- * Formatear tama├▒o de archivo
+ * Formatear tamano de archivo
  */
 const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes'
@@ -266,7 +275,7 @@ const formatFileSize = (bytes) => {
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
 }
 
-// Cargar im├ígenes al montar
+// Cargar imagenes al montar
 onMounted(() => {
     getImagenes()
 })
@@ -315,10 +324,12 @@ onMounted(() => {
 }
 
 .preview-image {
-    max-width: 150px;
-    max-height: 150px;
+    width: 150px;
+    height: 150px;
     border-radius: 0.375rem;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
+    background: #000;
     border: 1px solid #e2e8f0;
 }
 
@@ -352,7 +363,9 @@ onMounted(() => {
 .thumbnail-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
+    background: #000;
 }
 
 .thumbnail-placeholder {

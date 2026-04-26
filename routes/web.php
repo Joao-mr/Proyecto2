@@ -22,21 +22,6 @@ Route::post('logout', [AuthenticatedSessionController::class, 'logout']);
  
 
 
-//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-
-use App\Http\Controllers\SalaController;
-
-//Route::prefix('admin/salas')->group(function () {
-   // Route::get('/', [SalaController::class, 'index'])->name('admin.salas.index');
-   // Route::get('/create', [SalaController::class, 'create'])->name('admin.salas.create');
-   // Route::post('/', [SalaController::class, 'store'])->name('admin.salas.store');
-   // Route::get('/edit/{sala}', [SalaController::class, 'edit'])->name('admin.salas.edit');
-   // Route::put('/{sala}', [SalaController::class, 'update'])->name('admin.salas.update');
-  //  Route::delete('/{sala}', [SalaController::class, 'destroy'])->name('admin.salas.destroy');
-//});
-
-
 Route::view('/{any?}', 'main-view')
     ->name('dashboard')
     ->where('any', '^(?!api(?:/|$)).*');

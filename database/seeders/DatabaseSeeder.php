@@ -33,7 +33,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PartidasTableSeeder::class);
         $this->call(UsuarioPartidaTableSeeder::class);
         $this->call(PartidaImagenTableSeeder::class);
-        $this->call(RespuestasTableSeeder::class);
         $this->call(UsuarioSalaTableSeeder::class);
 
 /*

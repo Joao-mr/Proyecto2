@@ -6,7 +6,7 @@
 
     <div class="game-player-panel__score-label">Puntuación</div>
     <div class="game-player-panel__score" :class="{ 'game-player-panel__score--pop': scorePop }">
-      <span class="badge rounded-pill bg-warning text-dark fs-4 px-4 py-2">{{ score }}</span>
+      <span class="game-player-panel__score-pill">{{ score }}</span>
     </div>
 
     <div class="game-player-panel__divider"></div>

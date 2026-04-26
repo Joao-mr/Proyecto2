@@ -15,8 +15,11 @@ async function requireLogin(to, from, next) {
     }
 }
 
-const hasAdmin = (roles = []) =>
-    roles.some((role) => role?.name?.toLowerCase().includes('admin'));
+const hasDashboardAccess = (roles = []) =>
+    roles.some((role) => {
+        const roleName = role?.name?.toLowerCase() || '';
+        return roleName.includes('admin') || roleName === 'docent';
+    });
 
 async function guest(to, from, next) {
     const auth = authStore()
@@ -35,7 +38,7 @@ async function requireAdmin(to, from, next) {
     let user = auth.user;
 
     if (isLogin) {
-        if (hasAdmin(user.roles)) {
+        if (hasDashboardAccess(user?.roles)) {
             next()
         } else {
             next('/app')
@@ -43,6 +46,23 @@ async function requireAdmin(to, from, next) {
     } else {
         next('/login')
     }
+}
+
+async function requireAppUser(to, from, next) {
+    const auth = authStore();
+    const isLogin = !!auth.authenticated;
+
+    if (!isLogin) {
+        next('/login');
+        return;
+    }
+
+    if (hasDashboardAccess(auth.user?.roles)) {
+        next('/admin');
+        return;
+    }
+
+    next();
 }
 
 export default [
@@ -116,8 +136,25 @@ export default [
                 meta: { requiresAuth: false }
             },
             {
-                path: 'ranking.category',
-                redirect: { name: 'ranking.category' }
+                path: 'info',
+                name: 'info.index',
+                component: () => import('@/views/public/Information/index.vue'),
+                meta: { requiresAuth: false }
+            },
+            {
+                path: 'info/como-jugar',
+                name: 'como-jugar',
+                redirect: { name: 'info.index', query: { tab: 'como-jugar' } }
+            },
+            {
+                path: 'info/normas',
+                name: 'normas',
+                redirect: { name: 'info.index', query: { tab: 'normas' } }
+            },
+            {
+                path: 'info/ranking',
+                name: 'ranking-info',
+                redirect: { name: 'info.index', query: { tab: 'ranking' } }
             }
         ]
     },
@@ -125,14 +162,18 @@ export default [
     {
         path: '/app',
         component: AuthenticatedUserLayout,
-        name: 'app',
-        beforeEnter: requireLogin,
+        beforeEnter: requireAppUser,
         meta: { breadCrumb: '.' },
         children: [
             {
+                path: '',
+                name: 'app',
+                redirect: { name: 'app.profile' },
+            },
+            {
                 name: 'app.profile',
                 path: 'profile',
-                component: () => import('../views/user/profile.vue'),
+                component: () => import('../views/shared/MyProfileView.vue'),
                 meta: {
                     breadCrumb: 'Perfil',
                 },
@@ -160,7 +201,7 @@ export default [
             {
                 name: 'profile.index',
                 path: 'profile',
-                component: () => import('../views/admin/profile/index.vue'),
+                component: () => import('../views/shared/MyProfileView.vue'),
                 meta: { breadCrumb: 'Profile' }
             },
 
@@ -208,7 +249,7 @@ export default [
                         component: () => import('../views/admin/users/Index.vue'),
                         meta: {
                             breadCrumb: 'Usuarios',
-                            hideBreadcrumb: true // Ocultar breadcrumb del layout porque la Card tiene su propio header
+                            hideBreadcrumb: true 
                         }
                     },
                     {
@@ -341,7 +382,7 @@ export default [
                     },
                     {
                         name: 'partidas-juego.create',
-                        path: 'partidas/create',
+                        path: 'create',
                         component: () => import('../views/admin/partidas/Create.vue'),
                         meta: {
                             breadCrumb: 'Crear Partida',
@@ -350,7 +391,7 @@ export default [
                     },
                     {
                         name: 'partidas-juego.edit',
-                        path: 'partidas/:id/edit',
+                        path: ':id/edit',
                         component: () => import('../views/admin/partidas/Edit.vue'),
                         meta: {
                             breadCrumb: 'Editar Partida',

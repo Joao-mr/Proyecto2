@@ -1,4 +1,4 @@
-import { ref, inject } from 'vue'
+﻿import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import * as yup from 'yup'
@@ -30,19 +30,15 @@ export default function usePosts() {
     })
 
     const getPosts = async () => {
-        return axios.get('/api/posts')
-            .then(response => {
-                posts.value = response.data;
-                return response;
-            })
+        const response = await axios.get('/api/posts')
+        posts.value = response.data
+        return response
     }
 
     const getPost = async (id) => {
-        return axios.get('/api/posts/' + id)
-            .then(response => {
-                post.value = response.data.data;
-                return response;
-            })
+        const response = await axios.get('/api/posts/' + id)
+        post.value = response.data.data
+        return response
     }
 
     const storePost = async (post) => {
@@ -59,21 +55,20 @@ export default function usePosts() {
 
         const serializedPost = serializePost(post)
 
-        axios.post('/api/posts', serializedPost, {
-            headers: {
-                "content-type": "multipart/form-data"
-            }
-        })
-            .then(response => {
-                //router.push({ name: 'posts.index' })
-                toast.crud.created('Post')
-            })
-            .catch(error => {
-                if (error.response?.data) {
-                    validationErrors.value = error.response.data.errors
+        try {
+            await axios.post('/api/posts', serializedPost, {
+                headers: {
+                    'content-type': 'multipart/form-data'
                 }
             })
-            .finally(() => isLoading.value = false)
+            toast.crud.created('Post')
+        } catch (error) {
+            if (error.response?.data) {
+                validationErrors.value = error.response.data.errors
+            }
+        } finally {
+            isLoading.value = false
+        }
     }
 
     const resetPost = () => {
@@ -93,28 +88,27 @@ export default function usePosts() {
             return
         }
 
-        axios.put('/api/posts/' + post.id, post)
-            .then(response => {
-                router.push({ name: 'posts.index' })
-                toast.crud.updated('Post')
-            })
-            .catch(error => {
-                if (error.response?.data) {
-                    validationErrors.value = error.response.data.errors
-                }
-            })
-            .finally(() => isLoading.value = false)
+        try {
+            await axios.put('/api/posts/' + post.id, post)
+            router.push({ name: 'posts.index' })
+            toast.crud.updated('Post')
+        } catch (error) {
+            if (error.response?.data) {
+                validationErrors.value = error.response.data.errors
+            }
+        } finally {
+            isLoading.value = false
+        }
     }
 
     const deletePost = async (id) => {
-        axios.delete('/api/posts/' + id)
-            .then(response => {
-                getPosts()
-                toast.crud.deleted('Post')
-            })
-            .catch(error => {
-                toast.error('Error', 'No se pudo eliminar el post')
-            })
+        try {
+            await axios.delete('/api/posts/' + id)
+            await getPosts()
+            toast.crud.deleted('Post')
+        } catch (error) {
+            toast.error('Error', 'No se pudo eliminar el post')
+        }
     }
 
     const serializePost = (data) => {
@@ -144,3 +138,4 @@ export default function usePosts() {
         isLoading
     }
 }
+

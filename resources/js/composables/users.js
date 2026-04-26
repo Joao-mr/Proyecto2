@@ -131,9 +131,6 @@ export default function useUsers() {
             toast.crud.created('Usuario')
             return data
         } catch (error) {
-            if (error.response?.data?.errors) {
-                console.log(error.response.data.errors)
-            }
             toast.error('Error', 'No se pudo crear el usuario')
             throw error
         }
