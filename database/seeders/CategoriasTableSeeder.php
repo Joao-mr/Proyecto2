@@ -3,52 +3,23 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class CategoriasTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
-        \DB::table('categorias')->delete();
+        DB::table('categorias')->delete();
 
-        \DB::table('categorias')->insert(array (
-            0 =>
-            array (
-                'id' => 1,
-                'nombre' => 'Animales',
-                'created_at' => '2026-04-15 00:00:00',
-                'updated_at' => '2026-04-15 00:00:00',
-            ),
-            1 =>
-            array (
-                'id' => 2,
-                'nombre' => 'Deportes',
-                'created_at' => '2026-04-15 00:00:00',
-                'updated_at' => '2026-04-15 00:00:00',
-            ),
-            2 =>
-            array (
-                'id' => 3,
-                'nombre' => 'Películas',
-                'created_at' => '2026-04-15 00:00:00',
-                'updated_at' => '2026-04-15 00:00:00',
-            ),
-            3 =>
-            array (
-                'id' => 4,
-                'nombre' => 'Videojuegos',
-                'created_at' => '2026-04-15 00:00:00',
-                'updated_at' => '2026-04-15 00:00:00',
-            ),
-            4 =>
-            array (
-                'id' => 5,
-                'nombre' => 'Geografía',
-                'created_at' => '2026-04-15 00:00:00',
-                'updated_at' => '2026-04-15 00:00:00',
-            ),
-        ));
+        DB::table('categorias')->insert([
+            ['id' => 1, 'nombre' => 'Animales'],
+            ['id' => 2, 'nombre' => 'Deportes'],
+            ['id' => 3, 'nombre' => 'Peliculas'],
+            ['id' => 4, 'nombre' => 'Videojuegos'],
+            ['id' => 5, 'nombre' => 'Geografia'],
+        ]);
     }
 }
