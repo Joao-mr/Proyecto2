@@ -14,6 +14,17 @@
         />
         <small v-if="hasError('nombre')" class="text-red-500">{{ getError('nombre') }}</small>
       </div>
+      <div class="mb-4">
+        <label for="categoria-descripcion" class="block font-medium mb-1">Descripción <span class="text-muted fw-normal">(opcional)</span></label>
+        <Textarea
+          v-model="categoria.descripcion"
+          id="categoria-descripcion"
+          class="w-100"
+          rows="3"
+          placeholder="Ej: Adivina el nombre de famosos y celebrities"
+          auto-resize
+        />
+      </div>
       <div class="d-flex gap-2 justify-content-end">
         <Button label="Cancelar" severity="secondary" @click="goBack" />
         <Button label="Guardar" type="submit" :loading="isSubmitting" :disabled="isSubmitting" />
@@ -26,6 +37,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import useCategorias from '@/composables/categorias';
+import Textarea from 'primevue/textarea';
 
 const route = useRoute();
 const router = useRouter();

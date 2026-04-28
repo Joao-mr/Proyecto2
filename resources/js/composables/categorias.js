@@ -6,7 +6,7 @@ import { useValidation } from './useValidation'
 
 export default function useCategorias() {
   const categorias = ref([])
-  const categoria = ref({ id: null, nombre: '' })
+  const categoria = ref({ id: null, nombre: '', descripcion: '' })
   const isLoading = ref(false)
   const toast = useToast()
 
@@ -37,14 +37,15 @@ export default function useCategorias() {
   }
 
   const resetCategoria = () => {
-    categoria.value = { id: null, nombre: '' }
+    categoria.value = { id: null, nombre: '', descripcion: '' }
     clearErrors()
   }
 
   const setCategoria = (data = {}) => {
     categoria.value = {
       id: data.id ?? null,
-      nombre: data.nombre ?? ''
+      nombre: data.nombre ?? '',
+      descripcion: data.descripcion ?? ''
     }
     clearErrors()
   }
@@ -74,7 +75,7 @@ export default function useCategorias() {
 
     try {
       const response = await withLoading(() =>
-        axios.post('/api/categorias', { nombre: categoria.value.nombre })
+        axios.post('/api/categorias', { nombre: categoria.value.nombre, descripcion: categoria.value.descripcion })
       )
       const data = response.data
       toast.crud.created('Categoría')
@@ -99,7 +100,8 @@ export default function useCategorias() {
     try {
       const response = await withLoading(() =>
         axios.put(`/api/categorias/${categoria.value.id}`, {
-          nombre: categoria.value.nombre
+          nombre: categoria.value.nombre,
+          descripcion: categoria.value.descripcion
         })
       )
       const data = response.data
