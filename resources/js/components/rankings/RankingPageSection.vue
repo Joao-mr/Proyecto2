@@ -5,27 +5,6 @@
         <div class="col-12">
           <header class="ranking-page__header text-center mb-4">
             <h1 class="ranking-page__title">RANKING GLOBAL</h1>
-
-            <div class="d-flex justify-content-center mt-3">
-              <div class="ranking-mode-switch p-2 rounded-4 shadow-sm">
-                <button
-                  type="button"
-                  class="btn mode-btn px-4 py-2 rounded-pill fw-bold"
-                  :class="{ active: mode === 'individual' }"
-                  @click="changeMode('individual')"
-                >
-                  Individual
-                </button>
-                <button
-                  type="button"
-                  class="btn mode-btn px-4 py-2 rounded-pill fw-bold"
-                  :class="{ active: mode === 'multijugador' }"
-                  @click="changeMode('multijugador')"
-                >
-                  Multijugador
-                </button>
-              </div>
-            </div>
           </header>
 
           <div class="card border-0 ranking-card shadow-lg mx-auto">
@@ -134,7 +113,6 @@ const changeMode = async (nextMode) => {
 
 onMounted(async () => {
   await fetchRanking('individual', { limit: 20, force: true })
-  fetchRanking('multijugador', { limit: 20 })
 })
 
 const rankClass = (index) => {

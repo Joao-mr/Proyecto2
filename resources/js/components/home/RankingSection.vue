@@ -3,23 +3,6 @@
     <div class="container-home">
       <h2 class="ranking-title">Mejores Jugadores</h2>
 
-      <div class="ranking-switch">
-        <button
-          class="ranking-switch__btn"
-          :class="{ 'is-active': mode === 'individual' }"
-          @click="changeMode('individual')"
-        >
-          Individual
-        </button>
-        <button
-          class="ranking-switch__btn"
-          :class="{ 'is-active': mode === 'multijugador' }"
-          @click="changeMode('multijugador')"
-        >
-          Multijugador
-        </button>
-      </div>
-
       <div class="ranking-card">
         <div class="ranking-head">
           <div>Jugador</div>
@@ -81,7 +64,6 @@ const {
 
 onMounted(async () => {
   await fetchRanking('individual')
-  fetchRanking('multijugador')
 })
 
 const changeMode = async (value) => {
