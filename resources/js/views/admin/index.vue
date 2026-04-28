@@ -12,6 +12,18 @@
                             Bienvenido al panel de administracion. Desde aqui puedes gestionar usuarios, categorias, salas, partidas e imagenes.
                         </p>
                     </div>
+
+                    <div class="page-header-actions">
+                        <Button
+                            label="Reiniciar estadisticas"
+                            icon="pi pi-refresh"
+                            severity="danger"
+                            outlined
+                            :loading="isResettingStats"
+                            :disabled="isResettingStats"
+                            @click="resetPlayerStats"
+                        />
+                    </div>
                 </div>
             </template>
         </Card>
@@ -120,19 +132,23 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import axios from "axios";
 import useUsers from "../../composables/users";
 import useCategorias from "../../composables/categorias";
 import useRoles from "../../composables/roles";
+import { useToast } from "../../composables/useToast";
 
 const stats = ref({
     users: 0,
     categories: 0,
     roles: 0
 });
+const isResettingStats = ref(false);
 
 const { categorias, getCategorias } = useCategorias();
 const { users, getUsers } = useUsers();
 const { roles, getRoles } = useRoles();
+const toast = useToast();
 
 const loadStats = async () => {
     try {
@@ -152,6 +168,39 @@ const loadStats = async () => {
     }
 };
 
+const resetPlayerStats = async () => {
+    if (isResettingStats.value) {
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Esto reiniciara las estadisticas de todos los jugadores a 0 y borrara el historial usado para rankings y perfil.\n\n¿Quieres continuar?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    isResettingStats.value = true;
+
+    try {
+        const response = await axios.post("/api/admin/player-stats/reset");
+
+        toast.success(
+            "Estadisticas reiniciadas",
+            response.data?.message || "Todos los jugadores vuelven a empezar desde cero."
+        );
+    } catch (error) {
+        console.error("Error resetting player stats:", error);
+        toast.error(
+            "Error",
+            error.response?.data?.message || "No se pudieron reiniciar las estadisticas."
+        );
+    } finally {
+        isResettingStats.value = false;
+    }
+};
+
 onMounted(() => {
     loadStats();
 });
@@ -162,6 +211,24 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+.page-header-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.page-header-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.page-header-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
 }
 
 .dashboard-stats-grid {
@@ -277,6 +344,14 @@ onMounted(() => {
 }
 
 @media (max-width: 640px) {
+    .page-header-content {
+        flex-direction: column;
+    }
+
+    .page-header-actions {
+        width: 100%;
+    }
+
     .dashboard-stats-grid {
         grid-template-columns: 1fr;
     }

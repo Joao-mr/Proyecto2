@@ -143,4 +143,17 @@ class UserStatsService
             DB::table('users')->update($updates);
         }
     }
+
+    public function resetAllPlayerStats(): void
+    {
+        DB::transaction(function (): void {
+            foreach (['usuario_partida', 'usuario_partidas'] as $table) {
+                if (Schema::hasTable($table)) {
+                    DB::table($table)->delete();
+                }
+            }
+
+            $this->resetAllUserStats();
+        });
+    }
 }

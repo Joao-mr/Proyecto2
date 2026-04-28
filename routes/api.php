@@ -1,5 +1,6 @@
 ﻿<?php
 
+use App\Http\Controllers\Api\AdminStatsController;
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\CategoryPublicController;
 use App\Http\Controllers\Api\ImagenCategoriaController;
@@ -36,6 +37,9 @@ Route::prefix('public')->name('public.')->group(function () {
 Private API (auth:sanctum)
 */
 Route::middleware('auth:sanctum')->group(function () {
+    // acciones administrativas
+    Route::post('admin/player-stats/reset', [AdminStatsController::class, 'resetAll']);
+
     // usuarios
     Route::apiResource('users', UserController::class);
     Route::post('users/updateimg', [UserController::class, 'updateimg']);
