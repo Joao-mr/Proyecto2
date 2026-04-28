@@ -130,32 +130,14 @@ export default function useImagen() {
   const getImagenes = async (params = {}) => {
     isLoading.value = true
     try {
-      let response
-      
-      // Si tiene parametros (Index.vue con paginacion)
-      if (Object.keys(params).length > 0) {
-        const defaultParams = { page: 1, per_page: 1000 }
-        const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
-        response = await axios.get(`/api/imagenes?${query}`)
-      } else {
-        // Sin parametros (Upload.vue, simple list)
-        response = await axios.get('/api/imagenes', {
-          headers: {
-            Authorization: `Bearer ${auth.token}`
-          }
-        })
-      }
-
+      const cleanParams = params instanceof Event ? {} : params
+      const query = new URLSearchParams({ page: 1, per_page: 1000, ...cleanParams }).toString()
+      const response = await axios.get(`/api/imagenes?${query}`)
       imagenes.value = response.data?.data ?? response.data ?? []
-      if (!(Object.keys(params).length > 0)) {
-        toast.success('Imagenes cargadas correctamente')
-      }
       return response
     } catch (error) {
       console.error('Error al obtener imagenes:', error)
-      if (!(Object.keys(params).length > 0)) {
-        toast.error(error.response?.data?.message || 'Error al cargar imagenes')
-      }
+      toast.error(error.response?.data?.message || 'Error al cargar imagenes')
       throw error
     } finally {
       isLoading.value = false
