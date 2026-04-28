@@ -65,7 +65,7 @@ export default function usePartidas() {
   }
 
   const getPartidas = async (params = {}) => {
-    const query = new URLSearchParams({ page: 1, ...params }).toString()
+    const query = new URLSearchParams({ page: 1, per_page: 1000, ...params }).toString()
     const response = await axios.get(`/api/partidas?${query}`)
     partidas.value = response.data?.data ?? []
     return response

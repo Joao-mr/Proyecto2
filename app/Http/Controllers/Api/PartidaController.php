@@ -14,9 +14,10 @@ use Illuminate\Support\Str;
 
 class PartidaController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $partidas = Partida::with('sala:id,nombre,codigo')->paginate(10);
+        $perPage = (int) $request->get('per_page', 10);
+        $partidas = Partida::with('sala:id,nombre,codigo')->paginate($perPage);
         return response()->json($partidas);
     }
 

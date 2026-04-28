@@ -134,7 +134,7 @@ export default function useImagen() {
       
       // Si tiene parametros (Index.vue con paginacion)
       if (Object.keys(params).length > 0) {
-        const defaultParams = { page: 1 }
+        const defaultParams = { page: 1, per_page: 1000 }
         const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
         response = await axios.get(`/api/imagenes?${query}`)
       } else {

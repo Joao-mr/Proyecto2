@@ -85,7 +85,7 @@ export default function useSalas() {
   }
 
   const getSalas = async (params = {}) => {
-    const defaultParams = { page: 1 }
+    const defaultParams = { page: 1, per_page: 1000 }
     const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
     const response = await axios.get(`/api/salas?${query}`)
     salas.value = response.data?.data ?? []
