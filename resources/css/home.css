@@ -72,15 +72,14 @@
 }
 
 @keyframes floatAnim {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-25px) rotate(2deg);
-  }
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
+  0%   { transform: translateY(0px) translateX(0px) rotate(0deg); }
+  15%  { transform: translateY(-18px) translateX(4px) rotate(1.5deg); }
+  30%  { transform: translateY(-10px) translateX(-6px) rotate(-2deg); }
+  45%  { transform: translateY(-26px) translateX(3px) rotate(0.8deg); }
+  60%  { transform: translateY(-8px) translateX(-4px) rotate(-1.2deg); }
+  75%  { transform: translateY(-20px) translateX(6px) rotate(2.2deg); }
+  88%  { transform: translateY(-5px) translateX(-3px) rotate(-0.6deg); }
+  100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
 }
 
 /* =========================
@@ -459,8 +458,8 @@ a{
   width: 100%;
   max-width: 520px;
   filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.25));
-  animation: floatAnim 6s ease-in-out infinite;
-  transform-origin: center center;
+  animation: floatAnim 7s ease-in-out infinite;
+  transform-origin: center bottom;
   will-change: transform;
 }
 
