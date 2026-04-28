@@ -458,7 +458,7 @@ a{
   width: 100%;
   max-width: 520px;
   filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.25));
-  animation: floatAnim 7s ease-in-out infinite;
+  animation: floatAnim 11s ease-in-out infinite;
   transform-origin: center bottom;
   will-change: transform;
 }
