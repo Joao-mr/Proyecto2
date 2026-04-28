@@ -97,6 +97,8 @@
   background: #5f74b7;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
 }
 
 .home-header__inner {
