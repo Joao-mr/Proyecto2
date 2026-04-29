@@ -105,12 +105,6 @@ import { useRanking } from '@/composables/useRanking'
 
 const { mode, currentRows, loading, errorGlobal, fetchRanking, formatElo } = useRanking()
 
-const changeMode = async (nextMode) => {
-  if (mode.value === nextMode) return
-  mode.value = nextMode
-  await fetchRanking(nextMode, { limit: 20 })
-}
-
 onMounted(async () => {
   await fetchRanking('individual', { limit: 20, force: true })
 })
@@ -136,25 +130,6 @@ const rankClass = (index) => {
   font-weight: 800;
   letter-spacing: 0.08em;
   font-size: clamp(1.05rem, 2vw, 1.55rem);
-}
-
-.ranking-mode-switch {
-  background: rgba(95, 111, 153, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 15px;
-  display: inline-flex;
-  gap: 0.45rem;
-}
-
-.mode-btn {
-  color: #eaf0ff;
-  border: 0;
-}
-
-.mode-btn.active {
-  background: #eef2ff;
-  border-radius: 15px   ;
-  color: #556799;
 }
 
 .ranking-card {
@@ -218,10 +193,6 @@ const rankClass = (index) => {
 .rank-num.first { color: #ffd23c; }
 .rank-num.second { color: #d8deef; }
 .rank-num.third { color: #f2a45e; }
-
-.rank-avatar {
-  opacity: 0.95;
-}
 
 .elo-dot {
   width: 12px;
@@ -304,19 +275,6 @@ const rankClass = (index) => {
 
 
 /* BREAKPOINTS */
-@media (max-width: 768px) {
-  .ranking-mode-switch {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .mode-btn {
-    flex: 1 1 0;
-    padding: 0.52rem 0.72rem !important;
-    font-size: 0.9rem;
-  }
-}
-
 @media (max-width: 576px) {
   .ranking-page__container {
     padding-left: 0.8rem;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\AppliesIndexFilters;
 use App\Http\Controllers\Controller;
  
 use App\Http\Requests\StoreRoleRequest;
@@ -10,6 +11,8 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+    use AppliesIndexFilters;
+
     /**
      * Display a listing of the resource.
      *
@@ -17,29 +20,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $orderColumn = request('order_column', 'created_at');
-        if (!in_array($orderColumn, ['id', 'name', 'created_at'])) {
-            $orderColumn = 'created_at';
-        }
-        $orderDirection = request('order_direction', 'desc');
-        if (!in_array($orderDirection, ['asc', 'desc'])) {
-            $orderDirection = 'desc';
-        }
-        $roles = Role::
-            when(request('search_id'), function ($query) {
-                $query->where('id', request('search_id'));
-            })
-            ->when(request('search_title'), function ($query) {
-                $query->where('name', 'like', '%'.request('search_title').'%');
-            })
-            ->when(request('search_global'), function ($query) {
-                $query->where(function($q) {
-                    $q->where('id', request('search_global'))
-                        ->orWhere('name', 'like', '%'.request('search_global').'%');
-
-                });
-            })
-            ->orderBy($orderColumn, $orderDirection)
+        $roles = $this->applyIndexFilters(Role::query())
             ->get();
 
         return RoleResource::collection($roles);

@@ -33,13 +33,5 @@ class DatabaseSeeder extends Seeder
         $this->call(UsuarioPartidaTableSeeder::class);
         $this->call(PartidaImagenTableSeeder::class);
         $this->call(UsuarioSalaTableSeeder::class);
-
-/*
- php artisan iseed media,model_has_permissions,model_has_roles,permissions,role_has_permissions,roles --exclude=created_at,updated_at --force
-
-attempts, userts
-
-*/
-
     }
 }

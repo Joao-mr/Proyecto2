@@ -35,6 +35,11 @@ class UserStatsService
         return true;
     }
 
+    public function calculateCorrectImagesFromElo(int $eloTotal): int
+    {
+        return (int) floor($eloTotal / self::POINTS_PER_CORRECT_IMAGE);
+    }
+
     public function syncForUser(int $userId): void
     {
         if (!$this->supportsPersistedStats()) {
@@ -80,7 +85,7 @@ class UserStatsService
             $updates['titulo'] = $title;
         }
         if (Schema::hasColumn('users', 'imagenes_acertadas')) {
-            $updates['imagenes_acertadas'] = (int) floor($eloTotal / self::POINTS_PER_CORRECT_IMAGE);
+            $updates['imagenes_acertadas'] = $this->calculateCorrectImagesFromElo($eloTotal);
         }
         if (Schema::hasColumn('users', 'promedio_puntos')) {
             $updates['promedio_puntos'] = (int) round($promedio);
@@ -100,6 +105,24 @@ class UserStatsService
                 ->whereKey($userId)
                 ->update($updates);
         }
+    }
+
+    public function getPersistedStatsForUser(User $user): array
+    {
+        $this->syncForUser((int) $user->id);
+        $user->refresh();
+
+        $eloTotal = (int) ($user->elo_total ?? 0);
+
+        return [
+            'partidas_jugadas' => (int) ($user->partidas_jugadas ?? 0),
+            'elo_total' => $eloTotal,
+            'imagenes_acertadas' => (int) ($user->imagenes_acertadas ?? $this->calculateCorrectImagesFromElo($eloTotal)),
+            'promedio_puntos' => (int) ($user->promedio_puntos ?? 0),
+            'mejor_puntuacion' => (int) ($user->mejor_puntuacion ?? 0),
+            'ultima_puntuacion' => (int) ($user->ultima_puntuacion ?? 0),
+            'consistencia_pct' => (int) ($user->consistencia_pct ?? 0),
+        ];
     }
 
     public function resetAllUserStats(): void

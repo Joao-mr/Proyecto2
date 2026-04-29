@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Concerns\AppliesIndexFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -14,33 +16,14 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    use AppliesIndexFilters;
+
     /**
      * @return AnonymousResourceCollection
      */
     public function index()
     {
-        $orderColumn = request('order_column', 'created_at');
-        if (!in_array($orderColumn, ['id', 'name', 'created_at'])) {
-            $orderColumn = 'created_at';
-        }
-        $orderDirection = request('order_direction', 'desc');
-        if (!in_array($orderDirection, ['asc', 'desc'])) {
-            $orderDirection = 'desc';
-        }
-        $users = User::when(request('search_id'), function ($query) {
-            $query->where('id', request('search_id'));
-        })
-            ->when(request('search_title'), function ($query) {
-                $query->where('name', 'like', '%'.request('search_title').'%');
-            })
-            ->when(request('search_global'), function ($query) {
-                $query->where(function($q) {
-                    $q->where('id', request('search_global'))
-                        ->orWhere('name', 'like', '%'.request('search_global').'%');
-
-                });
-            })
-            ->orderBy($orderColumn, $orderDirection)
+        $users = $this->applyIndexFilters(User::query())
             ->paginate(500);
 
         return UserResource::collection($users);

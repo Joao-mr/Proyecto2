@@ -1,97 +1,89 @@
 <template>
-  <!-- GAME OVER -->
-  <div v-if="gameOver" class="game-page d-flex align-items-center justify-content-center">
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
-          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
-            <div class="card-body p-5">
-              <div class="display-1 mb-3">🏆</div>
-              <h1 class="card-title fw-bold text-white mb-2">¡Partida finalizada!</h1>
-              <p class="text-white-50 mb-4">Has completado todas las rondas de <strong>{{ salaName }}</strong></p>
-              <div class="display-4 fw-black text-warning mb-1">{{ score }}</div>
-              <p class="text-white-50 small mb-4">puntos totales</p>
-              <RouterLink to="/mis-salas" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
-                <i class="pi pi-arrow-left me-2"></i>Volver a tus salas
-              </RouterLink>
-            </div>
-          </div>
-        </div>
+  <div v-if="gameOver" class="game-page game-state-page">
+    <div class="game-state-card">
+      <div class="game-state-icon-wrap">
+        <i class="pi pi-trophy game-state-icon"></i>
       </div>
+      <h1 class="game-state-title">Partida finalizada</h1>
+      <p class="game-state-subtitle">Has completado todas las rondas de <strong>{{ salaName }}</strong></p>
+      <div class="game-state-score">{{ score }}</div>
+      <p class="game-state-score-label">puntos totales</p>
+      <RouterLink to="/mis-salas" class="game-state-btn">
+        <i class="pi pi-arrow-left"></i>
+        Volver a tus salas
+      </RouterLink>
     </div>
   </div>
 
-  <!-- SIN IMÁGENES -->
-  <div v-else-if="!isLoading && rounds.length === 0" class="game-page d-flex align-items-center justify-content-center">
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
-          <div class="card border-0 shadow-lg text-center" style="background: rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 20px;">
-            <div class="card-body p-5">
-              <div class="display-1 mb-3">📭</div>
-              <h1 class="card-title fw-bold text-white mb-2">Sin imágenes</h1>
-              <p class="text-white-50 mb-4">Las categorías de esta sala no tienen imágenes todavía.</p>
-              <RouterLink to="/mis-salas" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
-                <i class="pi pi-arrow-left me-2"></i>Volver a tus salas
-              </RouterLink>
-            </div>
-          </div>
-        </div>
+  <div v-else-if="pageLoading" class="game-page game-state-page">
+    <div class="game-loading-card">
+      <div class="game-loading-ring"></div>
+      <p class="game-loading-text">Cargando sala...</p>
+    </div>
+  </div>
+
+  <div v-else-if="loadError" class="game-page game-state-page">
+    <div class="game-state-card">
+      <div class="game-state-icon-wrap game-state-icon-wrap--warn">
+        <i class="pi pi-exclamation-triangle game-state-icon"></i>
       </div>
+      <h1 class="game-state-title">Error al cargar la sala</h1>
+      <p class="game-state-subtitle">{{ loadError }}</p>
+      <RouterLink to="/mis-salas" class="game-state-btn">
+        <i class="pi pi-arrow-left"></i>
+        Volver a tus salas
+      </RouterLink>
     </div>
   </div>
 
-  <!-- CARGANDO -->
-  <div v-else-if="isLoading" class="game-page d-flex align-items-center justify-content-center">
-    <div class="text-center text-white">
-      <div class="spinner-border text-warning mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-      <p class="fs-5 fw-semibold">Cargando sala...</p>
+  <div v-else-if="rounds.length === 0" class="game-page game-state-page">
+    <div class="game-state-card">
+      <div class="game-state-icon-wrap">
+        <i class="pi pi-images game-state-icon"></i>
+      </div>
+      <h1 class="game-state-title">Sin imágenes</h1>
+      <p class="game-state-subtitle">Las categorías de esta sala no tienen imágenes todavía.</p>
+      <RouterLink to="/mis-salas" class="game-state-btn">
+        <i class="pi pi-arrow-left"></i>
+        Volver a tus salas
+      </RouterLink>
     </div>
   </div>
 
-  <!-- SALA DE JUEGO -->
   <div v-else class="game-page">
-    <!-- Navbar -->
     <GameNavbar :sala-name="salaName" @exit="handleExit" />
 
-    <!-- Barra de progreso Bootstrap -->
     <div class="game-progress-bar">
       <div class="game-progress-bar__inner">
         <span class="game-progress-bar__label">Progreso</span>
-        <div class="progress flex-grow-1" style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 999px;">
+        <div class="game-progress-bar__track">
           <div
-            class="progress-bar bg-warning"
+            class="game-progress-bar__fill"
             role="progressbar"
-            :style="{ width: `${((round - 1) / totalRounds) * 100}%`, borderRadius: '999px' }"
+            :style="{ width: `${progressPercent}%` }"
             :aria-valuenow="round - 1"
             :aria-valuemin="0"
             :aria-valuemax="totalRounds"
           ></div>
         </div>
-        <span class="game-progress-bar__round">
-          <span class="badge bg-light text-dark">Ronda {{ round }} / {{ totalRounds }}</span>
-        </span>
+        <span class="game-progress-bar__round">Ronda {{ round }} / {{ totalRounds }}</span>
       </div>
     </div>
 
-    <!-- Área principal -->
     <main class="game-main">
-      <!-- Imagen -->
       <GameImage
         :image-src="currentRound?.image ?? null"
         :round="round"
         :total-rounds="totalRounds"
       />
 
-      <!-- Panel jugador -->
       <PlayerPanel
         :player-name="playerName"
         :score="score"
         :time-left="timeLeft"
-        :total-time="TOTAL_TIME"
+        :total-time="totalTime"
       />
 
-      <!-- Input respuesta -->
       <AnswerInput
         ref="answerInputRef"
         :feedback="feedback"
@@ -104,200 +96,95 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { authStore } from '@/store/auth';
-import axios from 'axios';
-import '../../../../css/game.css';
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { authStore } from '@/store/auth'
+import axios from 'axios'
+import '../../../../css/game.css'
 
-import GameNavbar   from '@/components/game/GameNavbar.vue';
-import GameImage    from '@/components/game/GameImage.vue';
-import PlayerPanel  from '@/components/game/PlayerPanel.vue';
-import AnswerInput  from '@/components/game/AnswerInput.vue';
+import GameNavbar from '@/components/game/GameNavbar.vue'
+import GameImage from '@/components/game/GameImage.vue'
+import PlayerPanel from '@/components/game/PlayerPanel.vue'
+import AnswerInput from '@/components/game/AnswerInput.vue'
+import { buildGameRounds, shuffleGameRounds, useGameSession } from '@/composables/useGameSession'
 
-/* ── Router & Auth ── */
-const route  = useRoute();
-const router = useRouter();
-const auth   = authStore();
+const route = useRoute()
+const router = useRouter()
+const auth = authStore()
 
-const salaId     = computed(() => route.params.id);
-const salaName   = ref('');
-const playerName = computed(() => auth.user?.name ?? 'Jugador');
-const isLoading  = ref(true);
+const salaId = computed(() => route.params.id)
+const salaName = ref('')
+const playerName = computed(() => auth.user?.name ?? 'Jugador')
+const pageLoading = ref(true)
+const loadError = ref('')
+const totalTime = ref(30)
 
-/* ── Rounds built from API images ── */
-const rounds = ref([]);
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-/* ── Game state ── */
-const TOTAL_TIME     = ref(30);
-const round          = ref(1);
-const totalRounds    = computed(() => rounds.value.length);
-const score          = ref(0);
-const timeLeft       = ref(30);
-const feedback       = ref(null);
-const revealAnswer   = ref(false);
-const answerDisabled = ref(false);
-const gameOver       = ref(false);
-const isSavingStats  = ref(false);
-const hasSavedStats  = ref(false);
-const answerInputRef = ref(null);
-const statsSaveState = ref('idle');
-const statsSaveMessage = ref('');
-const matchStartedAt = ref(null);
-const matchPersisted = ref(false);
-
-const currentRound = computed(() => rounds.value[round.value - 1] ?? null);
-
-/* ── Timer ── */
-let timerInterval = null;
-
-function startTimer() {
-  clearInterval(timerInterval);
-  timeLeft.value = TOTAL_TIME.value;
-  timerInterval = setInterval(() => {
-    if (timeLeft.value <= 0) {
-      clearInterval(timerInterval);
-      onTimeout();
-      return;
+const {
+  rounds,
+  round,
+  totalRounds,
+  progressPercent,
+  score,
+  timeLeft,
+  feedback,
+  revealAnswer,
+  answerDisabled,
+  gameOver,
+  answerInputRef,
+  currentRound,
+  startMatch,
+  handleAnswer,
+  stopTimer,
+} = useGameSession({
+  totalTime,
+  advanceOnWrongAnswer: true,
+  persistResult: async ({ score, startedAt, finishedAt }) => {
+    try {
+      await axios.post('/api/partidas/registrar-resultado', {
+        id_sala: Number(salaId.value),
+        puntuacion: score,
+        fecha_inicio: startedAt,
+        fecha_fin: finishedAt,
+      })
+    } catch (error) {
+      console.error('Error saving match stats:', error)
+      throw error
     }
-    timeLeft.value--;
-  }, 1000);
-}
+  },
+})
 
-function stopTimer() { clearInterval(timerInterval); }
-
-function onTimeout() {
-  answerDisabled.value = true;
-  revealAnswer.value   = true;
-  feedback.value       = 'timeout';
-  scheduleNextRound();
-}
-
-/* ── Answer ── */
-function handleAnswer(value) {
-  stopTimer();
-  answerDisabled.value = true;
-  revealAnswer.value   = true;
-
-  const correct  = (value ?? '').toLowerCase().trim();
-  const expected = (currentRound.value?.answer ?? '').toLowerCase().trim();
-
-  if (correct === expected) {
-    score.value += 50;
-    feedback.value = 'correct';
-  } else {
-    feedback.value = 'wrong';
-  }
-
-  scheduleNextRound();
-}
-
-function scheduleNextRound() {
-  setTimeout(() => {
-    if (round.value >= totalRounds.value) {
-      finishGame();
-    } else {
-      round.value++;
-      feedback.value       = null;
-      revealAnswer.value   = false;
-      answerDisabled.value = false;
-      nextTick(() => {
-        startTimer();
-        answerInputRef.value?.focus();
-      });
-    }
-  }, 2200);
-}
-
-function finishGame() {
-  gameOver.value = true;
-  void persistMatchResult();
-}
-
-async function persistMatchResult() {
-  if (matchPersisted.value) return;
-
-  matchPersisted.value = true;
-  statsSaveState.value = 'saving';
-  statsSaveMessage.value = '';
-
-  try {
-    await axios.post('/api/partidas/registrar-resultado', {
-      id_sala: Number(salaId.value),
-      puntuacion: score.value,
-      fecha_inicio: matchStartedAt.value ?? new Date().toISOString(),
-      fecha_fin: new Date().toISOString(),
-    });
-
-    statsSaveState.value = 'saved';
-  } catch (error) {
-    console.error('Error saving match stats:', error);
-    statsSaveState.value = 'error';
-    statsSaveMessage.value = 'Error al guardar tus estadisticas. Intentalo de nuevo.';
-    matchPersisted.value = false;
-  }
-}
-
-/* ── Exit ── */
 function handleExit() {
-  stopTimer();
-  router.push('/mis-salas');
+  stopTimer()
+  router.push('/mis-salas')
 }
 
-/* ── Load sala data ── */
 onMounted(async () => {
   try {
-    // 1. Fetch sala with categories
-    const { data: sala } = await axios.get(`/api/salas/${salaId.value}`);
-    salaName.value = sala.nombre ?? 'Sala';
-    TOTAL_TIME.value = sala.tiempo_respuesta ?? 30;
+    const { data: sala } = await axios.get(`/api/salas/${salaId.value}`)
+    salaName.value = sala.nombre ?? 'Sala'
+    totalTime.value = sala.tiempo_respuesta ?? 30
 
-    const categoriaIds = (sala.categorias ?? []).map(c => c.id);
+    const categoriaIds = (sala.categorias ?? []).map((categoria) => categoria.id)
 
     if (categoriaIds.length === 0) {
-      isLoading.value = false;
-      return;
+      await startMatch([])
+      return
     }
 
-    // 2. Fetch imagenes for each category in parallel
-    const requests = categoriaIds.map(catId =>
+    const requests = categoriaIds.map((catId) =>
       axios.get(`/api/imagenes?categoria_id=${catId}&per_page=100&page=1`)
-        .then(r => r.data?.data ?? [])
+        .then((response) => response.data?.data ?? [])
         .catch(() => [])
-    );
+    )
 
-    const results = await Promise.all(requests);
-    const allImagenes = results.flat();
-
-    // 3. Build rounds (ignore images without media)
-    const built = allImagenes
-      .filter(img => img.urls?.original || img.urls?.preview || img.url)
-      .map(img => ({
-        image: img.urls?.preview || img.urls?.original || img.url,
-        answer: img.respuesta_correcta,
-      }));
-
-    rounds.value = shuffle(built);
+    const results = await Promise.all(requests)
+    const allImagenes = results.flat()
+    await startMatch(shuffleGameRounds(buildGameRounds(allImagenes, { filterMissingImage: true })))
   } catch (err) {
-    console.error('Error loading sala:', err);
+    console.error('Error loading sala:', err)
+    loadError.value = err?.response?.data?.message ?? 'No fue posible cargar la sala en este momento.'
   } finally {
-    isLoading.value = false;
+    pageLoading.value = false
   }
-
-  if (rounds.value.length > 0) {
-    matchStartedAt.value = new Date().toISOString();
-    startTimer();
-    nextTick(() => answerInputRef.value?.focus());
-  }
-});
-
-onUnmounted(() => stopTimer());
+})
 </script>

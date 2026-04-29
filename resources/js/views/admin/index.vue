@@ -150,6 +150,14 @@ const { users, getUsers } = useUsers();
 const { roles, getRoles } = useRoles();
 const toast = useToast();
 
+const resolveCollectionCount = (collection) => {
+    if (Array.isArray(collection)) {
+        return collection.length;
+    }
+
+    return collection?.total || collection?.data?.length || 0;
+};
+
 const loadStats = async () => {
     try {
         await Promise.all([
@@ -159,9 +167,9 @@ const loadStats = async () => {
         ]);
 
         stats.value = {
-            users: users.value?.total || users.value?.data?.length || 0,
-            categories: categorias.value?.total || categorias.value?.data?.length || 0,
-            roles: roles.value?.total || roles.value?.data?.length || 0
+            users: resolveCollectionCount(users.value),
+            categories: resolveCollectionCount(categorias.value),
+            roles: resolveCollectionCount(roles.value)
         };
     } catch (error) {
         console.error('Error loading stats:', error);

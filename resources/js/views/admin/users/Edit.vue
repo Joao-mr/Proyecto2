@@ -17,19 +17,19 @@
                         pt:root:class="fu"
                         class="fu"
                     >
-                        <template #header="{ chooseCallback, uploadCallback, clearCallback, files, uploadedFiles }">
+                        <template #header="{ chooseCallback, uploadCallback, clearCallback, files }">
                             <div class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
                                 <div class="d-flex gap-2">
                                     <Button @click="chooseCallback()" icon="pi pi-images" rounded outlined></Button>
-                                    <Button @click="uploadEvent(uploadCallback, uploadedFiles)" icon="pi pi-cloud-upload" rounded outlined severity="success" :disabled="!files || files.length === 0"></Button>
+                                    <Button @click="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" rounded outlined severity="success" :disabled="!files || files.length === 0"></Button>
                                     <Button @click="clearCallback()" icon="pi pi-times" rounded outlined severity="danger" :disabled="!files || files.length === 0"></Button>
                                 </div>
                                 <p class="mt-4 mb-0">Drag and drop files to here to upload.</p>
                             </div>
                         </template>
 
-                        <template #content="{ files, uploadedFiles, removeUploadedFileCallback, removeFileCallback }">
-                            <img v-if=" files.length > 0" v-for="(file, index) of files" :key="file.name + file.type + file.size" role="presentation" :alt="file.name" :src="file.objectURL" class="object-cover w-full aspect-square rounded-tl-2 rounded-tr-2" />
+                        <template #content="{ files, uploadedFiles }">
+                            <img v-if=" files.length > 0" v-for="file of files" :key="file.name + file.type + file.size" role="presentation" :alt="file.name" :src="file.objectURL" class="object-cover w-full aspect-square rounded-tl-2 rounded-tr-2" />
                             <div v-else>
                                 <img v-if="uploadedFiles.length > 0" :key="uploadedFiles[uploadedFiles.length-1].name + uploadedFiles[uploadedFiles.length-1].type + uploadedFiles[uploadedFiles.length-1].size" role="presentation" :alt="uploadedFiles[uploadedFiles.length-1].name" :src="uploadedFiles[uploadedFiles.length-1].objectURL" class="object-cover w-full aspect-square rounded-tl-2 rounded-tr-2" />
                             </div>
@@ -168,17 +168,15 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { usePrimeVue } from 'primevue/config';
 import useRoles from "@/composables/roles";
 import useUsers from "@/composables/users";
 
-const $primevue = usePrimeVue();
 const route = useRoute();
 
 const { roles, getRoles } = useRoles();
-const {user, getUser, updateUser, isLoading, hasError, getError,setUser } = useUsers();
+const {user, getUser, updateUser, isLoading, hasError, getError } = useUsers();
 
 const submitForm = async () => {
     try {
@@ -197,48 +195,23 @@ onMounted(async () => {
     }
 })
 
-// File Upload Logic
-const totalSize = ref(0);
-const totalSizePercent = ref(0);
-const files = ref([]);
-
 const onBeforeUpload = (event) => {
     event.formData.append('id', user.value.id)
 };
 
 const onSelectedFiles = (event) => {
-    files.value = event.files;
     if (event.files.length > 1) {
         event.files = event.files.splice(0, event.files.length - 1);
     }
-    files.value.forEach((file) => {
-        totalSize.value += parseInt(formatSize(file.size));
-    });
 };
 
-const uploadEvent = async (callback, uploadedFiles) => {
-    totalSizePercent.value = totalSize.value / 10;
+const uploadEvent = async (callback) => {
     await callback();
 };
 
-const onTemplatedUpload = (event) => {
+const onTemplatedUpload = () => {
     // Reload user to get new avatar
     getUser(user.value.id);
-};
-
-const formatSize = (bytes) => {
-    const k = 1024;
-    const dm = 3;
-    const sizes = $primevue.config.locale.fileSizeTypes;
-
-    if (bytes === 0) {
-        return `0 ${sizes[0]}`;
-    }
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
-
-    return `${formattedSize} ${sizes[i]}`;
 };
 
 </script>

@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
-    private const POINTS_PER_CORRECT_IMAGE = 50;
     private const RECENT_ACTIVITY_LIMIT = 8;
 
     /** */
@@ -53,16 +52,15 @@ class ProfileController extends Controller
             ->get();
 
         if ($userStatsService->supportsPersistedStats()) {
-            $userStatsService->syncForUser((int) $userId);
-            $user->refresh();
+            $stats = $userStatsService->getPersistedStatsForUser($user);
 
-            $partidasJugadas = (int) ($user->partidas_jugadas ?? 0);
-            $eloTotal = (int) ($user->elo_total ?? 0);
-            $imagenesAcertadas = (int) ($user->imagenes_acertadas ?? floor($eloTotal / self::POINTS_PER_CORRECT_IMAGE));
-            $promedio = (int) ($user->promedio_puntos ?? 0);
-            $mejorPuntuacion = (int) ($user->mejor_puntuacion ?? 0);
-            $ultimaPuntuacion = (int) ($user->ultima_puntuacion ?? 0);
-            $consistencia = (int) ($user->consistencia_pct ?? 0);
+            $partidasJugadas = $stats['partidas_jugadas'];
+            $eloTotal = $stats['elo_total'];
+            $imagenesAcertadas = $stats['imagenes_acertadas'];
+            $promedio = $stats['promedio_puntos'];
+            $mejorPuntuacion = $stats['mejor_puntuacion'];
+            $ultimaPuntuacion = $stats['ultima_puntuacion'];
+            $consistencia = $stats['consistencia_pct'];
         } else {
             $stats = DB::table('usuario_partida as up')
                 ->where('up.id_usuario', $userId)
@@ -74,7 +72,7 @@ class ProfileController extends Controller
 
             $partidasJugadas = (int) ($stats->partidas_jugadas ?? 0);
             $eloTotal = (int) ($stats->elo_total ?? 0);
-            $imagenesAcertadas = (int) floor($eloTotal / self::POINTS_PER_CORRECT_IMAGE);
+            $imagenesAcertadas = $userStatsService->calculateCorrectImagesFromElo($eloTotal);
             $promedioFloat = (float) ($stats->promedio_puntos ?? 0);
             $promedio = (int) round($promedioFloat);
             $mejorPuntuacion = (int) ($stats->mejor_puntuacion ?? 0);
