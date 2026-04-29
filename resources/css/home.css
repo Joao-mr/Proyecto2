@@ -865,20 +865,16 @@ a{
 .categories-image-box {
   width: 100%;
   min-height: 430px;
-  background: #000;
   border-radius: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
 
 .categories-image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  display: block;
+  object-fit: cover;
   object-position: center;
-  background: #000;
 }
 
 .categories-content {
