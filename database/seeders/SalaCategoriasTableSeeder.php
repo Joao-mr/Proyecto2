@@ -32,11 +32,6 @@ class SalaCategoriasTableSeeder extends Seeder
             3 =>
             array (
                 'id_sala' => 3,
-                'id_categoria' => 1,
-            ),
-            4 =>
-            array (
-                'id_sala' => 3,
                 'id_categoria' => 5,
             ),
         ));

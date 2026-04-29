@@ -16,25 +16,15 @@ class ImagenCategoriaTableSeeder extends Seeder
         \DB::table('imagen_categoria')->insert(array (
             0 =>
             array (
-                'id_imagen' => 1,
-                'id_categoria' => 1,
-            ),
-            1 =>
-            array (
-                'id_imagen' => 2,
-                'id_categoria' => 1,
-            ),
-            2 =>
-            array (
                 'id_imagen' => 3,
                 'id_categoria' => 2,
             ),
-            3 =>
+            1 =>
             array (
                 'id_imagen' => 4,
                 'id_categoria' => 3,
             ),
-            4 =>
+            2 =>
             array (
                 'id_imagen' => 5,
                 'id_categoria' => 4,
