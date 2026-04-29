@@ -9,16 +9,6 @@
       <div class="game-state-score">{{ score }}</div>
       <p class="game-state-score-label">puntos totales</p>
 
-      <div v-if="statsSaveState === 'saving'" class="game-state-alert game-state-alert--info">
-        Guardando estadisticas...
-      </div>
-      <div v-else-if="statsSaveState === 'saved'" class="game-state-alert game-state-alert--ok">
-        Estadisticas guardadas correctamente.
-      </div>
-      <div v-else-if="statsSaveState === 'error'" class="game-state-alert game-state-alert--error">
-        {{ statsSaveMessage || 'No se pudieron guardar las estadisticas.' }}
-      </div>
-
       <RouterLink to="/categorias" class="game-state-btn">
         <i class="pi pi-arrow-left"></i>
         Volver a categorias

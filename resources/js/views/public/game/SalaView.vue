@@ -11,15 +11,6 @@
               <p class="text-white-50 mb-4">Has completado todas las rondas de <strong>{{ salaName }}</strong></p>
               <div class="display-4 fw-black text-warning mb-1">{{ score }}</div>
               <p class="text-white-50 small mb-4">puntos totales</p>
-              <div v-if="statsSaveState === 'saving'" class="alert alert-info py-2 small mb-3">
-                Guardando estadisticas...
-              </div>
-              <div v-else-if="statsSaveState === 'saved'" class="alert alert-success py-2 small mb-3">
-                Estadisticas guardadas correctamente.
-              </div>
-              <div v-else-if="statsSaveState === 'error'" class="alert alert-danger py-2 small mb-3">
-                {{ statsSaveMessage || 'No se pudieron guardar las estadisticas.' }}
-              </div>
               <RouterLink to="/mis-salas" class="btn btn-warning btn-lg fw-bold px-5 rounded-pill">
                 <i class="pi pi-arrow-left me-2"></i>Volver a tus salas
               </RouterLink>

@@ -198,10 +198,9 @@ function irARankingGlobal() {
 }
 
 .card-image {
-  width: 100px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
-  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,15 +208,15 @@ function irARankingGlobal() {
   font-weight: 700;
   color: #eef2ff;
   text-align: center;
+  overflow: hidden;
 }
 
 .card-image__img {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
-  background: #000;
   display: block;
 }
 
