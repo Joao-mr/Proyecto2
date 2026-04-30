@@ -5,6 +5,15 @@ const DEFAULT_SCORE_PER_CORRECT = 50
 const DEFAULT_NEXT_ROUND_DELAY = 2200
 const DEFAULT_WRONG_FEEDBACK_DURATION = 900
 
+export function normalizeGameAnswer(value = '') {
+  return String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .trim()
+}
+
 export function shuffleGameRounds(items = []) {
   const shuffled = [...items]
 
@@ -31,6 +40,7 @@ export function useGameSession({
   totalTime = DEFAULT_TOTAL_TIME,
   scorePerCorrect = DEFAULT_SCORE_PER_CORRECT,
   advanceOnWrongAnswer = false,
+  shuffleOnStart = true,
   nextRoundDelay = DEFAULT_NEXT_ROUND_DELAY,
   wrongFeedbackDuration = DEFAULT_WRONG_FEEDBACK_DURATION,
   persistResult,
@@ -116,7 +126,8 @@ export function useGameSession({
 
   async function startMatch(nextRounds = []) {
     resetState()
-    rounds.value = Array.isArray(nextRounds) ? nextRounds : []
+    const preparedRounds = Array.isArray(nextRounds) ? nextRounds : []
+    rounds.value = shuffleOnStart ? shuffleGameRounds(preparedRounds) : preparedRounds
 
     if (rounds.value.length === 0) {
       return
@@ -153,8 +164,8 @@ export function useGameSession({
   }
 
   function handleAnswer(value) {
-    const receivedAnswer = String(value ?? '').toLowerCase().trim()
-    const expectedAnswer = String(currentRound.value?.answer ?? '').toLowerCase().trim()
+    const receivedAnswer = normalizeGameAnswer(value)
+    const expectedAnswer = normalizeGameAnswer(currentRound.value?.answer)
 
     if (receivedAnswer === expectedAnswer) {
       clearWrongFeedbackTimeout()

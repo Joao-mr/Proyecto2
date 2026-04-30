@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Support\GameImageCatalog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,34 +13,27 @@ class ImagenesTableSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('partida_imagen')->delete();
+        DB::table('imagen_categoria')->delete();
         DB::table('imagenes')->delete();
 
-        DB::table('imagenes')->insert([
-            [
-                'id' => 1,
-                'url' => 'https://placehold.co/600x400?text=Gato',
-                'respuesta_correcta' => 'gato',
-            ],
-            [
-                'id' => 2,
-                'url' => 'https://placehold.co/600x400?text=Perro',
-                'respuesta_correcta' => 'perro',
-            ],
-            [
-                'id' => 3,
-                'url' => 'https://placehold.co/600x400?text=Futbol',
-                'respuesta_correcta' => 'futbol',
-            ],
-            [
-                'id' => 4,
-                'url' => 'https://placehold.co/600x400?text=SpiderMan',
-                'respuesta_correcta' => 'spiderman',
-            ],
-            [
-                'id' => 5,
-                'url' => 'https://placehold.co/600x400?text=Minecraft',
-                'respuesta_correcta' => 'minecraft',
-            ],
-        ]);
+        $categoryIds = DB::table('categorias')->pluck('id', 'nombre')->all();
+
+        $rows = collect(GameImageCatalog::records())
+            ->filter(static fn (array $record): bool => isset($categoryIds[$record['category_name']]))
+            ->values()
+            ->map(static function (array $record, int $index) use ($categoryIds): array {
+                return [
+                    'id' => $index + 1,
+                    'url' => $record['url'],
+                    'respuesta_correcta' => $record['respuesta_correcta'],
+                    'categoria_id' => $categoryIds[$record['category_name']],
+                ];
+            })
+            ->all();
+
+        if ($rows !== []) {
+            DB::table('imagenes')->insert($rows);
+        }
     }
 }

@@ -95,7 +95,7 @@ import GameNavbar from '@/components/game/GameNavbar.vue'
 import GameImage from '@/components/game/GameImage.vue'
 import PlayerPanel from '@/components/game/PlayerPanel.vue'
 import AnswerInput from '@/components/game/AnswerInput.vue'
-import { buildGameRounds, shuffleGameRounds, useGameSession } from '@/composables/useGameSession'
+import { buildGameRounds, useGameSession } from '@/composables/useGameSession'
 import useImagen from '@/composables/useImagen'
 import useCategorias from '@/composables/categorias'
 
@@ -161,7 +161,7 @@ onMounted(async () => {
       getCategorias(),
     ])
 
-    await startMatch(shuffleGameRounds(buildGameRounds(imagenes.value)))
+    await startMatch(buildGameRounds(imagenes.value))
   } catch (error) {
     loadError.value = error?.response?.data?.message ?? 'No fue posible cargar la partida en este momento.'
   } finally {

@@ -196,8 +196,9 @@
   grid-column: 1;
   grid-row: 1;
   position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
   min-height: 340px;
-  height: min(56vh, 500px);
   max-height: 500px;
   background: #000;
   overflow: hidden;
@@ -208,6 +209,7 @@
   height: 100%;
   object-fit: contain !important;
   object-position: center !important;
+  image-orientation: from-image;
   display: block;
   background: #000;
 }

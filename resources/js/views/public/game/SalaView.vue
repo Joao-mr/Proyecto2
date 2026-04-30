@@ -106,7 +106,7 @@ import GameNavbar from '@/components/game/GameNavbar.vue'
 import GameImage from '@/components/game/GameImage.vue'
 import PlayerPanel from '@/components/game/PlayerPanel.vue'
 import AnswerInput from '@/components/game/AnswerInput.vue'
-import { buildGameRounds, shuffleGameRounds, useGameSession } from '@/composables/useGameSession'
+import { buildGameRounds, useGameSession } from '@/composables/useGameSession'
 
 const route = useRoute()
 const router = useRouter()
@@ -179,7 +179,7 @@ onMounted(async () => {
 
     const results = await Promise.all(requests)
     const allImagenes = results.flat()
-    await startMatch(shuffleGameRounds(buildGameRounds(allImagenes, { filterMissingImage: true })))
+    await startMatch(buildGameRounds(allImagenes, { filterMissingImage: true }))
   } catch (err) {
     console.error('Error loading sala:', err)
     loadError.value = err?.response?.data?.message ?? 'No fue posible cargar la sala en este momento.'
