@@ -16,7 +16,6 @@ class ProfileController extends Controller
 {
     private const RECENT_ACTIVITY_LIMIT = 8;
 
-    /** */
     public function update(UpdateProfileRequest $request)
     {
         $profile = $request->user();
@@ -40,9 +39,31 @@ class ProfileController extends Controller
     public function stats(Request $request, PlayerTitleResolver $resolver, UserStatsService $userStatsService)
     {
         $user = $request->user();
-        $userId = $user->id;
+        $recentActivity = $this->loadRecentActivity($user->id);
+        $statsData = $this->loadStats($user, $userStatsService, $recentActivity);
 
-        $recentActivity = DB::table('usuario_partida as up')
+        $currentTitle = $resolver->resolve($statsData['elo_total']);
+        $nextTitle = $this->resolveNextTitle($statsData['elo_total']);
+
+        return response()->json([
+            'partidas_jugadas' => $statsData['partidas_jugadas'],
+            'elo_total' => $statsData['elo_total'],
+            'imagenes_acertadas' => $statsData['imagenes_acertadas'],
+            'titulo' => $currentTitle,
+            'resumen' => [
+                'promedio_puntos' => $statsData['promedio'],
+                'mejor_puntuacion' => $statsData['mejor_puntuacion'],
+                'ultima_puntuacion' => $statsData['ultima_puntuacion'],
+                'consistencia_pct' => $statsData['consistencia'],
+                'progreso_siguiente_titulo_pct' => $this->calculateNextTitleProgress($statsData['elo_total'], $currentTitle, $nextTitle),
+            ],
+            'actividad_reciente' => $recentActivity,
+        ]);
+    }
+
+    private function loadRecentActivity(int $userId)
+    {
+        return DB::table('usuario_partida as up')
             ->join('partidas as p', 'p.id', '=', 'up.id_partida')
             ->where('up.id_usuario', $userId)
             ->select('up.id_partida', 'up.puntuacion', 'p.fecha_inicio', 'p.fecha_fin')
@@ -50,55 +71,48 @@ class ProfileController extends Controller
             ->orderByDesc('p.id')
             ->limit(self::RECENT_ACTIVITY_LIMIT)
             ->get();
+    }
+
+    private function loadStats($user, UserStatsService $userStatsService, $recentActivity): array
+    {
+        $userId = $user->id;
 
         if ($userStatsService->supportsPersistedStats()) {
             $stats = $userStatsService->getPersistedStatsForUser($user);
-
-            $partidasJugadas = $stats['partidas_jugadas'];
-            $eloTotal = $stats['elo_total'];
-            $imagenesAcertadas = $stats['imagenes_acertadas'];
-            $promedio = $stats['promedio_puntos'];
-            $mejorPuntuacion = $stats['mejor_puntuacion'];
-            $ultimaPuntuacion = $stats['ultima_puntuacion'];
-            $consistencia = $stats['consistencia_pct'];
-        } else {
-            $stats = DB::table('usuario_partida as up')
-                ->where('up.id_usuario', $userId)
-                ->selectRaw('COUNT(*) as partidas_jugadas')
-                ->selectRaw('COALESCE(SUM(up.puntuacion), 0) as elo_total')
-                ->selectRaw('COALESCE(AVG(up.puntuacion), 0) as promedio_puntos')
-                ->selectRaw('COALESCE(MAX(up.puntuacion), 0) as mejor_puntuacion')
-                ->first();
-
-            $partidasJugadas = (int) ($stats->partidas_jugadas ?? 0);
-            $eloTotal = (int) ($stats->elo_total ?? 0);
-            $imagenesAcertadas = $userStatsService->calculateCorrectImagesFromElo($eloTotal);
-            $promedioFloat = (float) ($stats->promedio_puntos ?? 0);
-            $promedio = (int) round($promedioFloat);
-            $mejorPuntuacion = (int) ($stats->mejor_puntuacion ?? 0);
-            $ultimaPuntuacion = (int) ($recentActivity->first()->puntuacion ?? 0);
-            $consistencia = $mejorPuntuacion > 0
-                ? min(100, (int) round(($promedioFloat / $mejorPuntuacion) * 100))
-                : 0;
+            return [
+                'partidas_jugadas' => $stats['partidas_jugadas'],
+                'elo_total' => $stats['elo_total'],
+                'imagenes_acertadas' => $stats['imagenes_acertadas'],
+                'promedio' => $stats['promedio_puntos'],
+                'mejor_puntuacion' => $stats['mejor_puntuacion'],
+                'ultima_puntuacion' => $stats['ultima_puntuacion'],
+                'consistencia' => $stats['consistencia_pct'],
+            ];
         }
 
-        $currentTitle = $resolver->resolve($eloTotal);
-        $nextTitle = $this->resolveNextTitle($eloTotal);
+        $stats = DB::table('usuario_partida as up')
+            ->where('up.id_usuario', $userId)
+            ->selectRaw('COUNT(*) as partidas_jugadas')
+            ->selectRaw('COALESCE(SUM(up.puntuacion), 0) as elo_total')
+            ->selectRaw('COALESCE(AVG(up.puntuacion), 0) as promedio_puntos')
+            ->selectRaw('COALESCE(MAX(up.puntuacion), 0) as mejor_puntuacion')
+            ->first();
 
-        return response()->json([
-            'partidas_jugadas' => $partidasJugadas,
+        $eloTotal = (int) ($stats->elo_total ?? 0);
+        $promedioFloat = (float) ($stats->promedio_puntos ?? 0);
+        $mejorPuntuacion = (int) ($stats->mejor_puntuacion ?? 0);
+
+        return [
+            'partidas_jugadas' => (int) ($stats->partidas_jugadas ?? 0),
             'elo_total' => $eloTotal,
-            'imagenes_acertadas' => $imagenesAcertadas,
-            'titulo' => $currentTitle,
-            'resumen' => [
-                'promedio_puntos' => $promedio,
-                'mejor_puntuacion' => $mejorPuntuacion,
-                'ultima_puntuacion' => $ultimaPuntuacion,
-                'consistencia_pct' => $consistencia,
-                'progreso_siguiente_titulo_pct' => $this->calculateNextTitleProgress($eloTotal, $currentTitle, $nextTitle),
-            ],
-            'actividad_reciente' => $recentActivity,
-        ]);
+            'imagenes_acertadas' => $userStatsService->calculateCorrectImagesFromElo($eloTotal),
+            'promedio' => (int) round($promedioFloat),
+            'mejor_puntuacion' => $mejorPuntuacion,
+            'ultima_puntuacion' => (int) ($recentActivity->first()->puntuacion ?? 0),
+            'consistencia' => $mejorPuntuacion > 0
+                ? min(100, (int) round(($promedioFloat / $mejorPuntuacion) * 100))
+                : 0,
+        ];
     }
 
     private function resolveNextTitle(int $eloTotal): ?array

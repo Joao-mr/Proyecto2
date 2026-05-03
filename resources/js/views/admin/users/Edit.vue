@@ -37,7 +37,7 @@
 
                         <template #empty>
                             <img v-if="user.avatar" :src=user.avatar alt="Avatar" class="object-cover w-full aspect-square rounded-tl-2 rounded-tr-2">
-                            <img v-if="!user.avatar" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar Default" class="object-cover w-full aspect-square rounded-tl-2 rounded-tr-2">
+                            <img v-if="!user.avatar" src="/images/avatar-default.svg" alt="Avatar Default" class="object-cover w-full aspect-square rounded-tl-2 rounded-tr-2">
                         </template>
                     </FileUpload>
                 </div>

@@ -22,74 +22,56 @@ class RankingPublicController extends Controller
             return response()->json(['mode' => $mode, 'data' => []]);
         }
 
-        $nameCol = $this->firstExistingColumn('users', ['name', 'username', 'nick', 'nombre']) ?? 'id';
-
-        $eloCol = $this->firstExistingColumn(
-            'users',
-            $mode === 'multijugador'
-                ? ['elo_multijugador', 'elo_multi', 'rating_multijugador', 'rating_multi', 'elo', 'rating']
-                : ['elo_individual', 'rating_individual', 'elo', 'rating']
-        );
-
-        $matchesCol = $this->firstExistingColumn(
-            'users',
-            $mode === 'multijugador'
-                ? ['partidas_multijugador', 'matches_multijugador', 'partidas_jugadas', 'matches_played']
-                : ['partidas_individuales', 'matches_individuales', 'partidas_jugadas', 'matches_played']
-        );
-
-        $titleCol = $this->firstExistingColumn(
-            'users',
-            $mode === 'multijugador'
-                ? ['titulo_multijugador', 'title_multijugador', 'rango_multijugador', 'titulo', 'title']
-                : ['titulo_individual', 'title_individual', 'rango_individual', 'titulo', 'title']
-        );
-
+        $columns = $this->resolveIndexColumns($mode);
         $limit = max(1, min((int) $request->query('limit', 10), 100));
 
-        $query = DB::table('users');
-        $select = ["{$nameCol} as name"];
+        $query = DB::table('users')->select($columns['select']);
+        if ($columns['name'] !== 'id') {
+            $query->whereNotNull($columns['name']);
+        }
+        $query->orderByDesc($columns['elo'] ?? 'id');
 
+        $data = $query->limit($limit)->get()
+            ->map(fn($row) => $this->formatIndexRow($row, $resolver))
+            ->values();
+
+        return response()->json(['mode' => $mode, 'data' => $data]);
+    }
+
+    private function resolveIndexColumns(string $mode): array
+    {
+        $nameCol = $this->firstExistingColumn('users', ['name', 'username', 'nick', 'nombre']) ?? 'id';
+        $eloCol = $this->firstExistingColumn('users', $mode === 'multijugador'
+            ? ['elo_multijugador', 'elo_multi', 'rating_multijugador', 'rating_multi', 'elo', 'rating']
+            : ['elo_individual', 'rating_individual', 'elo', 'rating']);
+        $matchesCol = $this->firstExistingColumn('users', $mode === 'multijugador'
+            ? ['partidas_multijugador', 'matches_multijugador', 'partidas_jugadas', 'matches_played']
+            : ['partidas_individuales', 'matches_individuales', 'partidas_jugadas', 'matches_played']);
+        $titleCol = $this->firstExistingColumn('users', $mode === 'multijugador'
+            ? ['titulo_multijugador', 'title_multijugador', 'rango_multijugador', 'titulo', 'title']
+            : ['titulo_individual', 'title_individual', 'rango_individual', 'titulo', 'title']);
+
+        $select = ["{$nameCol} as name"];
         if ($eloCol) $select[] = "{$eloCol} as elo";
         if ($matchesCol) $select[] = "{$matchesCol} as matches";
         if ($titleCol) $select[] = "{$titleCol} as title";
 
-        $rows = $query->select($select);
+        return ['name' => $nameCol, 'elo' => $eloCol, 'select' => $select];
+    }
 
-        if ($nameCol !== 'id') {
-            $rows->whereNotNull($nameCol);
-        }
+    private function formatIndexRow(object $row, PlayerTitleResolver $resolver): array
+    {
+        $elo = (int) ($row->elo ?? 0);
+        $name = trim((string) ($row->name ?? ''));
+        $storedTitle = trim((string) ($row->title ?? ''));
+        $resolvedTitle = (string) ($resolver->resolve($elo)['label'] ?? 'Bronce');
 
-        if ($eloCol) {
-            $rows->orderByDesc($eloCol);
-        } else {
-            $rows->orderByDesc('id');
-        }
-
-        $data = $rows
-            ->limit($limit)
-            ->get()
-            ->map(function ($row) use ($resolver) {
-                $elo = (int) ($row->elo ?? 0);
-                $name = trim((string) ($row->name ?? ''));
-                $storedTitle = trim((string) ($row->title ?? ''));
-                $resolvedTitle = (string) ($resolver->resolve($elo)['label'] ?? 'Bronce');
-
-                if ($name === '') $name = 'SIN NOMBRE';
-
-                return [
-                    'name' => strtoupper($name),
-                    'elo' => $elo,
-                    'matches' => (int) ($row->matches ?? 0),
-                    'title' => strtoupper($storedTitle !== '' ? $storedTitle : $resolvedTitle),
-                ];
-            })
-            ->values();
-
-        return response()->json([
-            'mode' => $mode,
-            'data' => $data,
-        ]);
+        return [
+            'name' => strtoupper($name !== '' ? $name : 'SIN NOMBRE'),
+            'elo' => $elo,
+            'matches' => (int) ($row->matches ?? 0),
+            'title' => strtoupper($storedTitle !== '' ? $storedTitle : $resolvedTitle),
+        ];
     }
 
     public function category(Request $request, $categoria = null): JsonResponse

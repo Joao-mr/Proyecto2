@@ -23,7 +23,7 @@ const hasDashboardAccess = (roles = []) =>
 
 async function guest(to, from, next) {
     const auth = authStore()
-    let isLogin = !!auth.authenticated;
+    const isLogin = !!auth.authenticated;
 
     if (isLogin) {
         next('/')
@@ -34,8 +34,8 @@ async function guest(to, from, next) {
 
 async function requireAdmin(to, from, next) {
     const auth = authStore();
-    let isLogin = !!auth.authenticated;
-    let user = auth.user;
+    const isLogin = !!auth.authenticated;
+    const user = auth.user;
 
     if (isLogin) {
         if (hasDashboardAccess(user?.roles)) {

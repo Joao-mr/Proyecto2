@@ -24,7 +24,7 @@ const normalizeCategory = (item = {}) => {
   }
 }
 
-export function useCategories() {
+export function usePublicCategories() {
   const categories = ref([])
   const index = ref(0)
   const loading = ref(false)

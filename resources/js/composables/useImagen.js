@@ -6,9 +6,6 @@ import { useToast } from './useToast'
 import { useValidation } from './useValidation'
 
 export default function useImagen() {
-  // ============================================
-  // STATE
-  // ============================================
   const imagenes = ref([])
   const imagen = ref({ id: null, url: '', respuesta_correcta: '', categoria_id: null })
   const isLoading = ref(false)
@@ -24,9 +21,6 @@ export default function useImagen() {
     getError
   } = useValidation()
 
-  // ============================================
-  // SCHEMA DE VALIDACION
-  // ============================================
   const imagenSchema = yup.object({
     url: yup
       .string()
@@ -40,9 +34,6 @@ export default function useImagen() {
       .max(255, 'La respuesta correcta no puede superar 255 caracteres')
   })
 
-  // ============================================
-  // UTILIDADES
-  // ============================================
   const withLoading = async (fn) => {
     if (isLoading.value) throw new Error('Operacion en curso')
     isLoading.value = true
@@ -72,9 +63,6 @@ export default function useImagen() {
     return true
   }
 
-  /**
-   * Obtener URL de preview de la imagen
-   */
   const getImageUrl = (imagenData, type = 'original') => {
     if (!imagenData) return ''
     
@@ -93,9 +81,6 @@ export default function useImagen() {
     return ''
   }
 
-  // ============================================
-  // FUNCIONES DE ESTADO (CRUD basico)
-  // ============================================
   const resetImagen = () => {
     imagen.value = { id: null, url: '', respuesta_correcta: '', categoria_id: null }
     clearErrors()
@@ -104,7 +89,6 @@ export default function useImagen() {
   const setImagen = (data = {}) => {
     imagen.value = {
       id: data.id ?? null,
-      // En listados de admin la URL viene en data.urls.original
       url: data.url ?? data.urls?.original ?? '',
       respuesta_correcta: data.respuesta_correcta ?? '',
       categoria_id: data.categoria_id ?? null
@@ -120,13 +104,6 @@ export default function useImagen() {
     ]
   }
 
-  // ============================================
-  // FUNCIONES DE API - CRUD
-  // ============================================
-  
-  /**
-   * Obtener lista de imagenes
-   */
   const getImagenes = async (params = {}) => {
     isLoading.value = true
     try {
@@ -144,9 +121,6 @@ export default function useImagen() {
     }
   }
 
-  /**
-   * Crear imagen (CRUD basico)
-   */
   const createImagen = async () => {
     const { isValid } = await validate(imagenSchema, imagen.value)
     if (!isValid) {
@@ -159,7 +133,6 @@ export default function useImagen() {
         categoria_id: imagen.value.categoria_id ?? null
       }
 
-      // Evitamos enviar strings vacios porque Laravel los convierte a null.
       if (typeof imagen.value.url === 'string' && imagen.value.url.trim() !== '') {
         payload.url = imagen.value.url.trim()
       }
@@ -186,9 +159,6 @@ export default function useImagen() {
     }
   }
 
-  /**
-   * Actualizar imagen (CRUD basico)
-   */
   const updateImagen = async () => {
     const { isValid } = await validate(imagenSchema, imagen.value)
     if (!isValid) {
@@ -201,7 +171,6 @@ export default function useImagen() {
         categoria_id: imagen.value.categoria_id ?? null
       }
 
-      // Evitamos enviar strings vacios porque Laravel los convierte a null.
       if (typeof imagen.value.url === 'string' && imagen.value.url.trim() !== '') {
         payload.url = imagen.value.url.trim()
       }
@@ -228,9 +197,6 @@ export default function useImagen() {
     }
   }
 
-  /**
-   * Eliminar imagen
-   */
   const deleteImagen = async (id) => {
     if (!confirm('¿Estas seguro de que deseas eliminar esta imagen?')) {
       return
@@ -257,16 +223,6 @@ export default function useImagen() {
     }
   }
 
-  // ============================================
-  // FUNCIONES DE UPLOAD
-  // ============================================
-
-  /**
-   * Subir imagen a un modelo existente
-   * @param {File} file - El archivo de imagen
-   * @param {number} imagenId - ID de la imagen existente
-   * @returns {Promise}
-   */
   const uploadImageToExisting = async (file, imagenId) => {
     validateFile(file)
     
@@ -299,12 +255,6 @@ export default function useImagen() {
     }
   }
 
-  /**
-   * Crear imagen y subir archivo en una sola peticion
-   * @param {File} file - El archivo de imagen
-   * @param {string} respuestaCorrecta - Texto de la respuesta correcta (opcional)
-   * @returns {Promise}
-   */
   const uploadImagenNew = async (file, respuestaCorrecta = '') => {
     validateFile(file)
 
@@ -342,13 +292,6 @@ export default function useImagen() {
     }
   }
 
-  // ============================================
-  // FUNCIONES DE INFORMACION
-  // ============================================
-
-  /**
-   * Obtener informacion detallada de media de una imagen
-   */
   const getMediaInfo = async (imagenId) => {
     isLoading.value = true
     try {
@@ -369,32 +312,20 @@ export default function useImagen() {
     }
   }
 
-  // ============================================
-  // EXPORT
-  // ============================================
   return {
-    // State
     imagenes,
     imagen,
     isLoading,
     uploadProgress,
-
-    // Validation
     hasError,
     getError,
-
-    // CRUD utilities
     resetImagen,
     setImagen,
     upsertImagenRecord,
-
-    // CRUD API
     getImagenes,
     createImagen,
     updateImagen,
     deleteImagen,
-
-    // Upload API
     uploadImageToExisting,
     uploadImagenNew,
 

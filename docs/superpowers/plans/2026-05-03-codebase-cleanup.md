@@ -1,6 +1,6 @@
 # Codebase Cleanup Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Leave the Laravel + Vue class project cleaner, smaller, easier to read, and free of dead code, duplicate logic, noisy comments, and clearly unused files without changing visible behavior.
 
@@ -68,27 +68,27 @@
 - Inspect: `tests/router-profile-route.test.mjs`
 - Inspect: `tests/Feature/*.php`
 
-- [ ] **Step 1: Capture the current behavior baseline**
+- [x] **Step 1: Capture the current behavior baseline**
 
 Run: `npm run test`
 Expected: frontend smoke test passes.
 
-- [ ] **Step 2: Capture backend baseline**
+- [x] **Step 2: Capture backend baseline**
 
 Run: `php vendor/bin/phpunit`
 Expected: backend feature tests pass or existing failures are listed before cleanup begins.
 
-- [ ] **Step 3: Capture build baseline**
+- [x] **Step 3: Capture build baseline**
 
 Run: `npm run build`
 Expected: Vite build succeeds without introducing new warnings.
 
-- [ ] **Step 4: Record the cleanup inventory**
+- [x] **Step 4: Record the cleanup inventory**
 
 Run: `rg -n "/\\*|//|swal\\(|Noir|aaaaaaaa|bootdey|quill" routes app resources\\js package.json`
 Expected: concrete list of noise, dead comments, suspicious fallbacks, and potentially unused dependencies to process in later tasks.
 
-- [ ] **Step 5: Commit the untouched baseline**
+- [x] **Step 5: Commit the untouched baseline**
 
 ```bash
 git add docs/superpowers/plans/2026-05-03-codebase-cleanup.md
@@ -106,15 +106,15 @@ git commit -m "docs: add cleanup implementation plan"
 - Modify: `resources/js/views/user/MisSalasView.vue`
 - Modify: `resources/js/composables/auth.js`
 
-- [ ] **Step 1: Remove non-functional boilerplate from web routing**
+- [x] **Step 1: Remove non-functional boilerplate from web routing**
 
 Edit `routes/web.php` to keep only route declarations and remove the default Laravel block comment plus extra blank lines.
 
-- [ ] **Step 2: Remove section banners and inline route noise from API routing**
+- [x] **Step 2: Remove section banners and inline route noise from API routing**
 
 Edit `routes/api.php` to delete the `/* ... */` section banners and convert the route file into compact grouped declarations without changing paths, middleware, or names.
 
-- [ ] **Step 3: Clean the SPA shell**
+- [x] **Step 3: Clean the SPA shell**
 
 In `resources/views/main-view.blade.php`, remove the commented font line and replace the generic title:
 
@@ -128,7 +128,7 @@ with the real project title sourced from config:
 <title>{{ config('app.name') }}</title>
 ```
 
-- [ ] **Step 4: Remove commented imports and banner comments from the Vue bootstrap**
+- [x] **Step 4: Remove commented imports and banner comments from the Vue bootstrap**
 
 In `resources/js/app.js`, delete:
 
@@ -140,7 +140,7 @@ In `resources/js/app.js`, delete:
 
 Keep only comments that explain non-obvious initialization logic, and rewrite any remaining comments in simple English if they are truly necessary.
 
-- [ ] **Step 5: Delete obvious garbage markers and dead comments**
+- [x] **Step 5: Delete obvious garbage markers and dead comments**
 
 In `app/Http/Controllers/Api/CategoriaController.php`, remove the stray line:
 
@@ -150,7 +150,7 @@ In `app/Http/Controllers/Api/CategoriaController.php`, remove the stray line:
 
 Also delete comments that only narrate obvious CRUD code.
 
-- [ ] **Step 6: Remove inline "cleanup me" comments from Vue views**
+- [x] **Step 6: Remove inline "cleanup me" comments from Vue views**
 
 Delete comments like:
 
@@ -160,12 +160,12 @@ Delete comments like:
 
 from `resources/js/views/user/MisSalasView.vue`, and remove commented SweetAlert snippets from `resources/js/composables/auth.js`.
 
-- [ ] **Step 7: Verify formatting and syntax after the noise pass**
+- [x] **Step 7: Verify formatting and syntax after the noise pass**
 
 Run: `npm run build`
 Expected: build still passes after comment and boilerplate removal.
 
-- [ ] **Step 8: Commit the noise cleanup**
+- [x] **Step 8: Commit the noise cleanup**
 
 ```bash
 git add routes/api.php routes/web.php resources/views/main-view.blade.php resources/js/app.js app/Http/Controllers/Api/CategoriaController.php resources/js/views/user/MisSalasView.vue resources/js/composables/auth.js
@@ -187,7 +187,7 @@ git commit -m "refactor: remove boilerplate and dead comments"
 - Modify: `resources/js/views/admin/categorias/Edit.vue`
 - Modify: `resources/js/views/admin/categorias/Index.vue`
 
-- [ ] **Step 1: Decide the naming split and keep behavior unchanged**
+- [x] **Step 1: Decide the naming split and keep behavior unchanged**
 
 Use this rule:
 
@@ -198,7 +198,7 @@ Public home carousel composable => usePublicCategories
 
 Do not merge them; they solve different problems and forced unification would add condition flags.
 
-- [ ] **Step 2: Rename the public composable API for clarity**
+- [x] **Step 2: Rename the public composable API for clarity**
 
 In `resources/js/composables/useCategories.js`, change:
 
@@ -214,7 +214,7 @@ export function usePublicCategories() {
 
 and update its imports in `resources/js/components/home/CategorySection.vue`.
 
-- [ ] **Step 3: Standardize the private category composable name**
+- [x] **Step 3: Standardize the private category composable name**
 
 In `resources/js/composables/categorias.js`, change the default function signature to:
 
@@ -224,11 +224,11 @@ export default function useCategorias() {
 
 and keep that name consistent in every importing view listed above.
 
-- [ ] **Step 4: Remove duplicated router fallback code where route names are already stable**
+- [x] **Step 4: Remove duplicated router fallback code where route names are already stable**
 
 In `resources/js/views/CategoriasView.vue`, replace manual `router.resolve(...)` fallback logic with a direct named navigation if `public.rankings` is guaranteed by `resources/js/routes/routes.js`.
 
-- [ ] **Step 5: Simplify route guards without changing redirects**
+- [x] **Step 5: Simplify route guards without changing redirects**
 
 In `resources/js/routes/routes.js`, extract repeated auth checks into tiny pure helpers and keep only four guard cases:
 
@@ -241,12 +241,12 @@ requireAppUser
 
 Do not add new flags or route meta behavior in this pass.
 
-- [ ] **Step 6: Run the existing frontend route smoke test**
+- [x] **Step 6: Run the existing frontend route smoke test**
 
 Run: `npm run test`
 Expected: `tests/router-profile-route.test.mjs` passes after the route/composable naming cleanup.
 
-- [ ] **Step 7: Commit the naming cleanup**
+- [x] **Step 7: Commit the naming cleanup**
 
 ```bash
 git add resources/js/composables/categorias.js resources/js/composables/useCategories.js resources/js/components/home/CategorySection.vue resources/js/views/CategoriasView.vue resources/js/views/user/MisSalasView.vue resources/js/components/RankingCategory/RankingCategorySection.vue resources/js/views/public/game/CategoriaGameView.vue resources/js/views/admin/index.vue resources/js/views/admin/imagenes/Index.vue resources/js/views/admin/categorias/Create.vue resources/js/views/admin/categorias/Edit.vue resources/js/views/admin/categorias/Index.vue resources/js/routes/routes.js
@@ -262,7 +262,7 @@ git commit -m "refactor: normalize category composable naming"
 - Modify: `resources/js/views/shared/MyProfileView.vue`
 - Modify: `resources/js/composables/layout.js`
 
-- [ ] **Step 1: Reduce `useImagen.js` by extracting pure local helpers first**
+- [x] **Step 1: Reduce `useImagen.js` by extracting pure local helpers first**
 
 Keep the file single-purpose and split only within the same module at first. Extract and reuse helpers for:
 
@@ -275,7 +275,7 @@ validating uploaded files
 
 Do not introduce a class or a generic utility bucket.
 
-- [ ] **Step 2: Remove duplicated explanation comments from `useImagen.js`**
+- [x] **Step 2: Remove duplicated explanation comments from `useImagen.js`**
 
 Delete banner sections such as:
 
@@ -287,24 +287,24 @@ Delete banner sections such as:
 
 and keep only short comments above non-obvious transformations.
 
-- [ ] **Step 3: Simplify admin image views**
+- [x] **Step 3: Simplify admin image views**
 
 In `resources/js/views/admin/imagenes/Index.vue` and `Upload.vue`, move repeated image URL/fetch/delete handler glue into the composable return API so the views become mostly template + event wiring.
 
-- [ ] **Step 4: Replace external placeholder dependencies that make the project look unfinished**
+- [x] **Step 4: Replace external placeholder dependencies that make the project look unfinished**
 
 In `resources/js/views/shared/MyProfileView.vue` and `resources/js/views/admin/users/Edit.vue`, replace the `bootdey.com` fallback avatar URL with a local asset under `public/images/` if the project does not already ship a local default avatar.
 
-- [ ] **Step 5: Trim theme boot logic comments**
+- [x] **Step 5: Trim theme boot logic comments**
 
 In `resources/js/composables/layout.js`, keep the DOM sync logic but remove long explanatory comment chains once the code is small enough to read directly.
 
-- [ ] **Step 6: Verify the admin image flow still builds**
+- [x] **Step 6: Verify the admin image flow still builds**
 
 Run: `npm run build`
 Expected: build passes and no import path breaks were introduced.
 
-- [ ] **Step 7: Commit the frontend reduction pass**
+- [x] **Step 7: Commit the frontend reduction pass**
 
 ```bash
 git add resources/js/composables/useImagen.js resources/js/views/admin/imagenes/Index.vue resources/js/views/admin/imagenes/Upload.vue resources/js/views/shared/MyProfileView.vue resources/js/views/admin/users/Edit.vue resources/js/composables/layout.js
@@ -320,7 +320,7 @@ git commit -m "refactor: reduce frontend file size and cleanup assets"
 - Modify: `app/Services/UserStatsService.php`
 - Inspect: `database/migrations/*.php`
 
-- [ ] **Step 1: Refactor `ProfileController` into smaller private pure methods**
+- [x] **Step 1: Refactor `ProfileController` into smaller private pure methods**
 
 Extract private methods for:
 
@@ -333,7 +333,7 @@ building the response payload
 
 Keep request validation and persistence behavior unchanged.
 
-- [ ] **Step 2: Reduce `RankingPublicController` duplication**
+- [x] **Step 2: Reduce `RankingPublicController` duplication**
 
 Extract private helpers for:
 
@@ -345,11 +345,11 @@ returning empty ranking responses
 
 Keep schema-compatibility checks only where they are actually used.
 
-- [ ] **Step 3: Audit defensive compatibility in `ImagenController`**
+- [x] **Step 3: Audit defensive compatibility in `ImagenController`**
 
 Keep only compatibility branches that match the current schema and current frontend payloads. If a branch exists only for an old response shape and no current caller uses it, delete it.
 
-- [ ] **Step 4: Verify schema assumptions before deleting compatibility code**
+- [x] **Step 4: Verify schema assumptions before deleting compatibility code**
 
 Run:
 
@@ -360,12 +360,12 @@ php artisan route:list
 
 Expected: current migrations and active routes confirm which controller branches are still relevant.
 
-- [ ] **Step 5: Run backend tests after controller cleanup**
+- [x] **Step 5: Run backend tests after controller cleanup**
 
 Run: `php vendor/bin/phpunit`
 Expected: feature tests for profile, ranking, salas, stats, and auth still pass.
 
-- [ ] **Step 6: Commit the backend simplification**
+- [x] **Step 6: Commit the backend simplification**
 
 ```bash
 git add app/Http/Controllers/Api/ProfileController.php app/Http/Controllers/Api/RankingPublicController.php app/Http/Controllers/Api/ImagenController.php app/Services/UserStatsService.php
@@ -381,7 +381,7 @@ git commit -m "refactor: simplify profile ranking and image controllers"
 - Inspect: `public/images/*`
 - Inspect: `resources/js/**/*`
 
-- [ ] **Step 1: Prove frontend dependency usage before deleting anything**
+- [x] **Step 1: Prove frontend dependency usage before deleting anything**
 
 Run:
 
@@ -393,7 +393,7 @@ rg -n "from '@primevue/themes'|from \"@primevue/themes\"" resources/js
 
 Expected: each dependency is either actively used or clearly removable.
 
-- [ ] **Step 2: Remove unused dependencies from project config, not manually**
+- [x] **Step 2: Remove unused dependencies from project config, not manually**
 
 If `quill` is still unused after the search above, remove it with:
 
@@ -403,7 +403,7 @@ npm uninstall quill
 
 Repeat only for dependencies proven unused.
 
-- [ ] **Step 3: Prove asset usage before deleting files**
+- [x] **Step 3: Prove asset usage before deleting files**
 
 Run:
 
@@ -413,16 +413,16 @@ rg -n "logo\\.svg|logowhatizit\\.svg|icono1\\.svg|icono2\\.svg|icono3\\.svg|icon
 
 Delete only assets with zero references and no class-project value.
 
-- [ ] **Step 4: Remove class-project-inappropriate leftovers**
+- [x] **Step 4: Remove class-project-inappropriate leftovers**
 
 If the social links in `resources/js/layouts/HomeFooter.vue` are not part of the class deliverable, replace them with neutral project/contact content or delete the block entirely instead of keeping dead branding.
 
-- [ ] **Step 5: Rebuild after dependency and asset deletion**
+- [x] **Step 5: Rebuild after dependency and asset deletion**
 
 Run: `npm run build`
 Expected: successful build with no missing-module or missing-asset errors.
 
-- [ ] **Step 6: Commit the deletion pass**
+- [x] **Step 6: Commit the deletion pass**
 
 ```bash
 git add package.json package-lock.json public/images resources/js/layouts/HomeFooter.vue
@@ -435,7 +435,7 @@ git commit -m "chore: remove unused dependencies and assets"
 - Modify: only files touched in Tasks 2-6
 - Inspect: `README.md`
 
-- [ ] **Step 1: Do a final search for noisy comment styles**
+- [x] **Step 1: Do a final search for noisy comment styles**
 
 Run:
 
@@ -445,11 +445,11 @@ rg -n "/\\*|//|TODO|FIXME|console\\.log|aaaaaaaa" app resources/js routes
 
 Expected: only meaningful comments remain; no garbage markers, temporary notes, or dead debug output.
 
-- [ ] **Step 2: Make naming and wording consistent**
+- [x] **Step 2: Make naming and wording consistent**
 
 Check for mixed labels such as `CategorÃ­a`, `ImÃ¡genes`, `Profile`, `Permissions`, and normalize obvious mojibake or inconsistent UI wording where cleanup touched the file.
 
-- [ ] **Step 3: Run the full validation set**
+- [x] **Step 3: Run the full validation set**
 
 Run:
 
@@ -462,12 +462,12 @@ php vendor/bin/pint --test
 
 Expected: route smoke test passes, backend tests pass, build passes, and PHP formatting checks pass.
 
-- [ ] **Step 4: Review final diff for accidental behavior changes**
+- [x] **Step 4: Review final diff for accidental behavior changes**
 
 Run: `git --no-pager diff --stat HEAD~4..HEAD`
 Expected: mostly deletions, simplifications, and small refactors; no surprise feature work.
 
-- [ ] **Step 5: Commit the final polish**
+- [x] **Step 5: Commit the final polish**
 
 ```bash
 git add -A

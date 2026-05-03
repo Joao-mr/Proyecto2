@@ -1,7 +1,7 @@
 <template>
   <div class="profile-page vstack gap-3 gap-md-4">
     <ProfileHeroCard
-      :avatar="userDetails.avatar || 'https://bootdey.com/img/Content/avatar/avatar7.png'"
+      :avatar="userDetails.avatar || '/images/avatar-default.svg'"
       :name="profile.name || auth.user?.name || 'Jugador'"
       :subtitle="$t('profile_ui.hero_subtitle')"
       :title-label="stats.titulo?.label || '-'"
@@ -69,7 +69,7 @@
           <div class="col-12">
             <div class="d-flex flex-column flex-md-row align-items-md-center gap-3 p-3 border rounded profile-panel-soft">
               <Avatar
-                :image="userDetails.avatar || 'https://bootdey.com/img/Content/avatar/avatar7.png'"
+                :image="userDetails.avatar || '/images/avatar-default.svg'"
                 style="width: 4.5rem; height: 4.5rem;"
                 size="xlarge"
                 shape="circle"

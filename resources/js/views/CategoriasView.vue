@@ -95,8 +95,7 @@ function irACrearSala() {
 }
 
 function irARankingGlobal() {
-  const target = router.resolve({ name: 'public.rankings' });
-  router.push(target.matched.length ? { name: 'public.rankings' } : { path: '/rankings' });
+  router.push({ name: 'public.rankings' });
 }
 </script>
 

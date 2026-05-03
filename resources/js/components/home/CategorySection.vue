@@ -64,10 +64,10 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCategories } from '../../composables/useCategories'
+import { usePublicCategories } from '../../composables/useCategories'
 
 const router = useRouter()
-const { categories, current, loading, error, fetchCategories, next, prev } = useCategories()
+const { categories, current, loading, error, fetchCategories, next, prev } = usePublicCategories()
 
 onMounted(() => {
   fetchCategories()

@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class ImagenController extends Controller
 {
-    // Obtiene lista de imágenes con URLs de Spatie Media Library
     public function index(Request $request)
     {
         $query = Imagen::with('categoria');
@@ -62,7 +61,6 @@ class ImagenController extends Controller
         return response()->json($this->formatImagenPayload($imagen), 201);
     }
 
-    // Obtener una imagen específica con todas sus URLs y datos
     public function show(Imagen $imagen)
     {
         return response()->json([
@@ -97,7 +95,6 @@ class ImagenController extends Controller
     {
         $validated = $request->validated();
 
-        // Blindaje defensivo: no sobreescribir columnas NOT NULL con null.
         if (array_key_exists('url', $validated) && $validated['url'] === null) {
             unset($validated['url']);
         }
@@ -117,7 +114,6 @@ class ImagenController extends Controller
         return response()->json(null, 204);
     }
 
-    // Obtener lista simple de todas las imágenes con URLs
     public function getList()
     {
         $imagenes = Imagen::with('categoria')->get()->map(fn($imagen) => [
@@ -139,12 +135,9 @@ class ImagenController extends Controller
         ]);
     }
 
-    // Sube imagen a un modelo de imagen existente con Spatie Media Library
     public function uploadImage(UploadImagenRequest $request, Imagen $imagen)
     {
         try {
-            // Coge el archivo del request, lo guarda en el disco, lo registra en la tabla media,
-            // lo asocia con el modelo imagen
             $mediaItem = $imagen->addMediaFromRequest('image')
                 ->toMediaCollection('imagenes');
 
@@ -172,24 +165,20 @@ class ImagenController extends Controller
         }
     }
 
-    // Crea la imagen y sube archivo en una sola petición
     public function storeWithUpload(UploadImagenRequest $request)
     {
         DB::beginTransaction();
 
         try {
-            // Crea la imagen con la respuesta correcta
             $imagen = Imagen::create([
                 'url' => '',
                 'respuesta_correcta' => $request->input('respuesta_correcta', ''),
                 'categoria_id' => $request->input('categoria_id')
             ]);
 
-            // Sube la imagen
             $mediaItem = $imagen->addMediaFromRequest('image')
                 ->toMediaCollection('imagenes');
 
-            // Sincroniza la URL legacy con la URL real del archivo subido
             $imagen->update([
                 'url' => $mediaItem->getUrl()
             ]);
@@ -228,7 +217,6 @@ class ImagenController extends Controller
         }
     }
 
-    // Obtiene información completa de media de una imagen
     public function getMediaInfo(Imagen $imagen)
     {
         $media = $imagen->getFirstMedia('imagenes');
@@ -262,7 +250,6 @@ class ImagenController extends Controller
         ]);
     }
 
-    // Obtiene todas las imágenes con información detallada
     public function getAllMedia(Imagen $imagen)
     {
         $allMedia = $imagen->getMedia('imagenes');
@@ -289,7 +276,6 @@ class ImagenController extends Controller
         ]);
     }
 
-    // Formatea bytes a formato legible
     private function formatBytes($bytes, $precision = 2)
     {
         $units = ['B', 'KB', 'MB', 'GB'];
