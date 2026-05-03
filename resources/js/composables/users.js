@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import { useToast } from './useToast'
 import { useValidation } from './useValidation'
 import axios from 'axios'
+import { createLoadingGuard, unwrapApiData, upsertById } from './crud-helpers'
 
 export default function useUsers() {
     const users = ref([])
@@ -41,15 +42,7 @@ export default function useUsers() {
     })
 
 
-    const withLoading = async (fn) => {
-        if (isLoading.value) throw new Error('Operación en curso')
-        isLoading.value = true
-        try {
-            return await fn()
-        } finally {
-            isLoading.value = false
-        }
-    }
+    const withLoading = createLoadingGuard(isLoading)
 
     const resetUser = () => { user.value = { ...initialUser }; clearErrors() }
 
@@ -68,16 +61,8 @@ export default function useUsers() {
     }
 
     const upsertUserRecord = (userRecord) => {
-        if (!userRecord?.id) return
-
-        if (users.value.data) {
-            const index = users.value.data.findIndex(u => u.id === userRecord.id)
-            if (index !== -1) {
-                users.value.data[index] = userRecord
-            } else {
-                users.value.data.unshift(userRecord)
-            }
-        }
+        if (!users.value.data) return
+        users.value.data = upsertById(users.value.data, userRecord)
     }
 
     const getUsers = async (
@@ -97,18 +82,17 @@ export default function useUsers() {
             order_direction
         }
         const query = new URLSearchParams(params).toString()
-        return axios.get(`/api/users?${query}`)
-            .then(response => {
-                users.value = response.data;
-                return response;
-            })
+        const response = await axios.get(`/api/users?${query}`)
+        users.value = response.data
+        return response
     }
 
     const getUser = async (id) => {
         return withLoading(async () => {
             const response = await axios.get('/api/users/' + id)
-            user.value = response.data.data
-            return response.data.data
+            const data = unwrapApiData(response)
+            user.value = data
+            return data
         })
     }
 
@@ -127,7 +111,7 @@ export default function useUsers() {
             }
 
             const response = await withLoading(() => axios.post('/api/users', payload))
-            const data = response.data?.data ?? response.data
+            const data = unwrapApiData(response)
             toast.crud.created('Usuario')
             return data
         } catch (error) {
@@ -156,7 +140,7 @@ export default function useUsers() {
             }
 
             const response = await withLoading(() => axios.put(`/api/users/${user.value.id}`, payload))
-            const data = response.data?.data ?? response.data
+            const data = unwrapApiData(response)
             toast.crud.updated('Usuario')
             return data
         } catch (error) {
@@ -175,7 +159,7 @@ export default function useUsers() {
             return
         }
 
-        swal({
+        const result = await swal({
             title: '¿Estás seguro?',
             text: '¡No podrás revertir esto!',
             icon: 'warning',
@@ -184,19 +168,19 @@ export default function useUsers() {
             cancelButtonText: 'Cancelar',
             confirmButtonColor: '#ef4444',
             reverseButtons: true
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    await withLoading(() => axios.delete('/api/users/' + id))
-                    if (users.value.data) {
-                        users.value.data.splice(index, 1);
-                    }
-                    toast.crud.deleted('Usuario')
-                } catch (error) {
-                    toast.error('Error', 'No se pudo eliminar el usuario')
-                }
-            }
         })
+
+        if (!result.isConfirmed) return
+
+        try {
+            await withLoading(() => axios.delete('/api/users/' + id))
+            if (users.value.data) {
+                users.value.data.splice(index, 1)
+            }
+            toast.crud.deleted('Usuario')
+        } catch (error) {
+            toast.error('Error', 'No se pudo eliminar el usuario')
+        }
     }
 
     return {
@@ -216,3 +200,4 @@ export default function useUsers() {
         upsertUserRecord
     }
 }
+

@@ -13,13 +13,10 @@ class RankingPublicController extends Controller
 {
     public function index(Request $request, PlayerTitleResolver $resolver): JsonResponse
     {
-        $mode = $request->query('mode', 'individual');
-        if (!in_array($mode, ['individual', 'multijugador'], true)) {
-            $mode = 'individual';
-        }
+        $mode = $this->resolveMode((string) $request->query('mode', 'individual'));
 
         if (!Schema::hasTable('users')) {
-            return response()->json(['mode' => $mode, 'data' => []]);
+            return $this->emptyIndexResponse($mode);
         }
 
         $columns = $this->resolveIndexColumns($mode);
@@ -35,7 +32,7 @@ class RankingPublicController extends Controller
             ->map(fn($row) => $this->formatIndexRow($row, $resolver))
             ->values();
 
-        return response()->json(['mode' => $mode, 'data' => $data]);
+        return $this->indexResponse($mode, $data->all());
     }
 
     private function resolveIndexColumns(string $mode): array
@@ -78,7 +75,7 @@ class RankingPublicController extends Controller
     {
         $categoriaId = $categoria ?? $request->query('categoria_id');
         if ($categoriaId === null || $categoriaId === '') {
-            return response()->json(['category_id' => null, 'data' => []]);
+            return $this->emptyCategoryResponse(null);
         }
 
         $limit = max(1, min((int) $request->query('limit', 50), 200));
@@ -88,7 +85,7 @@ class RankingPublicController extends Controller
         $salaCategoriaTable = $this->firstExistingTable(['sala_categoria', 'sala_categorias']);
 
         if (!$upTable || !$partidasTable || !$salaCategoriaTable || !Schema::hasTable('users')) {
-            return response()->json(['category_id' => $categoriaId, 'data' => []]);
+            return $this->emptyCategoryResponse($categoriaId);
         }
 
         $upUserCol = $this->firstExistingColumn($upTable, ['user_id', 'usuario_id', 'idUsuario', 'id_usuario']);
@@ -105,7 +102,7 @@ class RankingPublicController extends Controller
         $uNameCol = $this->firstExistingColumn('users', ['name', 'username', 'nick', 'nombre']) ?? $uIdCol;
 
         if (!$upUserCol || !$upPartidaCol || !$pSalaCol || !$scSalaCol || !$scCategoriaCol) {
-            return response()->json(['category_id' => $categoriaId, 'data' => []]);
+            return $this->emptyCategoryResponse($categoriaId);
         }
 
         $scoreExpr = $upScoreCol
@@ -127,23 +124,15 @@ class RankingPublicController extends Controller
             ->orderByDesc('puntuacion_total')
             ->limit($limit)
             ->get()
-            ->map(function ($row) {
-                $usuario = trim((string) ($row->usuario ?? ''));
-                if ($usuario === '') $usuario = 'SIN NOMBRE';
-
-                return [
-                    'user_id' => $row->user_id,
-                    'usuario' => strtoupper($usuario),
-                    'puntuacion_total' => (int) ($row->puntuacion_total ?? 0),
-                    'partidas_jugadas' => (int) ($row->partidas_jugadas ?? 0),
-                ];
-            })
+            ->map(fn ($row) => $this->formatCategoryRow($row))
             ->values();
 
-        return response()->json([
-            'category_id' => $categoriaId,
-            'data' => $rows,
-        ]);
+        return $this->categoryResponse($categoriaId, $rows->all());
+    }
+
+    private function resolveMode(string $mode): string
+    {
+        return in_array($mode, ['individual', 'multijugador'], true) ? $mode : 'individual';
     }
 
     private function firstExistingTable(array $tables): ?string
@@ -164,5 +153,37 @@ class RankingPublicController extends Controller
             }
         }
         return null;
+    }
+
+    private function formatCategoryRow(object $row): array
+    {
+        $usuario = trim((string) ($row->usuario ?? ''));
+
+        return [
+            'user_id' => $row->user_id,
+            'usuario' => strtoupper($usuario !== '' ? $usuario : 'SIN NOMBRE'),
+            'puntuacion_total' => (int) ($row->puntuacion_total ?? 0),
+            'partidas_jugadas' => (int) ($row->partidas_jugadas ?? 0),
+        ];
+    }
+
+    private function emptyIndexResponse(string $mode): JsonResponse
+    {
+        return $this->indexResponse($mode, []);
+    }
+
+    private function emptyCategoryResponse($categoriaId): JsonResponse
+    {
+        return $this->categoryResponse($categoriaId, []);
+    }
+
+    private function indexResponse(string $mode, array $data): JsonResponse
+    {
+        return response()->json(['mode' => $mode, 'data' => $data]);
+    }
+
+    private function categoryResponse($categoriaId, array $data): JsonResponse
+    {
+        return response()->json(['category_id' => $categoriaId, 'data' => $data]);
     }
 }

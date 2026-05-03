@@ -96,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import HomeNavbar from '@/layouts/HomeNavbar.vue';
 import { authStore } from '@/store/auth';
@@ -105,6 +105,7 @@ import useCategorias from '@/composables/categorias';
 
 const auth = authStore();
 const router = useRouter();
+const swal = inject('$swal');
 
 const {
   salas,
@@ -167,7 +168,19 @@ async function handleSubmit() {
 }
 
 async function handleDelete(id) {
-  if (!window.confirm('¿Seguro que quieres eliminar esta sala?')) return;
+  if (swal) {
+    const result = await swal({
+      icon: 'warning',
+      title: 'Eliminar sala?',
+      text: 'Esta accion eliminara la sala de forma permanente.',
+      showCancelButton: true,
+      confirmButtonText: 'Si, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#ef4444'
+    });
+    if (!result.isConfirmed) return;
+  }
+
   await deleteSala(id);
   await getSalas();
 }

@@ -182,17 +182,17 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, inject, watch } from "vue";
+import { ref, reactive, computed, onMounted, inject } from "vue";
 import usePermissions from "@/composables/permissions";
 import { useAbility } from '@casl/vue';
 import {FilterMatchMode, FilterOperator} from "@primevue/core/api";
+import { useStoredTableFilters } from "@/composables/useStoredTableFilters";
 
 const FILTERS_STORAGE_KEY = 'admin_permissions_table_filters';
 const {permissions, permission, getPermissions, createPermission, updatePermission, deletePermission, resetPermission, setPermission, hasError, getError, upsertPermissionRecord, isLoading} = usePermissions();
 const { can } = useAbility();
 
 const swal = inject('$swal');
-const canUseBrowserStorage = typeof window !== 'undefined';
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -209,35 +209,18 @@ const permissionDialog = reactive({
 const isSubmitting = computed(() => isLoading.value);
 const skeletonRows = Array.from({ length: 5 }, (_, index) => index);
 
-const saveFiltersToStorage = (currentFilters) => {
-    if (!canUseBrowserStorage) return;
-    try {
-        window.localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(currentFilters));
-    } catch (error) {
-        console.warn('No se pudieron guardar los filtros de permisos', error);
-    }
-};
-
-const restoreFiltersFromStorage = () => {
-    if (!canUseBrowserStorage) return;
-    try {
-        const stored = window.localStorage.getItem(FILTERS_STORAGE_KEY);
-        if (!stored) return;
-        const parsed = JSON.parse(stored);
+const { restore: restoreFiltersFromStorage } = useStoredTableFilters(
+    FILTERS_STORAGE_KEY,
+    filters,
+    (storedFilters) => {
         filters.value = {
-            global: { ...filters.value.global, ...parsed.global },
-            id: { ...filters.value.id, ...parsed.id },
-            name: { ...filters.value.name, ...parsed.name },
-            created_at: { ...filters.value.created_at, ...parsed.created_at }
+            global: { ...filters.value.global, ...storedFilters.global },
+            id: { ...filters.value.id, ...storedFilters.id },
+            name: { ...filters.value.name, ...storedFilters.name },
+            created_at: { ...filters.value.created_at, ...storedFilters.created_at }
         };
-    } catch (error) {
-        console.warn('No se pudieron restaurar los filtros de permisos', error);
     }
-};
-
-watch(filters, (newFilters) => {
-    saveFiltersToStorage(newFilters);
-}, { deep: true });
+);
 
 const openCreateDialog = () => {
     resetPermission();
@@ -256,41 +239,33 @@ const closeDialog = () => {
     resetPermission();
 };
 
-const submitCreate = () => {
+const submitCreate = async () => {
     if (isSubmitting.value) return;
 
-    createPermission()
-        .then(createdPermission => {
-            if (createdPermission) {
-                upsertPermissionRecord(createdPermission);
-                closeDialog();
-            }
-        });
+    const createdPermission = await createPermission();
+    if (!createdPermission) return;
+
+    upsertPermissionRecord(createdPermission);
+    closeDialog();
 };
 
-const submitUpdate = () => {
+const submitUpdate = async () => {
     if (isSubmitting.value) return;
 
-    updatePermission()
-        .then(updatedPermission => {
-            if (updatedPermission) {
-                upsertPermissionRecord(updatedPermission);
-                closeDialog();
-            }
-        });
+    const updatedPermission = await updatePermission();
+    if (!updatedPermission) return;
+
+    upsertPermissionRecord(updatedPermission);
+    closeDialog();
 };
 
-const performDelete = (id) => {
-    deletePermission(id);
-};
-
-const confirmDeletePermission = (currentPermission) => {
+const confirmDeletePermission = async (currentPermission) => {
     if (!swal) {
-        performDelete(currentPermission.id);
+        await deletePermission(currentPermission.id);
         return;
     }
 
-    swal({
+    const result = await swal({
         icon: 'warning',
         title: '¿Eliminar permiso?',
         text: `El permiso "${currentPermission.name}" se eliminará de forma permanente.`,
@@ -298,11 +273,11 @@ const confirmDeletePermission = (currentPermission) => {
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            performDelete(currentPermission.id);
-        }
     });
+
+    if (!result.isConfirmed) return;
+
+    await deletePermission(currentPermission.id);
 };
 
 const formatDate = (dateString) => {

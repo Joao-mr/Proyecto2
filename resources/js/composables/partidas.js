@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import axios from 'axios'
 import { useToast } from './useToast'
 import { useValidation } from './useValidation'
+import { createLoadingGuard, unwrapApiData, upsertById } from './crud-helpers'
 
 export default function usePartidas() {
   const partidas = ref([])
@@ -34,15 +35,7 @@ export default function usePartidas() {
       })
   })
 
-  const withLoading = async (fn) => {
-    if (isLoading.value) throw new Error('Operación en curso')
-    isLoading.value = true
-    try {
-      return await fn()
-    } finally {
-      isLoading.value = false
-    }
-  }
+  const withLoading = createLoadingGuard(isLoading)
 
   const resetPartida = () => {
     partida.value = { ...initialPartida }
@@ -60,20 +53,19 @@ export default function usePartidas() {
   }
 
   const upsertPartidaRecord = (record) => {
-    if (!record?.id) return
-    partidas.value = [record, ...partidas.value.filter((item) => item.id !== record.id)]
+    partidas.value = upsertById(partidas.value, record)
   }
 
   const getPartidas = async (params = {}) => {
     const query = new URLSearchParams({ page: 1, per_page: 1000, ...params }).toString()
     const response = await axios.get(`/api/partidas?${query}`)
-    partidas.value = response.data?.data ?? []
+    partidas.value = unwrapApiData(response) ?? []
     return response
   }
 
   const getSalasDisponibles = async () => {
     const response = await axios.get('/api/salas?page=1')
-    salasDisponibles.value = response.data?.data ?? []
+    salasDisponibles.value = unwrapApiData(response) ?? []
     return response
   }
 
@@ -92,7 +84,7 @@ export default function usePartidas() {
           fecha_fin: partida.value.fecha_fin || null
         })
       )
-      const data = response.data?.data ?? response.data
+      const data = unwrapApiData(response)
       toast.crud.created('Partida')
       return data
     } catch (error) {
@@ -115,7 +107,7 @@ export default function usePartidas() {
           fecha_fin: partida.value.fecha_fin || null
         })
       )
-      const data = response.data?.data ?? response.data
+      const data = unwrapApiData(response)
       toast.crud.updated('Partida')
       return data
     } catch (error) {
@@ -136,7 +128,7 @@ export default function usePartidas() {
 
   const getPartida = async (id) => {
     const response = await axios.get(`/api/partidas/${id}`)
-    const data = response.data?.data ?? response.data
+    const data = unwrapApiData(response)
     setPartida(data)
     return response
   }
@@ -168,3 +160,4 @@ function toDateTimeLocal(value) {
   const local = new Date(date.getTime() - offset * 60000)
   return local.toISOString().slice(0, 16)
 }
+

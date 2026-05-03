@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useToast } from './useToast'
 import { useValidation } from './useValidation'
 import { authStore } from '../store/auth'
+import { createLoadingGuard, unwrapApiData } from './crud-helpers'
 
 export default function useProfile() {
   const auth = authStore()
@@ -56,15 +57,7 @@ export default function useProfile() {
     })
   })
 
-  const withLoading = async (fn) => {
-    if (isLoading.value) throw new Error('Operación en curso')
-    isLoading.value = true
-    try {
-      return await fn()
-    } finally {
-      isLoading.value = false
-    }
-  }
+  const withLoading = createLoadingGuard(isLoading)
 
   const resetProfile = () => {
     profile.value = { ...initialProfile }
@@ -109,13 +102,13 @@ export default function useProfile() {
     return withLoading(async () => {
       try {
         const userResponse = await axios.get('/api/user')
-        const userData = userResponse.data?.data ?? userResponse.data ?? {}
+        const userData = unwrapApiData(userResponse) ?? {}
 
         setProfile(userData)
 
         try {
           const statsResponse = await axios.get('/api/user/stats')
-          const statsData = statsResponse.data?.data ?? statsResponse.data ?? {}
+          const statsData = unwrapApiData(statsResponse) ?? {}
           setStats(statsData)
         } catch (statsError) {
           setStats()
@@ -150,7 +143,7 @@ export default function useProfile() {
       }
 
       const response = await withLoading(() => axios.put('/api/user', payload))
-      const data = response.data?.data ?? response.data
+      const data = unwrapApiData(response)
       if (auth.user) {
         auth.user.name = normalizedProfile.name
       }
@@ -180,3 +173,4 @@ export default function useProfile() {
     updateProfile
   }
 }
+

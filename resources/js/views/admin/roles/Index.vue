@@ -87,16 +87,16 @@
                         <template #body="slotProps">
                             <Skeleton v-if="isLoading" width="4rem" height="2rem" />
                             <div v-else class="d-flex gap-2">
-                        <Button
-                            v-if="can('role-edit')"
-                            v-tooltip.top="'Editar rol'"
-                            icon="pi pi-pencil"
-                            rounded
-                            text
-                            severity="secondary"
-                            size="small"
-                            @click="goToEdit(slotProps.data)"
-                        />
+                                <Button
+                                    v-if="can('role-edit')"
+                                    v-tooltip.top="'Editar rol'"
+                                    icon="pi pi-pencil"
+                                    rounded
+                                    text
+                                    severity="secondary"
+                                    size="small"
+                                    @click="goToEdit(slotProps.data)"
+                                />
                                 <Button
                                     v-if="can('role-delete')"
                                     v-tooltip.top="'Eliminar rol'"
@@ -115,9 +115,9 @@
         </Card>
 
         <Dialog
-            v-model:visible="roleDialog.open"
+            v-model:visible="roleDialogOpen"
             modal
-            :header="roleDialog.type === 'create' ? 'Crear Rol' : 'Editar Rol'"
+            header="Crear Rol"
             :style="{ width: '400px' }"
             class="role-dialog"
         >
@@ -155,11 +155,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, inject, watch } from "vue";
+import { ref, computed, onMounted, inject } from "vue";
 import useRoles from "@/composables/roles";
 import { useAbility } from '@casl/vue';
 import { FilterMatchMode, FilterOperator  } from "@primevue/core/api";
 import { useRouter } from "vue-router";
+import { useStoredTableFilters } from "@/composables/useStoredTableFilters";
 
 const FILTERS_STORAGE_KEY = 'admin_roles_table_filters';
 const {roles, role, getRoles, createRole, deleteRole, resetRole, hasError, getError, upsertRoleRecord, isLoading} = useRoles();
@@ -167,7 +168,6 @@ const { can } = useAbility();
 const router = useRouter();
 
 const swal = inject('$swal');
-const canUseBrowserStorage = typeof window !== 'undefined';
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -176,45 +176,26 @@ const filters = ref({
     created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
 });
 
-const roleDialog = reactive({
-    open: false
-});
+const roleDialogOpen = ref(false);
 
 const isSubmitting = computed(() => isLoading.value);
 
-const saveFiltersToStorage = (currentFilters) => {
-    if (!canUseBrowserStorage) return;
-    try {
-        window.localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(currentFilters));
-    } catch (error) {
-        console.warn('No se pudieron guardar los filtros de roles', error);
-    }
-};
-
-const restoreFiltersFromStorage = () => {
-    if (!canUseBrowserStorage) return;
-    try {
-        const stored = window.localStorage.getItem(FILTERS_STORAGE_KEY);
-        if (!stored) return;
-        const parsed = JSON.parse(stored);
+const { restore: restoreFiltersFromStorage } = useStoredTableFilters(
+    FILTERS_STORAGE_KEY,
+    filters,
+    (storedFilters) => {
         filters.value = {
-            global: { ...filters.value.global, ...parsed.global },
-            id: { ...filters.value.id, ...parsed.id },
-            name: { ...filters.value.name, ...parsed.name },
-            created_at: { ...filters.value.created_at, ...parsed.created_at }
+            global: { ...filters.value.global, ...storedFilters.global },
+            id: { ...filters.value.id, ...storedFilters.id },
+            name: { ...filters.value.name, ...storedFilters.name },
+            created_at: { ...filters.value.created_at, ...storedFilters.created_at }
         };
-    } catch (error) {
-        console.warn('No se pudieron restaurar los filtros de roles', error);
     }
-};
-
-watch(filters, (newFilters) => {
-    saveFiltersToStorage(newFilters);
-}, { deep: true });
+);
 
 const openCreateDialog = () => {
     resetRole();
-    roleDialog.open = true;
+    roleDialogOpen.value = true;
 };
 
 const goToEdit = (currentRole) => {
@@ -222,32 +203,27 @@ const goToEdit = (currentRole) => {
 };
 
 const closeDialog = () => {
-    roleDialog.open = false;
+    roleDialogOpen.value = false;
     resetRole();
 };
 
-const submitCreate = () => {
-  if (isSubmitting.value) return;
-  createRole()
-    .then(createdRole => {
-      if (createdRole) {
-        upsertRoleRecord(createdRole);
-        closeDialog();
-      }
-    })
+const submitCreate = async () => {
+    if (isSubmitting.value) return;
+
+    const createdRole = await createRole();
+    if (!createdRole) return;
+
+    upsertRoleRecord(createdRole);
+    closeDialog();
 };
 
-const performDelete = (id) => {
-    deleteRole(id);
-};
-
-const confirmDeleteRole = (currentRole) => {
+const confirmDeleteRole = async (currentRole) => {
     if (!swal) {
-        performDelete(currentRole.id);
+        await deleteRole(currentRole.id);
         return;
     }
 
-    swal({
+    const result = await swal({
         icon: 'warning',
         title: '¿Eliminar rol?',
         text: `El rol "${currentRole.name}" se eliminará de forma permanente.`,
@@ -255,11 +231,11 @@ const confirmDeleteRole = (currentRole) => {
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            performDelete(currentRole.id);
-        }
     });
+
+    if (!result.isConfirmed) return;
+
+    await deleteRole(currentRole.id);
 };
 
 const formatDate = (dateString) => {

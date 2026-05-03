@@ -3,38 +3,33 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class PartidasTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run()
+    public function run(): void
     {
-        \DB::table('partidas')->delete();
+        $salas = DB::table('salas')->pluck('id', 'codigo')->all();
+        $marvelSalaId = $salas['MARVEL01'] ?? null;
+        $deportesSalaId = $salas['DEPORT01'] ?? null;
+        $generalSalaId = $salas['GENERAL01'] ?? null;
 
-        \DB::table('partidas')->insert(array (
-            0 =>
-            array (
-                'id' => 1,
-                'id_sala' => 1,
-                'fecha_inicio' => '2026-04-15 10:00:00',
-                'fecha_fin' => '2026-04-15 10:15:00',
-            ),
-            1 =>
-            array (
-                'id' => 2,
-                'id_sala' => 2,
-                'fecha_inicio' => '2026-04-15 11:00:00',
-                'fecha_fin' => '2026-04-15 11:10:00',
-            ),
-            2 =>
-            array (
-                'id' => 3,
-                'id_sala' => 3,
-                'fecha_inicio' => '2026-04-15 12:00:00',
-                'fecha_fin' => null,
-            ),
-        ));
+        if (! is_int($marvelSalaId) || ! is_int($deportesSalaId) || ! is_int($generalSalaId)) {
+            throw new RuntimeException('PartidasTableSeeder: required salas not found.');
+        }
+
+        $partidas = [
+            ['id_sala' => $marvelSalaId, 'fecha_inicio' => '2026-04-15 10:00:00', 'fecha_fin' => '2026-04-15 10:15:00'],
+            ['id_sala' => $deportesSalaId, 'fecha_inicio' => '2026-04-15 11:00:00', 'fecha_fin' => '2026-04-15 11:10:00'],
+            ['id_sala' => $generalSalaId, 'fecha_inicio' => '2026-04-15 12:00:00', 'fecha_fin' => null],
+        ];
+
+        foreach ($partidas as $partida) {
+            DB::table('partidas')->updateOrInsert(
+                ['id_sala' => $partida['id_sala'], 'fecha_inicio' => $partida['fecha_inicio']],
+                ['fecha_fin' => $partida['fecha_fin']]
+            );
+        }
     }
 }

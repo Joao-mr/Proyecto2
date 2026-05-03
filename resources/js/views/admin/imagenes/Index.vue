@@ -206,7 +206,6 @@ const {
     setImagen,
     hasError,
     getError,
-    upsertImagenRecord,
     isLoading
 } = useImagen();
 
@@ -244,41 +243,31 @@ const closeDialog = () => {
     resetImagen();
 };
 
-const submitCreate = () => {
+const submitCreate = async () => {
     if (isSubmitting.value) return;
 
-    createImagen()
-        .then(createdImagen => {
-            if (createdImagen) {
-                upsertImagenRecord(createdImagen);
-                closeDialog();
-            }
-        });
+    const createdImagen = await createImagen();
+    if (!createdImagen) return;
+
+    closeDialog();
 };
 
-const submitUpdate = () => {
+const submitUpdate = async () => {
     if (isSubmitting.value) return;
 
-    updateImagen()
-        .then(updatedImagen => {
-            if (updatedImagen) {
-                upsertImagenRecord(updatedImagen);
-                closeDialog();
-            }
-        });
+    const updatedImagen = await updateImagen();
+    if (!updatedImagen) return;
+
+    closeDialog();
 };
 
-const performDelete = (id) => {
-    deleteImagen(id);
-};
-
-const confirmDeleteImagen = (currentImagen) => {
+const confirmDeleteImagen = async (currentImagen) => {
     if (!swal) {
-        performDelete(currentImagen.id);
+        await deleteImagen(currentImagen.id);
         return;
     }
 
-    swal({
+    const result = await swal({
         icon: 'warning',
         title: 'Eliminar imagen?',
         text: `La imagen #${currentImagen.id} se eliminara de forma permanente.`,
@@ -286,11 +275,11 @@ const confirmDeleteImagen = (currentImagen) => {
         confirmButtonText: 'Si, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            performDelete(currentImagen.id);
-        }
     });
+
+    if (!result.isConfirmed) return;
+
+    await deleteImagen(currentImagen.id);
 };
 
 const formatDate = (dateString) => {

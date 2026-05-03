@@ -6,14 +6,8 @@ use Illuminate\Database\Seeder;
 
 class ModelHasPermissionsTableSeeder extends Seeder
 {
-
-    /**
-     * Auto generated seed file
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
-        \DB::table('model_has_permissions')->delete();
+        // Foundation intentionally does not assign direct model permissions.
     }
 }

@@ -3,7 +3,7 @@
     <Card>
       <template #title>
         <div class="d-flex align-items-center justify-content-between w-100">
-          <span>Gestión de Partidas</span>
+          <span>Gestion de Partidas</span>
           <div class="d-flex align-items-center gap-2">
             <Button
               label="Actualizar"
@@ -85,11 +85,12 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import usePartidas from '@/composables/partidas'
 
 const router = useRouter()
+const swal = inject('$swal')
 
 const {
   partidas,
@@ -112,7 +113,23 @@ const goToEditPartida = (id) => {
 }
 
 const confirmDelete = async (id) => {
-  if (!window.confirm('¿Eliminar esta partida?')) return
+  if (!swal) {
+    await deletePartida(id)
+    return
+  }
+
+  const result = await swal({
+    icon: 'warning',
+    title: 'Eliminar partida?',
+    text: 'Esta accion eliminara la partida de forma permanente.',
+    showCancelButton: true,
+    confirmButtonText: 'Si, eliminar',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#ef4444'
+  })
+
+  if (!result.isConfirmed) return
+
   await deletePartida(id)
 }
 

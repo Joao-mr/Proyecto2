@@ -4,6 +4,7 @@ import axios from 'axios'
 import { authStore } from '@/store/auth'
 import { useToast } from './useToast'
 import { useValidation } from './useValidation'
+import { createLoadingGuard, unwrapApiData, upsertById } from './crud-helpers'
 
 export default function useSalas() {
   const salas = ref([])
@@ -50,15 +51,7 @@ export default function useSalas() {
     categorias: yup.array().nullable()
   })
 
-  const withLoading = async (fn) => {
-    if (isLoading.value) throw new Error('Operación en curso')
-    isLoading.value = true
-    try {
-      return await fn()
-    } finally {
-      isLoading.value = false
-    }
-  }
+  const withLoading = createLoadingGuard(isLoading)
 
   const resetSala = () => {
     sala.value = { ...initialSala }
@@ -77,25 +70,21 @@ export default function useSalas() {
   }
 
   const upsertSalaRecord = (salaRecord) => {
-    if (!salaRecord?.id) return
-    salas.value = [
-      salaRecord,
-      ...salas.value.filter(item => item.id !== salaRecord.id)
-    ]
+    salas.value = upsertById(salas.value, salaRecord)
   }
 
   const getSalas = async (params = {}) => {
     const defaultParams = { page: 1, per_page: 1000 }
     const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
     const response = await axios.get(`/api/salas?${query}`)
-    salas.value = response.data?.data ?? []
+    salas.value = unwrapApiData(response) ?? []
     return response
   }
 
   const getCategoriasDisponibles = async () => {
     try {
       const response = await axios.get('/api/categorias-list')
-      categoriasDisponibles.value = response.data ?? []
+      categoriasDisponibles.value = unwrapApiData(response) ?? []
       return response
     } catch (error) {
       handleRequestError(error, {
@@ -128,7 +117,7 @@ export default function useSalas() {
           categorias: sala.value.categorias
         })
       )
-      const data = response.data
+      const data = unwrapApiData(response)
       toast.crud.created('Sala')
       return data
     } catch (error) {
@@ -157,7 +146,7 @@ export default function useSalas() {
           categorias: sala.value.categorias
         })
       )
-      const data = response.data
+      const data = unwrapApiData(response)
       toast.crud.updated('Sala')
       return data
     } catch (error) {

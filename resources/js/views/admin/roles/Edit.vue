@@ -100,7 +100,8 @@ const loadData = async () => {
   await Promise.all([
     getRole(id),
     (async () => {
-      const all = await getPermissionList().then(() => Array.isArray(permissionList.value) ? permissionList.value : [])
+      await getPermissionList()
+      const all = Array.isArray(permissionList.value) ? permissionList.value : []
       const assigned = await getRolePermissions(id)
       const available = getDifference(all, assigned)
       permissionsPick.value = [available, assigned]

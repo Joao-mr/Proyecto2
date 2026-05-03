@@ -13,9 +13,7 @@ try {
             initialDarkTheme = themeData.darkTheme === true;
         }
     }
-} catch (e) {
-    console.error('Error al leer tema desde localStorage:', e);
-}
+} catch (_) {}
 
 const layoutConfig = reactive({
     preset: 'Aura',

@@ -4,37 +4,33 @@ import { defineStore } from "pinia";
 
 export const authStore = defineStore("authStore", () => {
 
-    let user = ref({name:''});
-    let authenticated = ref(false);
+    const user = ref({name:''});
+    const authenticated = ref(false);
 
-    async function login(data) {
-        axios.get('/api/user').then(response => {
-            user.value = response.data.data
-            authenticated.value = true
-        }).catch(error => {
-            user.value = {}
-            authenticated.value = false
-        })
-    }
-    async function getUser(data) {
-
-        await axios.get('/api/user').then(response => {
-            user.value = response.data.data
-            authenticated.value = true
-        }).catch(error => {
-            user.value = {}
-            authenticated.value = false
-        })
+    async function login() {
+        await getUser()
     }
 
-    async function getUserSignIn(data) {
-        await axios.get('/api/user/signin').then(response => {
+    async function getUser() {
+        try {
+            const response = await axios.get('/api/user')
             user.value = response.data.data
             authenticated.value = true
-        }).catch(error => {
+        } catch (error) {
             user.value = {}
             authenticated.value = false
-        })
+        }
+    }
+
+    async function getUserSignIn() {
+        try {
+            const response = await axios.get('/api/user/signin')
+            user.value = response.data.data
+            authenticated.value = true
+        } catch (error) {
+            user.value = {}
+            authenticated.value = false
+        }
     }
     function logout() {
         user.value = {}

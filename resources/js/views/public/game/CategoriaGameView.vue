@@ -143,7 +143,6 @@ const {
         fecha_fin: finishedAt,
       })
     } catch (error) {
-      console.error('Error saving match stats by category:', error)
       throw error
     }
   },

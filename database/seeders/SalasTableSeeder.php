@@ -4,41 +4,36 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class SalasTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        DB::table('salas')->delete();
+        $users = DB::table('users')->pluck('id', 'email')->all();
+        $adminId = $users['admin@demo.com'] ?? null;
+        $userId = $users['user@demo.com'] ?? null;
 
-        DB::table('salas')->insert([
-            [
-                'id' => 1,
-                'nombre' => 'Sala Marvel',
-                'codigo' => 'MARVEL01',
-                'id_creador' => 1,
-                'tiempo_respuesta' => 30,
-                'fecha_creacion' => '2026-04-15 10:00:00',
-            ],
-            [
-                'id' => 2,
-                'nombre' => 'Sala Deportes',
-                'codigo' => 'DEPORT01',
-                'id_creador' => 1,
-                'tiempo_respuesta' => 20,
-                'fecha_creacion' => '2026-04-15 10:00:00',
-            ],
-            [
-                'id' => 3,
-                'nombre' => 'Sala General',
-                'codigo' => 'GENERAL01',
-                'id_creador' => 2,
-                'tiempo_respuesta' => 30,
-                'fecha_creacion' => '2026-04-15 10:00:00',
-            ],
-        ]);
+        if (! is_int($adminId) || ! is_int($userId)) {
+            throw new RuntimeException('SalasTableSeeder: bootstrap users not found.');
+        }
+
+        $salas = [
+            ['codigo' => 'MARVEL01', 'nombre' => 'Sala Marvel', 'id_creador' => $adminId, 'tiempo_respuesta' => 30, 'fecha_creacion' => '2026-04-15 10:00:00'],
+            ['codigo' => 'DEPORT01', 'nombre' => 'Sala Deportes', 'id_creador' => $adminId, 'tiempo_respuesta' => 20, 'fecha_creacion' => '2026-04-15 10:00:00'],
+            ['codigo' => 'GENERAL01', 'nombre' => 'Sala General', 'id_creador' => $userId, 'tiempo_respuesta' => 30, 'fecha_creacion' => '2026-04-15 10:00:00'],
+        ];
+
+        foreach ($salas as $sala) {
+            DB::table('salas')->updateOrInsert(
+                ['codigo' => $sala['codigo']],
+                [
+                    'nombre' => $sala['nombre'],
+                    'id_creador' => $sala['id_creador'],
+                    'tiempo_respuesta' => $sala['tiempo_respuesta'],
+                    'fecha_creacion' => $sala['fecha_creacion'],
+                ]
+            );
+        }
     }
 }

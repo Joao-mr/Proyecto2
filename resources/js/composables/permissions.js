@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import axios from 'axios'
 import { useToast } from './useToast'
 import { useValidation } from './useValidation'
+import { createLoadingGuard, unwrapApiData, upsertById } from './crud-helpers'
 
 export default function usePermissions() {
   const permissions = ref([])
@@ -18,15 +19,7 @@ export default function usePermissions() {
     name: yup.string().trim().required('El nombre es obligatorio').min(3, 'Debe tener al menos 3 caracteres')
   })
 
-  const withLoading = async (fn) => {
-    if (isLoading.value) throw new Error('Operación en curso')
-    isLoading.value = true
-    try {
-      return await fn()
-    } finally {
-      isLoading.value = false
-    }
-  }
+  const withLoading = createLoadingGuard(isLoading)
 
   const resetPermission = () => {
     permission.value = { ...initialPermission }
@@ -37,7 +30,7 @@ export default function usePermissions() {
     if (!roleId) return []
     try {
       const response = await withLoading(() => axios.get(`/api/role-permissions/${roleId}`))
-      return response.data?.data ?? response.data ?? []
+      return unwrapApiData(response) ?? []
     } catch (error) {
       handleRequestError(error, {
         fallbackMessage: 'No se pudieron obtener los permisos del rol',
@@ -54,7 +47,7 @@ export default function usePermissions() {
         permissions: JSON.stringify(permissionIds)
       }))
       toast.crud.updated('Permisos del rol')
-      return response.data?.data ?? response.data ?? []
+      return unwrapApiData(response) ?? []
     } catch (error) {
       handleRequestError(error, {
         fallbackMessage: 'No se pudieron actualizar los permisos',
@@ -73,11 +66,7 @@ export default function usePermissions() {
   }
 
   const upsertPermissionRecord = (permissionRecord) => {
-    if (!permissionRecord?.id) return
-    permissions.value = [
-      permissionRecord,
-      ...permissions.value.filter(item => item.id !== permissionRecord.id)
-    ]
+    permissions.value = upsertById(permissions.value, permissionRecord)
   }
 
   const getPermissions = async (params = {}) => {
@@ -92,14 +81,14 @@ export default function usePermissions() {
 
     const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
     const response = await axios.get(`/api/permissions?${query}`)
-    permissions.value = response.data?.data ?? response.data ?? []
+    permissions.value = unwrapApiData(response) ?? []
     return response
   }
 
   const getPermissionList = async () => {
     try {
       const response = await axios.get('/api/permissions')
-      permissionList.value = response.data?.data ?? response.data ?? []
+      permissionList.value = unwrapApiData(response) ?? []
       return response
     } catch (error) {
       handleRequestError(error, {
@@ -120,7 +109,7 @@ export default function usePermissions() {
       const response = await withLoading(() =>
         axios.post('/api/permissions', { name: permission.value.name })
       )
-      const data = response.data?.data ?? response.data
+      const data = unwrapApiData(response)
       toast.crud.created('Permiso')
       return data
     } catch (error) {
@@ -146,7 +135,7 @@ export default function usePermissions() {
           name: permission.value.name
         })
       )
-      const data = response.data?.data ?? response.data
+      const data = unwrapApiData(response)
       toast.crud.updated('Permiso')
       return data
     } catch (error) {
@@ -193,3 +182,4 @@ export default function usePermissions() {
     deletePermission
   }
 }
+

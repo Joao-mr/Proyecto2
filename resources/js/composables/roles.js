@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import { useToast } from './useToast'
 import { useValidation } from './useValidation'
 import axios from 'axios'
+import { createLoadingGuard, unwrapApiData, upsertById } from './crud-helpers'
 
 export default function useRoles() {
   const roles = ref([])
@@ -32,15 +33,7 @@ export default function useRoles() {
   })
 
   // Helper para controlar loading
-  const withLoading = async (fn) => {
-    if (isLoading.value) throw new Error('Operación en curso')
-    isLoading.value = true
-    try {
-      return await fn()
-    } finally {
-      isLoading.value = false
-    }
-  }
+  const withLoading = createLoadingGuard(isLoading)
 
   const resetRole = () => { role.value = { ...initialRole }; clearErrors() }
   const setRole = (data = {}) => {
@@ -55,7 +48,7 @@ export default function useRoles() {
     if (!id) return null
     try {
       const response = await withLoading(() => axios.get(`/api/roles/${id}`))
-      const data = response.data?.data ?? response.data
+      const data = unwrapApiData(response)
       setRole(data)
       return data
     } catch (error) {
@@ -65,11 +58,10 @@ export default function useRoles() {
   }
 
   const upsertRoleRecord = (roleRecord) => {
-    if (!roleRecord?.id) return
-    roles.value = [roleRecord, ...roles.value.filter(r => r.id !== roleRecord.id)]
+    roles.value = upsertById(roles.value, roleRecord)
   }
 
-  const getRoles = (params = {}) => {
+  const getRoles = async (params = {}) => {
     const defaultParams = {
       page: 1,
       search_id: '',
@@ -79,11 +71,9 @@ export default function useRoles() {
       order_direction: 'desc'
     }
     const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
-    return axios.get(`/api/roles?${query}`)
-      .then(response => {
-        roles.value = response.data.data
-        return response
-      })
+    const response = await axios.get(`/api/roles?${query}`)
+    roles.value = unwrapApiData(response)
+    return response
   }
 
   // Crear role
@@ -96,7 +86,7 @@ export default function useRoles() {
 
     try {
       const response = await withLoading(() => axios.post('/api/roles', { name: role.value.name }))
-      const data = response.data?.data ?? response.data
+      const data = unwrapApiData(response)
       toast.crud.created('Rol')
       return data
     } catch (error) {
@@ -115,7 +105,7 @@ export default function useRoles() {
 
     try {
       const response = await withLoading(() => axios.put(`/api/roles/${role.value.id}`, { name: role.value.name }))
-      const data = response.data?.data ?? response.data
+      const data = unwrapApiData(response)
       toast.crud.updated('Rol')
       return data
     } catch (error) {
@@ -155,3 +145,4 @@ export default function useRoles() {
     deleteRole,
   }
 }
+

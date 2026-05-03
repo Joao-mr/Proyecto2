@@ -45,7 +45,17 @@ class ProfileController extends Controller
         $currentTitle = $resolver->resolve($statsData['elo_total']);
         $nextTitle = $this->resolveNextTitle($statsData['elo_total']);
 
-        return response()->json([
+        return response()->json($this->buildStatsResponse(
+            $statsData,
+            $currentTitle,
+            $nextTitle,
+            $recentActivity
+        ));
+    }
+
+    private function buildStatsResponse(array $statsData, array $currentTitle, ?array $nextTitle, $recentActivity): array
+    {
+        return [
             'partidas_jugadas' => $statsData['partidas_jugadas'],
             'elo_total' => $statsData['elo_total'],
             'imagenes_acertadas' => $statsData['imagenes_acertadas'],
@@ -58,7 +68,7 @@ class ProfileController extends Controller
                 'progreso_siguiente_titulo_pct' => $this->calculateNextTitleProgress($statsData['elo_total'], $currentTitle, $nextTitle),
             ],
             'actividad_reciente' => $recentActivity,
-        ]);
+        ];
     }
 
     private function loadRecentActivity(int $userId)

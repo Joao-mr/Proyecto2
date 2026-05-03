@@ -164,17 +164,13 @@ const goToCreateSala = () => {
     router.push('/admin/salas/create');
 };
 
-const performDelete = (id) => {
-    deleteSala(id);
-};
-
-const confirmDeleteSala = (currentSala) => {
+const confirmDeleteSala = async (currentSala) => {
     if (!swal) {
-        performDelete(currentSala.id);
+        await deleteSala(currentSala.id);
         return;
     }
 
-    swal({
+    const result = await swal({
         icon: 'warning',
         title: '¿Eliminar sala?',
         text: `La sala "${currentSala.nombre}" se eliminará de forma permanente.`,
@@ -182,11 +178,10 @@ const confirmDeleteSala = (currentSala) => {
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            performDelete(currentSala.id);
-        }
     });
+
+    if (!result.isConfirmed) return;
+    await deleteSala(currentSala.id);
 };
 
 const formatDate = (dateString) => {

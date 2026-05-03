@@ -21,7 +21,7 @@
                             outlined
                             :loading="isResettingStats"
                             :disabled="isResettingStats"
-                            @click="resetPlayerStats"
+                            @click="requestStatsReset"
                         />
                     </div>
                 </div>
@@ -131,82 +131,37 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import axios from "axios";
-import useUsers from "../../composables/users";
-import useCategorias from "../../composables/categorias";
-import useRoles from "../../composables/roles";
-import { useToast } from "../../composables/useToast";
+import { onMounted, inject } from "vue";
+import useAdminDashboardStats from "../../composables/useAdminDashboardStats";
 
-const stats = ref({
-    users: 0,
-    categories: 0,
-    roles: 0
-});
-const isResettingStats = ref(false);
+const swal = inject("$swal");
+const { stats, isResettingStats, loadStats, resetPlayerStats } = useAdminDashboardStats();
 
-const { categorias, getCategorias } = useCategorias();
-const { users, getUsers } = useUsers();
-const { roles, getRoles } = useRoles();
-const toast = useToast();
-
-const resolveCollectionCount = (collection) => {
-    if (Array.isArray(collection)) {
-        return collection.length;
-    }
-
-    return collection?.total || collection?.data?.length || 0;
-};
-
-const loadStats = async () => {
-    try {
-        await Promise.all([
-            getUsers(),
-            getCategorias(),
-            getRoles()
-        ]);
-
-        stats.value = {
-            users: resolveCollectionCount(users.value),
-            categories: resolveCollectionCount(categorias.value),
-            roles: resolveCollectionCount(roles.value)
-        };
-    } catch (error) {
-        console.error('Error loading stats:', error);
-    }
-};
-
-const resetPlayerStats = async () => {
+const requestStatsReset = async () => {
     if (isResettingStats.value) {
         return;
     }
 
-    const confirmed = window.confirm(
-        "Esto reiniciara las estadisticas de todos los jugadores a 0 y borrara el historial usado para rankings y perfil.\n\n¿Quieres continuar?"
-    );
-
-    if (!confirmed) {
+    if (!swal) {
+        await resetPlayerStats();
         return;
     }
 
-    isResettingStats.value = true;
+    const result = await swal({
+        icon: "warning",
+        title: "Reiniciar estadisticas",
+        text: "Esto reiniciara las estadisticas de todos los jugadores a 0 y borrara el historial usado para rankings y perfil. Quieres continuar?",
+        showCancelButton: true,
+        confirmButtonText: "Si, reiniciar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#ef4444"
+    });
 
-    try {
-        const response = await axios.post("/api/admin/player-stats/reset");
-
-        toast.success(
-            "Estadisticas reiniciadas",
-            response.data?.message || "Todos los jugadores vuelven a empezar desde cero."
-        );
-    } catch (error) {
-        console.error("Error resetting player stats:", error);
-        toast.error(
-            "Error",
-            error.response?.data?.message || "No se pudieron reiniciar las estadisticas."
-        );
-    } finally {
-        isResettingStats.value = false;
+    if (!result.isConfirmed) {
+        return;
     }
+
+    await resetPlayerStats();
 };
 
 onMounted(() => {

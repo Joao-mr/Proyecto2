@@ -13,7 +13,7 @@ class CategoryPublicController extends Controller
     public function index(): JsonResponse
     {
         if (!Schema::hasTable('categorias')) {
-            return response()->json(['data' => []]);
+            return $this->responseData([]);
         }
 
         $table = 'categorias';
@@ -47,7 +47,7 @@ class CategoryPublicController extends Controller
             })
             ->values();
 
-        return response()->json(['data' => $rows]);
+        return $this->responseData($rows->all());
     }
 
     private function firstExistingColumn(string $table, array $columns): ?string
@@ -58,5 +58,10 @@ class CategoryPublicController extends Controller
             }
         }
         return null;
+    }
+
+    private function responseData(array $data): JsonResponse
+    {
+        return response()->json(['data' => $data]);
     }
 }

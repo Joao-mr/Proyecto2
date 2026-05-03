@@ -1,10 +1,10 @@
-# Laravel 10 + Vue 3 API Base Project
+# Laravel 12 + Vue 3 API Base Project
 
 Este proyecto es una base sólida diseñada para estudiantes y desarrolladores que deseen aprender a construir aplicaciones SPA (Single Page Application) modernas utilizando Laravel como API backend y Vue 3 como frontend.
 
 ## 🚀 Características Principales
 
-### Backend (Laravel 10)
+### Backend (Laravel 12)
 - **API RESTful**: Estructura robusta para servir datos al frontend.
 - **Autenticación Sanctum**: Sistema seguro de autenticación basado en cookies/tokens.
 - **Roles y Permisos**: Implementación de `spatie/laravel-permission` para gestión granular de accesos.
@@ -21,7 +21,7 @@ Este proyecto es una base sólida diseñada para estudiantes y desarrolladores q
 
 ## 🛠️ Requisitos Previos
 
-- PHP >= 8.1
+- PHP >= 8.2
 - Composer
 - Node.js >= 16
 - MySQL / MariaDB
@@ -29,6 +29,8 @@ Este proyecto es una base sólida diseñada para estudiantes y desarrolladores q
 ## ⚙️ Instalación y Configuración
 
 Sigue estos pasos para levantar el proyecto en tu entorno local:
+
+Objetivo de instalacion: este repositorio debe poder instalarse desde un clon limpio usando Composer, npm, `.env`, `php artisan migrate --seed` y `npm run build`, sin limpieza manual de base de datos.
 
 ### 1. Clonar el Repositorio
 ```bash
@@ -64,11 +66,10 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Configurar dominio para Sanctum (Importante para autenticación):
+Configurar dominio para Sanctum (importante para autenticacion):
 ```dotenv
 SANCTUM_STATEFUL_DOMAINS=localhost:8000
 APP_URL=http://localhost:8000
-FRONTEND_URL=http://localhost:8000
 ```
 
 Ejecutar migraciones y seeders:

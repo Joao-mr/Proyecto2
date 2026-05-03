@@ -163,7 +163,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import useImagen from '@/composables/useImagen'
 
@@ -174,6 +174,7 @@ const respuestaCorrecta = ref('')
 const viewDialogVisible = ref(false)
 const selectedImageToView = ref(null)
 const router = useRouter()
+const swal = inject('$swal')
 
 const { imagenes, isLoading, uploadProgress, getImagenes, uploadImagenNew, deleteImagen, getImageUrl } = useImagen()
 
@@ -181,25 +182,26 @@ const goBackToIndex = () => {
     router.push({ name: 'imagenes-juego.index' })
 }
 
-/**
- * Manejador de seleccion de archivo
- */
-const handleFileSelect = (event) => {
-    const file = event.target.files?.[0]
-    if (file) {
-        selectedFile.value = file
-        generatePreview(file)
+const getSelectedFile = (event) => event?.target?.files?.[0] ?? null
+const getDroppedFile = (event) => event?.dataTransfer?.files?.[0] ?? null
+
+const setSelectedFile = (file) => {
+    if (!file) {
+        return
     }
+
+    selectedFile.value = file
+    generatePreview(file)
 }
 
-/**
- * Manejador de drag and drop
- */
+const handleFileSelect = (event) => {
+    setSelectedFile(getSelectedFile(event))
+}
+
 const handleDrop = (event) => {
-    const file = event.dataTransfer.files?.[0]
+    const file = getDroppedFile(event)
     if (file && file.type.startsWith('image/')) {
-        selectedFile.value = file
-        generatePreview(file)
+        setSelectedFile(file)
     }
 }
 
@@ -227,8 +229,7 @@ const handleUpload = async () => {
             await getImagenes()
         }
     } catch (error) {
-        // El composable ya muestra el toast de error; evitamos romper el handler UI.
-        console.error('Error al subir imagen en Upload.vue:', error)
+        // El composable ya maneja el error por toast.
     }
 }
 
@@ -252,16 +253,31 @@ const viewImage = (imagen) => {
     viewDialogVisible.value = true
 }
 
-/**
- * Eliminar imagen
- */
+const performDeleteImage = async (id) => {
+    await deleteImagen(id)
+    await getImagenes()
+}
+
 const deleteImage = async (id) => {
-    try {
-        await deleteImagen(id)
-        await getImagenes()
-    } catch (error) {
-        console.error('Error al eliminar:', error)
+    if (swal) {
+        const result = await swal({
+            icon: 'warning',
+            title: 'Eliminar imagen?',
+            text: `La imagen #${id} se eliminara de forma permanente.`,
+            showCancelButton: true,
+            confirmButtonText: 'Si, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#ef4444'
+        })
+
+        if (!result.isConfirmed) {
+            return
+        }
     }
+
+    try {
+        await performDeleteImage(id)
+    } catch (_) {}
 }
 
 /**

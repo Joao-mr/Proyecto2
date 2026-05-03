@@ -50,18 +50,18 @@ export default function useAuth() {
         processing.value = true
         validationErrors.value = {}
 
-        await axios.post('/login', loginForm)
-            .then(async response => {
-                await auth.getUser()
-                await loginUser()
-                await router.push({ name: 'home' })
-            })
-            .catch(error => {
-                if (error.response?.data) {
-                    validationErrors.value = error.response.data.errors
-                }
-            })
-            .finally(() => processing.value = false)
+        try {
+            await axios.post('/login', loginForm)
+            await auth.getUser()
+            await loginUser()
+            await router.push({ name: 'home' })
+        } catch (error) {
+            if (error.response?.data) {
+                validationErrors.value = error.response.data.errors
+            }
+        } finally {
+            processing.value = false
+        }
     }
 
     const submitRegister = async () => {
@@ -70,22 +70,22 @@ export default function useAuth() {
         processing.value = true
         validationErrors.value = {}
 
-        await axios.post('/register', registerForm)
-            .then(async response => {
-                swal({
-                    icon: 'success',
-                    title: 'Registration successfully',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                await router.push({ name: 'auth.login' })
+        try {
+            await axios.post('/register', registerForm)
+            swal({
+                icon: 'success',
+                title: 'Registration successfully',
+                showConfirmButton: false,
+                timer: 1500
             })
-            .catch(error => {
-                if (error.response?.data) {
-                    validationErrors.value = error.response.data.errors
-                }
-            })
-            .finally(() => processing.value = false)
+            await router.push({ name: 'auth.login' })
+        } catch (error) {
+            if (error.response?.data) {
+                validationErrors.value = error.response.data.errors
+            }
+        } finally {
+            processing.value = false
+        }
     }
 
     const submitForgotPassword = async () => {
@@ -94,21 +94,21 @@ export default function useAuth() {
         processing.value = true
         validationErrors.value = {}
 
-        await axios.post('/api/forget-password', forgotForm)
-            .then(async response => {
-                swal({
-                    icon: 'success',
-                    title: 'We have emailed your password reset link! Please check your mail inbox.',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+        try {
+            await axios.post('/api/forget-password', forgotForm)
+            swal({
+                icon: 'success',
+                title: 'We have emailed your password reset link! Please check your mail inbox.',
+                showConfirmButton: false,
+                timer: 1500
             })
-            .catch(error => {
-                if (error.response?.data) {
-                    validationErrors.value = error.response.data.errors
-                }
-            })
-            .finally(() => processing.value = false)
+        } catch (error) {
+            if (error.response?.data) {
+                validationErrors.value = error.response.data.errors
+            }
+        } finally {
+            processing.value = false
+        }
     }
 
     const submitResetPassword = async () => {
@@ -117,22 +117,22 @@ export default function useAuth() {
         processing.value = true
         validationErrors.value = {}
 
-        await axios.post('/api/reset-password', resetForm)
-            .then(async response => {
-                swal({
-                    icon: 'success',
-                    title: 'Password successfully changed.',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                await router.push({ name: 'auth.login' })
+        try {
+            await axios.post('/api/reset-password', resetForm)
+            swal({
+                icon: 'success',
+                title: 'Password successfully changed.',
+                showConfirmButton: false,
+                timer: 1500
             })
-            .catch(error => {
-                if (error.response?.data) {
-                    validationErrors.value = error.response.data.errors
-                }
-            })
-            .finally(() => processing.value = false)
+            await router.push({ name: 'auth.login' })
+        } catch (error) {
+            if (error.response?.data) {
+                validationErrors.value = error.response.data.errors
+            }
+        } finally {
+            processing.value = false
+        }
     }
 
     const loginUser = () => {
@@ -163,27 +163,25 @@ export default function useAuth() {
 
         processing.value = true
 
-        axios.post('/logout')
-            .then(response => {
-                user.name = ''
-                user.email = ''
-                auth.logout()
-                router.push({ name: 'auth.login' })
-            })
-            .catch(() => {})
-            .finally(() => {
-                processing.value = false
-            })
+        try {
+            await axios.post('/logout')
+            user.name = ''
+            user.email = ''
+            auth.logout()
+            router.push({ name: 'auth.login' })
+        } catch (_) {
+            // noop
+        } finally {
+            processing.value = false
+        }
     }
 
     const getAbilities = async () => {
-        await axios.get('/api/abilities')
-            .then(response => {
-                const permissions = response.data
-                const { can, rules } = new AbilityBuilder(createMongoAbility)
-                can(permissions)
-                ability.update(rules)
-            })
+        const response = await axios.get('/api/abilities')
+        const permissions = response.data
+        const { can, rules } = new AbilityBuilder(createMongoAbility)
+        can(permissions)
+        ability.update(rules)
     }
 
     return {

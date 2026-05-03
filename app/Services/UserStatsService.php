@@ -72,33 +72,15 @@ class UserStatsService
         $title = $this->playerTitleResolver->resolve($eloTotal)['label'] ?? null;
         $updates = [];
 
-        if (Schema::hasColumn('users', 'partidas_jugadas')) {
-            $updates['partidas_jugadas'] = $partidasJugadas;
-        }
-        if (Schema::hasColumn('users', 'elo_total')) {
-            $updates['elo_total'] = $eloTotal;
-        }
-        if (Schema::hasColumn('users', 'elo')) {
-            $updates['elo'] = $eloTotal;
-        }
-        if (Schema::hasColumn('users', 'titulo')) {
-            $updates['titulo'] = $title;
-        }
-        if (Schema::hasColumn('users', 'imagenes_acertadas')) {
-            $updates['imagenes_acertadas'] = $this->calculateCorrectImagesFromElo($eloTotal);
-        }
-        if (Schema::hasColumn('users', 'promedio_puntos')) {
-            $updates['promedio_puntos'] = (int) round($promedio);
-        }
-        if (Schema::hasColumn('users', 'mejor_puntuacion')) {
-            $updates['mejor_puntuacion'] = $mejorPuntuacion;
-        }
-        if (Schema::hasColumn('users', 'ultima_puntuacion')) {
-            $updates['ultima_puntuacion'] = $ultimaPuntuacion;
-        }
-        if (Schema::hasColumn('users', 'consistencia_pct')) {
-            $updates['consistencia_pct'] = $consistencia;
-        }
+        $this->setColumnIfExists($updates, 'partidas_jugadas', $partidasJugadas);
+        $this->setColumnIfExists($updates, 'elo_total', $eloTotal);
+        $this->setColumnIfExists($updates, 'elo', $eloTotal);
+        $this->setColumnIfExists($updates, 'titulo', $title);
+        $this->setColumnIfExists($updates, 'imagenes_acertadas', $this->calculateCorrectImagesFromElo($eloTotal));
+        $this->setColumnIfExists($updates, 'promedio_puntos', (int) round($promedio));
+        $this->setColumnIfExists($updates, 'mejor_puntuacion', $mejorPuntuacion);
+        $this->setColumnIfExists($updates, 'ultima_puntuacion', $ultimaPuntuacion);
+        $this->setColumnIfExists($updates, 'consistencia_pct', $consistencia);
 
         if ($updates !== []) {
             User::query()
@@ -134,33 +116,15 @@ class UserStatsService
         $defaultTitle = $this->playerTitleResolver->resolve(0)['label'] ?? null;
         $updates = [];
 
-        if (Schema::hasColumn('users', 'partidas_jugadas')) {
-            $updates['partidas_jugadas'] = 0;
-        }
-        if (Schema::hasColumn('users', 'elo_total')) {
-            $updates['elo_total'] = 0;
-        }
-        if (Schema::hasColumn('users', 'elo')) {
-            $updates['elo'] = 0;
-        }
-        if (Schema::hasColumn('users', 'titulo')) {
-            $updates['titulo'] = $defaultTitle;
-        }
-        if (Schema::hasColumn('users', 'imagenes_acertadas')) {
-            $updates['imagenes_acertadas'] = 0;
-        }
-        if (Schema::hasColumn('users', 'promedio_puntos')) {
-            $updates['promedio_puntos'] = 0;
-        }
-        if (Schema::hasColumn('users', 'mejor_puntuacion')) {
-            $updates['mejor_puntuacion'] = 0;
-        }
-        if (Schema::hasColumn('users', 'ultima_puntuacion')) {
-            $updates['ultima_puntuacion'] = 0;
-        }
-        if (Schema::hasColumn('users', 'consistencia_pct')) {
-            $updates['consistencia_pct'] = 0;
-        }
+        $this->setColumnIfExists($updates, 'partidas_jugadas', 0);
+        $this->setColumnIfExists($updates, 'elo_total', 0);
+        $this->setColumnIfExists($updates, 'elo', 0);
+        $this->setColumnIfExists($updates, 'titulo', $defaultTitle);
+        $this->setColumnIfExists($updates, 'imagenes_acertadas', 0);
+        $this->setColumnIfExists($updates, 'promedio_puntos', 0);
+        $this->setColumnIfExists($updates, 'mejor_puntuacion', 0);
+        $this->setColumnIfExists($updates, 'ultima_puntuacion', 0);
+        $this->setColumnIfExists($updates, 'consistencia_pct', 0);
 
         if ($updates !== []) {
             DB::table('users')->update($updates);
@@ -178,5 +142,12 @@ class UserStatsService
 
             $this->resetAllUserStats();
         });
+    }
+
+    private function setColumnIfExists(array &$updates, string $column, mixed $value): void
+    {
+        if (Schema::hasColumn('users', $column)) {
+            $updates[$column] = $value;
+        }
     }
 }

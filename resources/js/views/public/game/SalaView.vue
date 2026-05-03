@@ -147,7 +147,6 @@ const {
         fecha_fin: finishedAt,
       })
     } catch (error) {
-      console.error('Error saving match stats:', error)
       throw error
     }
   },
@@ -171,18 +170,20 @@ onMounted(async () => {
       return
     }
 
-    const requests = categoriaIds.map((catId) =>
-      axios.get(`/api/imagenes?categoria_id=${catId}&per_page=100&page=1`)
-        .then((response) => response.data?.data ?? [])
-        .catch(() => [])
-    )
+    const requests = categoriaIds.map(async (catId) => {
+      try {
+        const response = await axios.get(`/api/imagenes?categoria_id=${catId}&per_page=100&page=1`)
+        return response.data?.data ?? []
+      } catch (_) {
+        return []
+      }
+    })
 
     const results = await Promise.all(requests)
     const allImagenes = results.flat()
     await startMatch(buildGameRounds(allImagenes, { filterMissingImage: true }))
-  } catch (err) {
-    console.error('Error loading sala:', err)
-    loadError.value = err?.response?.data?.message ?? 'No fue posible cargar la sala en este momento.'
+  } catch (error) {
+    loadError.value = error?.response?.data?.message ?? 'No fue posible cargar la sala en este momento.'
   } finally {
     pageLoading.value = false
   }

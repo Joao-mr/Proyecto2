@@ -97,9 +97,7 @@ app.directive('ripple', Ripple);
                 return;
             }
         }
-    } catch (e) {
-        console.error('Error al leer tema:', e);
-    }
+    } catch (_) {}
 
     document.documentElement.classList.remove('app-dark', 'dark');
     document.body.classList.remove('dark');

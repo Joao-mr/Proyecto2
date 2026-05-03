@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreImagenRequest;
 use App\Http\Requests\UpdateImagenRequest;
 use App\Http\Requests\UploadImagenRequest;
-use App\Http\Resources\ImagenResource;
 use App\Models\Imagen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ImagenController extends Controller
 {
@@ -27,20 +27,9 @@ class ImagenController extends Controller
             $query->latest('id');
         }
 
-        $imagenes = $query->paginate(min((int) $request->get('per_page', 10), 1000))->through(fn($imagen) => [
-            'id' => $imagen->id,
-            'respuesta_correcta' => $imagen->respuesta_correcta,
-            'categoria_id' => $imagen->categoria_id,
-            'categoria_nombre' => $imagen->categoria?->nombre,
-            'urls' => [
-                'original' => $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
-                'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
-                'preview' => $imagen->getFirstMediaUrl('imagenes', 'preview') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
-            ],
-            'has_media' => $imagen->hasMedia('imagenes'),
-            'created_at' => $imagen->created_at,
-            'updated_at' => $imagen->updated_at,
-        ]);
+        $imagenes = $query
+            ->paginate(min((int) $request->get('per_page', 10), 1000))
+            ->through(fn (Imagen $imagen) => $this->formatImagenPayload($imagen));
 
         return response()->json([
             'success' => true,
@@ -58,36 +47,26 @@ class ImagenController extends Controller
     {
         $imagen = Imagen::create($request->validated());
         $imagen->load('categoria');
-        return response()->json($this->formatImagenPayload($imagen), 201);
+        return response()->json([
+            'success' => true,
+            'data' => $this->formatImagenPayload($imagen),
+        ], 201);
     }
 
     public function show(Imagen $imagen)
     {
+        $imagen->load('categoria');
+
         return response()->json([
             'success' => true,
-            'data' => [
-                'id' => $imagen->id,
-                'respuesta_correcta' => $imagen->respuesta_correcta,
-                'urls' => [
-                    'original' => $imagen->getFirstMediaUrl('imagenes'),
-                    'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb'),
-                    'preview' => $imagen->getFirstMediaUrl('imagenes', 'preview'),
-                ],
-                'has_media' => $imagen->hasMedia('imagenes'),
-                'all_media' => $imagen->getMedia('imagenes')->map(fn($m) => [
-                    'id' => $m->id,
-                    'file_name' => $m->file_name,
-                    'size' => $m->size,
-                    'mime_type' => $m->mime_type,
-                    'urls' => [
-                        'original' => $m->getUrl(),
-                        'thumb' => $m->getUrl('thumb'),
-                        'preview' => $m->getUrl('preview'),
-                    ]
-                ]),
-                'created_at' => $imagen->created_at,
-                'updated_at' => $imagen->updated_at,
-            ]
+            'data' => array_merge(
+                $this->formatImagenPayload($imagen),
+                [
+                    'all_media' => $imagen->getMedia('imagenes')->map(
+                        fn ($mediaItem) => $this->formatMediaPayload($mediaItem)
+                    )->values(),
+                ]
+            ),
         ]);
     }
 
@@ -105,7 +84,10 @@ class ImagenController extends Controller
 
         $imagen->update($validated);
         $imagen->load('categoria');
-        return response()->json($this->formatImagenPayload($imagen));
+        return response()->json([
+            'success' => true,
+            'data' => $this->formatImagenPayload($imagen),
+        ]);
     }
 
     public function destroy(Imagen $imagen)
@@ -116,17 +98,10 @@ class ImagenController extends Controller
 
     public function getList()
     {
-        $imagenes = Imagen::with('categoria')->get()->map(fn($imagen) => [
-            'id' => $imagen->id,
-            'respuesta_correcta' => $imagen->respuesta_correcta,
-            'categoria_id' => $imagen->categoria_id,
-            'categoria_nombre' => $imagen->categoria?->nombre,
-            'url' => $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
-            'thumb_url' => $imagen->getFirstMediaUrl('imagenes', 'thumb') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
-            'preview_url' => $imagen->getFirstMediaUrl('imagenes', 'preview') ?: $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url,
-            'has_media' => $imagen->hasMedia('imagenes'),
-            'created_at' => $imagen->created_at,
-        ]);
+        $imagenes = Imagen::with('categoria')
+            ->get()
+            ->map(fn (Imagen $imagen) => $this->formatImagenPayload($imagen))
+            ->values();
 
         return response()->json([
             'success' => true,
@@ -156,12 +131,8 @@ class ImagenController extends Controller
                 ]
             ], 201);
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al subir la imagen',
-                'error' => $e->getMessage()
-            ], 500);
+        } catch (Throwable $exception) {
+            return $this->mediaUploadErrorResponse($exception, 'Error al subir la imagen');
         }
     }
 
@@ -189,31 +160,14 @@ class ImagenController extends Controller
                 'success' => true,
                 'message' => 'Imagen creada y subida exitosamente',
                 'data' => [
-                    'imagen' => [
-                        'id' => $imagen->id,
-                        'respuesta_correcta' => $imagen->respuesta_correcta,
-                        'created_at' => $imagen->created_at
-                    ],
-                    'media' => [
-                        'id' => $mediaItem->id,
-                        'original_url' => $mediaItem->getUrl(),
-                        'thumb_url' => $mediaItem->getUrl('thumb'),
-                        'preview_url' => $mediaItem->getUrl('preview'),
-                        'file_name' => $mediaItem->file_name,
-                        'file_size' => $mediaItem->size,
-                        'mime_type' => $mediaItem->mime_type
-                    ]
+                    'imagen' => $this->formatImagenPayload($imagen->fresh(['categoria'])),
+                    'media' => $this->formatMediaPayload($mediaItem),
                 ]
             ], 201);
 
-        } catch (\Exception $e) {
+        } catch (Throwable $exception) {
             DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear y subir la imagen',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->mediaUploadErrorResponse($exception, 'Error al crear y subir la imagen');
         }
     }
 
@@ -276,6 +230,15 @@ class ImagenController extends Controller
         ]);
     }
 
+    private function mediaUploadErrorResponse(Throwable $exception, string $message)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+            'error' => $exception->getMessage(),
+        ], 500);
+    }
+
     private function formatBytes($bytes, $precision = 2)
     {
         $units = ['B', 'KB', 'MB', 'GB'];
@@ -289,6 +252,8 @@ class ImagenController extends Controller
 
     private function formatImagenPayload(Imagen $imagen): array
     {
+        $originalUrl = $imagen->getFirstMediaUrl('imagenes') ?: $imagen->url;
+
         return [
             'id' => $imagen->id,
             'url' => $imagen->url,
@@ -296,13 +261,34 @@ class ImagenController extends Controller
             'categoria_id' => $imagen->categoria_id,
             'categoria_nombre' => $imagen->categoria?->nombre,
             'urls' => [
-                'original' => $imagen->getFirstMediaUrl('imagenes'),
-                'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb'),
-                'preview' => $imagen->getFirstMediaUrl('imagenes', 'preview'),
+                'original' => $originalUrl,
+                'thumb' => $imagen->getFirstMediaUrl('imagenes', 'thumb') ?: $originalUrl,
+                'preview' => $imagen->getFirstMediaUrl('imagenes', 'preview') ?: $originalUrl,
             ],
             'has_media' => $imagen->hasMedia('imagenes'),
             'created_at' => $imagen->created_at,
             'updated_at' => $imagen->updated_at,
+        ];
+    }
+
+    private function formatMediaPayload($media): array
+    {
+        return [
+            'id' => $media->id,
+            'file_name' => $media->file_name,
+            'file_size' => $media->size,
+            'size' => $media->size,
+            'mime_type' => $media->mime_type,
+            'urls' => [
+                'original' => $media->getUrl(),
+                'thumb' => $media->getUrl('thumb'),
+                'preview' => $media->getUrl('preview'),
+            ],
+            'original_url' => $media->getUrl(),
+            'thumb_url' => $media->getUrl('thumb'),
+            'preview_url' => $media->getUrl('preview'),
+            'created_at' => $media->created_at ?? null,
+            'updated_at' => $media->updated_at ?? null,
         ];
     }
 }

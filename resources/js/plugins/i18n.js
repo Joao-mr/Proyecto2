@@ -41,8 +41,7 @@ export async function loadMessages(locale) {
             i18n.global.locale.value = locale;
             document.querySelector('html').setAttribute('lang', locale);
         }
-    } catch (e) {
-        console.error(`Could not load language file for locale: ${locale}`, e);
+    } catch (_) {
         // Fallback to 'es' if loading fails and it's not the current one
         if (locale !== 'es') {
             await loadMessages('es');

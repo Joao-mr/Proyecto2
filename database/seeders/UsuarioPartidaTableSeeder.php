@@ -3,47 +3,39 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class UsuarioPartidaTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run()
+    public function run(): void
     {
-        \DB::table('usuario_partida')->delete();
+        $users = DB::table('users')->pluck('id', 'email')->all();
+        $partidas = DB::table('partidas')->pluck('id', 'fecha_inicio')->all();
 
-        \DB::table('usuario_partida')->insert(array (
-            0 =>
-            array (
-                'id_usuario' => 1,
-                'id_partida' => 1,
-                'puntuacion' => 850,
-            ),
-            1 =>
-            array (
-                'id_usuario' => 2,
-                'id_partida' => 1,
-                'puntuacion' => 720,
-            ),
-            2 =>
-            array (
-                'id_usuario' => 1,
-                'id_partida' => 2,
-                'puntuacion' => 930,
-            ),
-            3 =>
-            array (
-                'id_usuario' => 3,
-                'id_partida' => 2,
-                'puntuacion' => 610,
-            ),
-            4 =>
-            array (
-                'id_usuario' => 2,
-                'id_partida' => 3,
-                'puntuacion' => 400,
-            ),
-        ));
+        $adminId = $users['admin@demo.com'] ?? null;
+        $userId = $users['user@demo.com'] ?? null;
+        $partida1Id = $partidas['2026-04-15 10:00:00'] ?? null;
+        $partida2Id = $partidas['2026-04-15 11:00:00'] ?? null;
+        $partida3Id = $partidas['2026-04-15 12:00:00'] ?? null;
+
+        if (! is_int($adminId) || ! is_int($userId) || ! is_int($partida1Id) || ! is_int($partida2Id) || ! is_int($partida3Id)) {
+            throw new RuntimeException('UsuarioPartidaTableSeeder: required users or partidas not found.');
+        }
+
+        $rows = [
+            ['id_usuario' => $adminId, 'id_partida' => $partida1Id, 'puntuacion' => 850],
+            ['id_usuario' => $userId, 'id_partida' => $partida1Id, 'puntuacion' => 720],
+            ['id_usuario' => $adminId, 'id_partida' => $partida2Id, 'puntuacion' => 930],
+            ['id_usuario' => $userId, 'id_partida' => $partida2Id, 'puntuacion' => 610],
+            ['id_usuario' => $userId, 'id_partida' => $partida3Id, 'puntuacion' => 400],
+        ];
+
+        foreach ($rows as $row) {
+            DB::table('usuario_partida')->updateOrInsert(
+                ['id_usuario' => $row['id_usuario'], 'id_partida' => $row['id_partida']],
+                ['puntuacion' => $row['puntuacion']]
+            );
+        }
     }
 }

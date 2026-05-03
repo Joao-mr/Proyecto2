@@ -5,40 +5,29 @@ namespace Database\Seeders;
 use App\Support\GameImageCatalog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class ImagenCategoriaTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run()
+    public function run(): void
     {
-        DB::table('imagen_categoria')->delete();
-
         $imageIds = DB::table('imagenes')->pluck('id', 'url')->all();
         $categoryIds = DB::table('categorias')->pluck('id', 'nombre')->all();
 
-        $rows = collect(GameImageCatalog::records())
-            ->map(static function (array $record) use ($imageIds, $categoryIds): ?array {
-                $imageId = $imageIds[$record['url']] ?? null;
-                $categoryId = $categoryIds[$record['category_name']] ?? null;
+        foreach (GameImageCatalog::records() as $record) {
+            $imageId = $imageIds[$record['url']] ?? null;
+            $categoryId = $categoryIds[$record['category_name']] ?? null;
 
-                if (! $imageId || ! $categoryId) {
-                    return null;
-                }
+            if (! is_int($imageId) || ! is_int($categoryId)) {
+                throw new RuntimeException(
+                    'ImagenCategoriaTableSeeder: missing id mapping for url ' . $record['url'] . ' and category ' . $record['category_name'] . '.'
+                );
+            }
 
-                return [
-                    'id_imagen' => $imageId,
-                    'id_categoria' => $categoryId,
-                ];
-            })
-            ->filter()
-            ->unique(static fn (array $row): string => $row['id_imagen'] . ':' . $row['id_categoria'])
-            ->values()
-            ->all();
-
-        if ($rows !== []) {
-            DB::table('imagen_categoria')->insert($rows);
+            DB::table('imagen_categoria')->updateOrInsert(
+                ['id_imagen' => $imageId, 'id_categoria' => $categoryId],
+                []
+            );
         }
     }
 }

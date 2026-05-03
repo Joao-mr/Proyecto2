@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import axios from 'axios'
 import { useToast } from './useToast'
 import { useValidation } from './useValidation'
+import { createLoadingGuard, unwrapApiData, upsertById } from './crud-helpers'
 
 export default function useCategorias() {
   const categorias = ref([])
@@ -26,15 +27,7 @@ export default function useCategorias() {
       .min(2, 'Debe tener al menos 2 caracteres')
   })
 
-  const withLoading = async (fn) => {
-    if (isLoading.value) throw new Error('Operación en curso')
-    isLoading.value = true
-    try {
-      return await fn()
-    } finally {
-      isLoading.value = false
-    }
-  }
+  const withLoading = createLoadingGuard(isLoading)
 
   const resetCategoria = () => {
     categoria.value = { id: null, nombre: '', descripcion: '' }
@@ -51,18 +44,14 @@ export default function useCategorias() {
   }
 
   const upsertCategoriaRecord = (categoriaRecord) => {
-    if (!categoriaRecord?.id) return
-    categorias.value = [
-      categoriaRecord,
-      ...categorias.value.filter(item => item.id !== categoriaRecord.id)
-    ]
+    categorias.value = upsertById(categorias.value, categoriaRecord)
   }
 
   const getCategorias = async (params = {}) => {
     const defaultParams = { page: 1, per_page: 1000 }
     const query = new URLSearchParams({ ...defaultParams, ...params }).toString()
     const response = await axios.get(`/api/categorias?${query}`)
-    categorias.value = response.data?.data ?? []
+    categorias.value = unwrapApiData(response) ?? []
     return response
   }
 
@@ -77,7 +66,7 @@ export default function useCategorias() {
       const response = await withLoading(() =>
         axios.post('/api/categorias', { nombre: categoria.value.nombre, descripcion: categoria.value.descripcion })
       )
-      const data = response.data
+      const data = unwrapApiData(response)
       toast.crud.created('Categoría')
       return data
     } catch (error) {
@@ -104,7 +93,7 @@ export default function useCategorias() {
           descripcion: categoria.value.descripcion
         })
       )
-      const data = response.data
+      const data = unwrapApiData(response)
       toast.crud.updated('Categoría')
       return data
     } catch (error) {

@@ -4,6 +4,7 @@ import axios from 'axios'
 import { authStore } from '@/store/auth'
 import { useToast } from './useToast'
 import { useValidation } from './useValidation'
+import { createLoadingGuard, unwrapApiData } from './crud-helpers'
 
 export default function useImagen() {
   const imagenes = ref([])
@@ -34,14 +35,22 @@ export default function useImagen() {
       .max(255, 'La respuesta correcta no puede superar 255 caracteres')
   })
 
-  const withLoading = async (fn) => {
-    if (isLoading.value) throw new Error('Operacion en curso')
-    isLoading.value = true
-    try {
-      return await fn()
-    } finally {
-      isLoading.value = false
+  const withLoading = createLoadingGuard(isLoading)
+
+  const buildImagenPayload = (currentImagen) => {
+    const payload = {
+      categoria_id: currentImagen.categoria_id ?? null
     }
+
+    const url = typeof currentImagen.url === 'string' ? currentImagen.url.trim() : ''
+    const respuestaCorrecta = typeof currentImagen.respuesta_correcta === 'string'
+      ? currentImagen.respuesta_correcta.trim()
+      : ''
+
+    if (url !== '') payload.url = url
+    if (respuestaCorrecta !== '') payload.respuesta_correcta = respuestaCorrecta
+
+    return payload
   }
 
   const validateFile = (file) => {
@@ -110,10 +119,10 @@ export default function useImagen() {
       const cleanParams = params instanceof Event ? {} : params
       const query = new URLSearchParams({ page: 1, per_page: 1000, ...cleanParams }).toString()
       const response = await axios.get(`/api/imagenes?${query}`)
-      imagenes.value = response.data?.data ?? response.data ?? []
+      const responseData = unwrapApiData(response)
+      imagenes.value = Array.isArray(responseData) ? responseData : []
       return response
     } catch (error) {
-      console.error('Error al obtener imagenes:', error)
       toast.error(error.response?.data?.message || 'Error al cargar imagenes')
       throw error
     } finally {
@@ -129,24 +138,14 @@ export default function useImagen() {
     }
 
     try {
-      const payload = {
-        categoria_id: imagen.value.categoria_id ?? null
-      }
-
-      if (typeof imagen.value.url === 'string' && imagen.value.url.trim() !== '') {
-        payload.url = imagen.value.url.trim()
-      }
-
-      if (typeof imagen.value.respuesta_correcta === 'string' && imagen.value.respuesta_correcta.trim() !== '') {
-        payload.respuesta_correcta = imagen.value.respuesta_correcta.trim()
-      }
+      const payload = buildImagenPayload(imagen.value)
 
       const response = await withLoading(() =>
         axios.post('/api/imagenes', payload)
       )
-      const data = response.data
+      const data = unwrapApiData(response)
       toast.crud.created('Imagen')
-      upsertImagenRecord(data.data || data)
+      upsertImagenRecord(data)
       return data
     } catch (error) {
       handleRequestError(error, {
@@ -167,24 +166,14 @@ export default function useImagen() {
     }
 
     try {
-      const payload = {
-        categoria_id: imagen.value.categoria_id ?? null
-      }
-
-      if (typeof imagen.value.url === 'string' && imagen.value.url.trim() !== '') {
-        payload.url = imagen.value.url.trim()
-      }
-
-      if (typeof imagen.value.respuesta_correcta === 'string' && imagen.value.respuesta_correcta.trim() !== '') {
-        payload.respuesta_correcta = imagen.value.respuesta_correcta.trim()
-      }
+      const payload = buildImagenPayload(imagen.value)
 
       const response = await withLoading(() =>
         axios.put(`/api/imagenes/${imagen.value.id}`, payload)
       )
-      const data = response.data
+      const data = unwrapApiData(response)
       toast.crud.updated('Imagen')
-      upsertImagenRecord(data.data || data)
+      upsertImagenRecord(data)
       return data
     } catch (error) {
       handleRequestError(error, {
@@ -198,10 +187,6 @@ export default function useImagen() {
   }
 
   const deleteImagen = async (id) => {
-    if (!confirm('¿Estas seguro de que deseas eliminar esta imagen?')) {
-      return
-    }
-
     isLoading.value = true
     try {
       await axios.delete(`/api/imagenes/${id}`, {
@@ -214,7 +199,6 @@ export default function useImagen() {
       toast.crud.deleted('Imagen')
       return true
     } catch (error) {
-      console.error('Error al eliminar imagen:', error)
       const message = error.response?.data?.message || error.message || 'Error al eliminar imagen'
       toast.error(message)
       throw error
@@ -245,7 +229,6 @@ export default function useImagen() {
       toast.success('Imagen subida correctamente')
       return response.data
     } catch (error) {
-      console.error('Error al subir imagen:', error)
       const message = error.response?.data?.message || error.message || 'Error al subir imagen'
       toast.error(message)
       throw error
@@ -278,11 +261,10 @@ export default function useImagen() {
       })
 
       toast.success('Imagen creada y subida correctamente')
-      const data = response.data?.data ?? response.data
-      imagenes.value = [data, ...imagenes.value]
-      return response.data
+      const data = unwrapApiData(response)
+      upsertImagenRecord(data?.imagen ?? data)
+      return data
     } catch (error) {
-      console.error('Error al crear y subir imagen:', error)
       const message = error.response?.data?.message || error.message || 'Error al subir imagen'
       toast.error(message)
       throw error
@@ -302,9 +284,8 @@ export default function useImagen() {
       })
       
       toast.success('Informacion de media obtenida')
-      return response.data.data
+      return unwrapApiData(response)
     } catch (error) {
-      console.error('Error al obtener info de media:', error)
       toast.error(error.response?.data?.message || 'Error al obtener informacion')
       return null
     } finally {

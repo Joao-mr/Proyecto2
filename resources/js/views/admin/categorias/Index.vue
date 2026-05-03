@@ -140,17 +140,13 @@ const goToEditCategoria = (id) => {
     router.push(`/admin/categorias/edit/${id}`);
 };
 
-const performDelete = (id) => {
-    deleteCategoria(id);
-};
-
-const confirmDeleteCategoria = (currentCategoria) => {
+const confirmDeleteCategoria = async (currentCategoria) => {
     if (!swal) {
-        performDelete(currentCategoria.id);
+        await deleteCategoria(currentCategoria.id);
         return;
     }
 
-    swal({
+    const result = await swal({
         icon: 'warning',
         title: '¿Eliminar categoría?',
         text: `La categoría "${currentCategoria.nombre}" se eliminará de forma permanente.`,
@@ -158,11 +154,10 @@ const confirmDeleteCategoria = (currentCategoria) => {
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#ef4444'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            performDelete(currentCategoria.id);
-        }
     });
+
+    if (!result.isConfirmed) return;
+    await deleteCategoria(currentCategoria.id);
 };
 
 const formatDate = (dateString) => {

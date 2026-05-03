@@ -284,14 +284,14 @@ export default [
             {
                 name: 'categorias-juego',
                 path: 'categorias',
-                meta: { breadCrumb: 'Categorías Juego' },
+                meta: { breadCrumb: 'Categorias Juego' },
                 children: [
                     {
                         name: 'categorias-juego.index',
                         path: '',
                         component: () => import('../views/admin/categorias/Index.vue'),
                         meta: {
-                            breadCrumb: 'Categorías Juego',
+                            breadCrumb: 'Categorias Juego',
                             hideBreadcrumb: true
                         }
                     },
@@ -300,7 +300,7 @@ export default [
                         path: 'create',
                         component: () => import('../views/admin/categorias/Create.vue'),
                         meta: {
-                            breadCrumb: 'Crear Categoría',
+                            breadCrumb: 'Crear Categoria',
                             linked: false
                         }
                     },
@@ -309,7 +309,7 @@ export default [
                         path: 'edit/:id',
                         component: () => import('../views/admin/categorias/Edit.vue'),
                         meta: {
-                            breadCrumb: 'Editar Categoría',
+                            breadCrumb: 'Editar Categoria',
                             linked: false
                         }
                     }
@@ -386,14 +386,14 @@ export default [
             {
                 name: 'imagenes-juego',
                 path: 'imagenes',
-                meta: { breadCrumb: 'Imágenes Juego' },
+                meta: { breadCrumb: 'Imagenes Juego' },
                 children: [
                     {
                         name: 'imagenes-juego.index',
                         path: '',
                         component: () => import('../views/admin/imagenes/Index.vue'),
                         meta: {
-                            breadCrumb: 'Imágenes Juego',
+                            breadCrumb: 'Imagenes Juego',
                             hideBreadcrumb: true
                         }
                     },
@@ -416,3 +416,4 @@ export default [
         component: () => import("../views/errors/404.vue"),
     },
 ];
+
