@@ -9,7 +9,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Imagen extends Model implements HasMedia
 {
-    use InteractsWithMedia; //permite usar media library
+    use InteractsWithMedia; //permiter media library
 
     protected $table = 'imagenes';
     public $timestamps = false;

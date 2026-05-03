@@ -46,7 +46,7 @@ import { ref, computed } from 'vue';
 const props = defineProps({
   feedback: {
     type: String,
-    default: null, // 'correct' | 'wrong' | 'timeout' | null
+    default: null, 
   },
   disabled: {
     type: Boolean,
@@ -99,6 +99,5 @@ const feedbackMessage = computed(() => {
   return '';
 });
 
-/* Expose focus for parent to call after round change */
 defineExpose({ focus: () => inputRef.value?.focus() });
 </script>

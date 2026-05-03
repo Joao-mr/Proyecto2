@@ -11,7 +11,6 @@
 
     <div class="game-player-panel__divider"></div>
 
-    <!-- Cronómetro circular SVG -->
     <div class="game-timer">
       <svg
         class="game-timer__svg"
@@ -20,14 +19,12 @@
         :viewBox="`0 0 ${timerSize} ${timerSize}`"
         :aria-label="`Tiempo restante: ${timeLeft} segundos`"
       >
-        <!-- track -->
         <circle
           class="game-timer__bg"
           :cx="cx"
           :cy="cy"
           :r="radius"
         />
-        <!-- arc de progreso -->
         <circle
           class="game-timer__arc"
           :class="arcColorClass"
@@ -37,7 +34,6 @@
           :stroke-dasharray="circumference"
           :stroke-dashoffset="dashOffset"
         />
-        <!-- valor numérico centrado -->
         <text
           class="game-timer__value"
           :x="cx"
@@ -90,7 +86,7 @@ const arcColorClass = computed(() => {
   return 'game-timer__arc--danger';
 });
 
-/* ── Score pop animation ── */
+/*Score pop animation*/
 const scorePop = ref(false);
 
 watch(

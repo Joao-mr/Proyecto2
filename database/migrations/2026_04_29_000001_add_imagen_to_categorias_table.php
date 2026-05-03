@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('imagen')->nullable()->after('descripcion');
         });
 
-        // Eliminar relaciones de la categoría Animales (id=1) antes de borrarla
+        // Eliminar relaciones 
         DB::table('sala_categorias')->where('id_categoria', 1)->delete();
         DB::table('imagen_categoria')->where('id_categoria', 1)->delete();
         DB::table('categorias')->where('id', 1)->delete();

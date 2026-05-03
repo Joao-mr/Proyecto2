@@ -1,6 +1,12 @@
 import { computed, reactive, readonly, watch, nextTick } from 'vue';
 import {styleStore} from "@/store/style";
 
+// ✅ Definir antes de usar
+const applyDarkMode = (enabled) => {
+    if (typeof document === 'undefined') return;
+    document.documentElement.classList.toggle('theme-dark', Boolean(enabled));
+};
+
 // Obtener el store y configurar el estado inicial
 const store = styleStore();
 let initialDarkTheme = false;
@@ -117,5 +123,23 @@ export function useLayout() {
 
     const getSurface = computed(() => layoutConfig.surface);
 
-    return { layoutConfig: readonly(layoutConfig), layoutState: readonly(layoutState), onMenuToggle, isSidebarActive, isDarkTheme, getPrimary, getSurface, setActiveMenuItem, toggleDarkMode, setPrimary, setSurface, setPreset, resetMenu, setMenuMode, setDefaultMode };
+    // Asegura que se exporta si tu composable devuelve un objeto
+    return {
+        layoutConfig: readonly(layoutConfig),
+        layoutState: readonly(layoutState),
+        onMenuToggle,
+        isSidebarActive,
+        isDarkTheme,
+        getPrimary,
+        getSurface,
+        setActiveMenuItem,
+        toggleDarkMode,
+        setPrimary,
+        setSurface,
+        setPreset,
+        resetMenu,
+        setMenuMode,
+        setDefaultMode,
+        applyDarkMode
+    };
 }

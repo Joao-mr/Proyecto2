@@ -13,9 +13,9 @@
           Únete a salas temáticas, observa la imagen y escribe la respuesta correcta antes que los demás. Compite en tiempo real, gana puntos y escala posiciones en el ranking global.
         </p>
 
-        <button class="home-btn-play" @click="goPlay">
-          <a href="/categorias">Jugar ahora <span>›</span></a>
-        </button>
+        <RouterLink class="home-btn-play" :to="{ name: 'categorias' }">
+          Jugar ahora <span>›</span>
+        </RouterLink>
       </div>
 
       <!-- Imagen -->
@@ -30,8 +30,3 @@
   </section>
 </template>
 
-<script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
-const goPlay = () => router.push('/login')
-</script>

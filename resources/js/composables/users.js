@@ -151,7 +151,7 @@ export default function useUsers() {
 
     const deleteUser = async (id, index) => {
         if (!swal) {
-            // Fallback if swal not injected
+
             if (!confirm('¿Estás seguro?')) return
             await axios.delete('/api/users/' + id)
             users.value.data.splice(index, 1)

@@ -19,7 +19,7 @@
 
             <template #content>
                 <form @submit.prevent="handleUpload" class="vstack gap-4">
-                    <!-- File Upload Area -->
+
                     <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop">
                         <input
                             ref="fileInput"
@@ -229,7 +229,6 @@ const handleUpload = async () => {
             await getImagenes()
         }
     } catch (error) {
-        // El composable ya maneja el error por toast.
     }
 }
 

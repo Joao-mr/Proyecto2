@@ -162,7 +162,6 @@ export function useRanking({
     }
   }
 
-  // Compatibilidad con tu componente viejo de categoría
   const ranking = categoryRows
   const isLoading = computed(() => loadingCategory.value)
   const error = computed(() => errorCategory.value || errorGlobal.value)
@@ -174,7 +173,7 @@ export function useRanking({
     rowsByMode,
     currentRows,
     loading,
-    error, // compat para componentes que usan `error`
+    error, 
     errorGlobal,
     fetchRanking,
     setMode,

@@ -74,6 +74,10 @@ class UserController extends Controller
         }
     }
 
+    public function updateImage(Request $request)
+    {
+        return $this->updateimg($request);
+    }
 
     public function updateimg(Request $request)
     {

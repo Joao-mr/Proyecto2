@@ -36,7 +36,7 @@
                   <option value="" disabled>Selecciona una categoría</option>
                   <option
                     v-for="categoria in categoryOptions"
-                    :key="`opt-${getCategoriaId(categoria)}`"
+                    :key="`select-${getCategoriaId(categoria)}`"
                     :value="String(getCategoriaId(categoria))"
                   >
                     {{ getCategoriaNombre(categoria) }}
@@ -82,19 +82,19 @@
                   <div class="col-4">
                     <div class="ranking-stat">
                       <div class="ranking-stat__value">{{ formatNumber(totalPlayers) }}</div>
-                      <div class="ranking-stat__label">Jug.</div>
+                      <div class="ranking-stat__label">Jugadores</div>
                     </div>
                   </div>
                   <div class="col-4">
                     <div class="ranking-stat">
                       <div class="ranking-stat__value">{{ formatNumber(totalPoints) }}</div>
-                      <div class="ranking-stat__label">Pts</div>
+                      <div class="ranking-stat__label">Puntos</div>
                     </div>
                   </div>
                   <div class="col-4">
                     <div class="ranking-stat">
                       <div class="ranking-stat__value">{{ formatNumber(totalGames) }}</div>
-                      <div class="ranking-stat__label">Part.</div>
+                      <div class="ranking-stat__label">Partidas</div>
                     </div>
                   </div>
                 </div>
@@ -102,13 +102,13 @@
                 <h4 class="ranking-summary__mini-title">Podio</h4>
                 <ul class="list-unstyled mb-0 ranking-podium">
                   <li
-                    v-for="(player, index) in podium"
-                    :key="`podium-${index}-${getUsuario(player)}`"
+                    v-for="(row, index) in podium"
+                    :key="`podium-${row.user_id ?? index}`"
                     class="ranking-podium__item"
                   >
                     <span class="ranking-podium__pos">#{{ index + 1 }}</span>
-                    <span class="text-truncate">{{ getUsuario(player) }}</span>
-                    <strong>{{ formatNumber(getPuntuacion(player)) }}</strong>
+                    <span class="ranking-podium__name">{{ getUsuario(row) }}</span>
+                    <span class="ranking-podium__points">{{ formatNumber(getPuntuacion(row)) }} pts</span>
                   </li>
                   <li v-if="podium.length === 0" class="ranking-podium__empty">Sin datos</li>
                 </ul>
@@ -134,34 +134,27 @@
 
                 <template v-else>
                   <div class="table-responsive d-none d-md-block">
-                    <table class="table table-borderless align-middle mb-0 ranking-table">
-                      <colgroup>
-                        <col style="width: 10%" />
-                        <col style="width: 38%" />
-                        <col style="width: 20%" />
-                        <col style="width: 16%" />
-                        <col style="width: 16%" />
-                      </colgroup>
+                    <table class="table table-borderless ranking-table mb-0">
                       <thead>
                         <tr>
                           <th>#</th>
-                          <th>Usuario</th>
-                          <th>Puntuación</th>
+                          <th>Jugador</th>
+                          <th>Puntos</th>
                           <th>Partidas</th>
                           <th>Media</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr
-                          v-for="(item, index) in rows"
-                          :key="`row-${selectedCategoriaId}-${index}-${getUsuario(item)}`"
+                          v-for="(row, index) in rows"
+                          :key="`row-${row.user_id ?? index}`"
                           :class="getRowClass(index)"
                         >
-                          <td class="text-center fw-bold">{{ index + 1 }}</td>
-                          <td class="fw-semibold">{{ getUsuario(item) }}</td>
-                          <td class="text-center fw-bold">{{ formatNumber(getPuntuacion(item)) }}</td>
-                          <td class="text-center">{{ formatNumber(getPartidas(item)) }}</td>
-                          <td class="text-center">{{ getAverage(item) }}</td>
+                          <td>{{ index + 1 }}</td>
+                          <td>{{ getUsuario(row) }}</td>
+                          <td>{{ formatNumber(getPuntuacion(row)) }}</td>
+                          <td>{{ formatNumber(getPartidas(row)) }}</td>
+                          <td>{{ getAverage(row) }}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -169,21 +162,18 @@
 
                   <div class="d-md-none ranking-mobile-list p-3">
                     <article
-                      v-for="(item, index) in rows"
-                      :key="`mobile-${selectedCategoriaId}-${index}-${getUsuario(item)}`"
+                      v-for="(row, index) in rows"
+                      :key="`mobile-${row.user_id ?? index}`"
                       class="ranking-mobile-card"
                       :class="getRowClass(index)"
                     >
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-2">
-                          <span class="ranking-mobile-card__position">#{{ index + 1 }}</span>
-                          <strong>{{ getUsuario(item) }}</strong>
-                        </div>
-                        <span class="ranking-mobile-card__points">{{ formatNumber(getPuntuacion(item)) }}</span>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <span class="ranking-mobile-card__position">#{{ index + 1 }}</span>
+                        <span class="ranking-mobile-card__points">{{ formatNumber(getPuntuacion(row)) }} pts</span>
                       </div>
-                      <div class="d-flex justify-content-between mt-2">
-                        <small class="ranking-mobile-card__meta">Partidas: {{ formatNumber(getPartidas(item)) }}</small>
-                        <small class="ranking-mobile-card__meta">Media: {{ getAverage(item) }}</small>
+                      <div class="fw-bold mt-1">{{ getUsuario(row) }}</div>
+                      <div class="ranking-mobile-card__meta">
+                        Partidas: {{ formatNumber(getPartidas(row)) }} · Media: {{ getAverage(row) }}
                       </div>
                     </article>
                   </div>
@@ -297,7 +287,7 @@ const loadCategorias = async () => {
   try {
     let loaded = false
 
-    // 1) Intentar composable existente
+    // composable existente
     if (typeof getCategorias === 'function') {
       try {
         await getCategorias()
@@ -307,7 +297,7 @@ const loadCategorias = async () => {
       }
     }
 
-    // 2) Fallback público si falla el privado o no devuelve datos
+    // Fallback público si falla el privado o no devuelve datos
     if (!loaded) {
       const { data } = await axios.get('/api/public/categories')
       const raw = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : [])

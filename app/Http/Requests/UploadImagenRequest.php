@@ -20,7 +20,7 @@ class UploadImagenRequest extends FormRequest
                 'file',
                 'image',
                 'mimes:jpeg,jpg,png,gif,webp,svg',
-                'max:5120' // 5MB max
+                'max:5120'
             ],
             'respuesta_correcta' => [
                 'nullable',

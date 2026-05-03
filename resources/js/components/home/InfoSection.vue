@@ -13,7 +13,7 @@
           <li>Gana puntos y sube en el ranking global</li>
         </ol>
         
-        <button class="action-btn">› <a href="/info">Ver cómo jugar</a></button>
+        <RouterLink class="action-btn" to="/info">› Ver cómo jugar</RouterLink>
       </div>
 
       <div class="panel panel-right">
@@ -26,7 +26,7 @@
           Cada partida cuenta para tu posición en el ranking.
         </p>
         
-        <button class="action-btn">› <a href="/categorias">Competir ahora</a></button>
+        <RouterLink class="action-btn" to="/categorias">› Competir ahora</RouterLink>
       </div>
     </div>
 

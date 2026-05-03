@@ -10,6 +10,11 @@ use App\Models\Categoria;
 
 class CategoriaController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(\App\Models\Categoria::class, 'categoria');
+    }
+
     public function index(Request $request)
     {
         $query = Categoria::with('salas');

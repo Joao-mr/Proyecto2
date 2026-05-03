@@ -10,7 +10,7 @@ class Categoria extends Model
 
     protected $fillable = ['nombre', 'descripcion'];
 
-    //
+    
     public function salas()
     {
         return $this->belongsToMany(Sala::class, 'sala_categorias', 'id_categoria', 'id_sala');

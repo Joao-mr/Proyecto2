@@ -1,4 +1,3 @@
-<!-- filepath: c:\xampp\htdocs\Proyecto2\Laravel-VUE-API-Base-Clase\resources\js\views\admin\partidas\Create.vue -->
 <template>
   <div class="partidas-create-page container py-4">
     <h2 class="fs-4 fw-bold mb-4">Crear Partida</h2>

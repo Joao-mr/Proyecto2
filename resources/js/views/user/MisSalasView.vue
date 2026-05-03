@@ -66,7 +66,6 @@
       <div v-if="isLoading && !formVisible" class="loading-text">Cargando salas...</div>
 
       <div v-else-if="misSalas.length === 0 && !formVisible" class="empty-state">
-        <span class="empty-icon">🎮</span>
         <p>No tienes salas creadas todavía.</p>
       </div>
 

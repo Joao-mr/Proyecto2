@@ -19,7 +19,7 @@
         <div class="home-footer__social">
           <a
             class="home-footer__social-link"
-            href="https://discord.com/invite/whatizit"
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Discord"
@@ -29,7 +29,7 @@
 
           <a
             class="home-footer__social-link"
-            href="https://instagram.com/whatizit"
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
@@ -39,7 +39,7 @@
 
           <a
             class="home-footer__social-link"
-            href="https://x.com/whatizit"
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="X"
@@ -49,7 +49,7 @@
 
           <a
             class="home-footer__social-link"
-            href="https://tiktok.com/@whatizit"
+            href="#"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="TikTok"

@@ -14,24 +14,21 @@ export const authStore = defineStore("authStore", () => {
     async function getUser() {
         try {
             const response = await axios.get('/api/user')
-            user.value = response.data.data
-            authenticated.value = true
+            const payload = response.data?.data ?? response.data
+            user.value = payload ?? {}
+            authenticated.value = Boolean(payload?.id || payload?.email)
         } catch (error) {
-            user.value = {}
-            authenticated.value = false
+            if ([401, 419].includes(error?.response?.status)) {
+                user.value = {}
+                authenticated.value = false
+            }
         }
     }
 
     async function getUserSignIn() {
-        try {
-            const response = await axios.get('/api/user/signin')
-            user.value = response.data.data
-            authenticated.value = true
-        } catch (error) {
-            user.value = {}
-            authenticated.value = false
-        }
+        return getUser()
     }
+
     function logout() {
         user.value = {}
         authenticated.value = false
@@ -41,5 +38,5 @@ export const authStore = defineStore("authStore", () => {
         return user.value.roles.some(role => role.name === roleName);
     }
 
-    return { user, authenticated, login, is, getUser,getUserSignIn, logout};
+    return { user, authenticated, login, is, getUser, getUserSignIn, logout};
 }, {persist: true});

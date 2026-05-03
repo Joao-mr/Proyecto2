@@ -154,4 +154,9 @@ class ProfileController extends Controller
 
         return max(0, min(100, $progress));
     }
+
+    public function abilities(Request $request)
+    {
+        return $request->user()->getAllPermissions()->pluck('name')->values();
+    }
 }
