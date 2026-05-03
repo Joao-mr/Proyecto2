@@ -13,7 +13,6 @@ import '../css/app.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import App from './main.vue'
 
-/*PRIMEVUE */
 import PrimeVue from "primevue/config";
 import Avatar from 'primevue/avatar';
 import Button from 'primevue/button';
@@ -54,8 +53,6 @@ l.$subscribe((_, state) => {
     loadMessages(state.locale)
 });
 
-/**PRIMEVUE */
-//import Noir from './presets/Noir.js';
 import Aura from '@primevue/themes/aura';
 app.use(PrimeVue, {
     ripple: true,
@@ -88,15 +85,11 @@ app.component('ProgressBar', ProgressBar);
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
 
-// Inicializar modo oscuro desde localStorage antes de montar
-// Esto asegura que el tema se aplique inmediatamente sin flash
 (function initDarkMode() {
     try {
-        // Pinia-plugin-persistedstate guarda con el nombre del store
         const savedTheme = localStorage.getItem('styleStore');
         if (savedTheme) {
             const themeData = JSON.parse(savedTheme);
-            // El formato puede ser {darkTheme: true} directamente o anidado
             const isDark = themeData?.darkTheme === true || (themeData?.state && themeData.state.darkTheme === true);
             if (isDark) {
                 document.documentElement.classList.add('app-dark', 'dark');

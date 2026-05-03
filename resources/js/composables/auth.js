@@ -102,7 +102,6 @@ export default function useAuth() {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                // await router.push({ name: 'admin.index' })
             })
             .catch(error => {
                 if (error.response?.data) {
@@ -171,13 +170,7 @@ export default function useAuth() {
                 auth.logout()
                 router.push({ name: 'auth.login' })
             })
-            .catch(error => {
-                // swal({
-                //     icon: 'error',
-                //     title: error.response.status,
-                //     text: error.response.statusText
-                // })
-            })
+            .catch(() => {})
             .finally(() => {
                 processing.value = false
             })

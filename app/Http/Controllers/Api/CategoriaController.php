@@ -14,19 +14,16 @@ class CategoriaController extends Controller
     {
         $query = Categoria::with('salas');
 
-        // Filtrar por nombre
         if ($request->filled('nombre')) {
             $query->where('nombre', 'like', '%' . $request->nombre . '%');
         }
 
-        // Filtrar por sala relacionada
         if ($request->filled('sala_id')) {
             $query->whereHas('salas', function ($q) use ($request) {
                 $q->where('id', $request->sala_id);
             });
         }
 
-        // Ordenación
         if ($request->filled('sort')) {
             $query->orderBy(
                 $request->sort,
@@ -34,7 +31,6 @@ class CategoriaController extends Controller
             );
         }
 
-        // Paginación dinámica
         $perPage = $request->per_page ?? 10;
 
         return response()->json(
@@ -76,7 +72,3 @@ class CategoriaController extends Controller
         return response()->json(Categoria::all());
     }
 }
-
-
-
-///aaaaaaaaaaaaaaaaa

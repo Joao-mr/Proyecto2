@@ -309,9 +309,6 @@ function jugarSala(id) {
   margin-top: 1.5rem;
 }
 
-/* Grid de salas */
-/* .salas-grid { ... } -> puedes eliminarlo si ya no se usa */
-
 .sala-card {
   background: rgba(255,255,255,0.10);
   border: 1px solid rgba(255,255,255,0.22);
