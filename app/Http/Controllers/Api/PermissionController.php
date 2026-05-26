@@ -7,7 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Resources\PermissionResource;
 use Illuminate\Http\Request;
- 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -18,10 +19,12 @@ class PermissionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return AnonymousResourceCollection
      */
     public function index()
     {
+        $this->authorize('permission-list');
+
         $permissions = $this->applyIndexFilters(Permission::query())
             ->get();
 
@@ -31,15 +34,15 @@ class PermissionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StorePermissionRequest $request
      * @return PermissionResource
+     *
      * @throws AuthorizationException
      */
     public function store(StorePermissionRequest $request)
     {
         $this->authorize('permission-create');
 
-        $permission = new Permission();
+        $permission = new Permission;
         $permission->name = $request->name;
         $permission->guard_name = 'web';
         $permission->save();
@@ -50,7 +53,7 @@ class PermissionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return PermissionResource
      */
     public function show(Permission $permission)
@@ -63,9 +66,8 @@ class PermissionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Permission $permission
-     * @param StorePermissionRequest $request
      * @return JsonResponse|PermissionResource
+     *
      * @throws AuthorizationException
      */
     public function update(Permission $permission, StorePermissionRequest $request)
@@ -81,8 +83,8 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param  int  $id
+     * @return Response
      */
     public function destroy(Permission $permission)
     {
@@ -94,7 +96,10 @@ class PermissionController extends Controller
 
     public function getRolePermissions($id)
     {
+        $this->authorize('role-edit');
+
         $permissions = Role::findById($id, 'web')->permissions;
+
         return PermissionResource::collection($permissions);
     }
 
@@ -106,6 +111,7 @@ class PermissionController extends Controller
         $permissions_where = Permission::whereIn('id', $permissions)->get();
         $role = Role::findById($request->role_id, 'web');
         $role->syncPermissions($permissions_where);
+
         return PermissionResource::collection($permissions_where);
     }
 }

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Concerns\AppliesIndexFilters;
 use App\Http\Controllers\Controller;
- 
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Resources\RoleResource;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -16,10 +18,12 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return AnonymousResourceCollection
      */
     public function index()
     {
+        $this->authorize('role-list');
+
         $roles = $this->applyIndexFilters(Role::query())
             ->get();
 
@@ -29,14 +33,14 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return RoleResource
      */
     public function store(StoreRoleRequest $request)
     {
         $this->authorize('role-create');
 
-        $role = new Role();
+        $role = new Role;
         $role->name = $request->name;
         $role->guard_name = 'web';
         $role->save();
@@ -60,9 +64,8 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Role $role
-     * @param StoreRoleRequest $request
      * @return RoleResource
+     *
      * @throws AuthorizationException
      */
     public function update(Role $role, StoreRoleRequest $request)
@@ -79,9 +82,10 @@ class RoleController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy(Role $role) {
+    public function destroy(Role $role)
+    {
         $this->authorize('role-delete');
         $role->delete();
 
@@ -90,6 +94,8 @@ class RoleController extends Controller
 
     public function getList()
     {
+        $this->authorize('role-list');
+
         return RoleResource::collection(Role::all());
     }
 }
