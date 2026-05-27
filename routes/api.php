@@ -16,7 +16,6 @@ use App\Http\Controllers\Api\SalaController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UsuarioPartidaController;
 use App\Http\Controllers\Api\UsuarioSalaController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('public')->name('public.')->middleware('throttle:api')->group(function () {
@@ -30,8 +29,7 @@ Route::prefix('public')->name('public.')->middleware('throttle:api')->group(func
 });
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
-    Route::post('admin/player-stats/reset', [AdminStatsController::class, 'resetAll'])
-        ->middleware('role:admin');
+    Route::post('admin/player-stats/reset', [AdminStatsController::class, 'resetAll']);
 
     Route::apiResource('users', UserController::class);
     Route::post('users/updateimg', [UserController::class, 'updateimg']);

@@ -9,9 +9,6 @@ use App\Services\UserStatsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class AdminPlayerStatsResetTest extends TestCase
@@ -21,12 +18,8 @@ class AdminPlayerStatsResetTest extends TestCase
     public function test_admin_can_reset_all_player_stats_and_clear_match_history(): void
     {
         $admin = $this->makeUser('admin-'.uniqid().'@example.com');
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
-        Permission::findOrCreate('admin-stats-reset', 'web');
-        $adminRole = Role::findOrCreate('admin', 'web');
-        $adminRole->givePermissionTo('admin-stats-reset');
-        $admin->assignRole('admin');
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        $admin->rol = 'admin';
+        $admin->save();
 
         $player = $this->makeUser('player-'.uniqid().'@example.com');
         $partida = $this->createPartida($player);
