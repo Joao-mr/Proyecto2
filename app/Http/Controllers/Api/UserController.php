@@ -22,7 +22,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', User::class);
+        $this->authorize('user-list');
 
         $users = $this->applyIndexFilters(User::query())
             ->paginate(500);
@@ -32,7 +32,7 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $this->authorize('create', User::class);
+        $this->authorize('user-create');
 
         $role = Role::find($request->role_id);
         $user = new User;
@@ -52,9 +52,11 @@ class UserController extends Controller
         }
     }
 
-    public function show(User $user)
+    public function show(Request $request, User $user)
     {
-        $this->authorize('view', $user);
+        if ($request->user()->id !== $user->id && ! $request->user()->checkPermissionTo('user-list')) {
+            abort(403);
+        }
 
         $user->load('roles');
 
@@ -63,7 +65,7 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
-        $this->authorize('update', $user);
+        $this->authorize('user-edit');
 
         $role = Role::find($request->role_id);
 
@@ -97,7 +99,9 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($request->id);
-        $this->authorize('updateAvatar', $user);
+        if ($request->user()->id !== $user->id && ! $request->user()->checkPermissionTo('user-edit')) {
+            abort(403);
+        }
 
         if ($request->hasFile('picture')) {
             $user->media()->delete();
@@ -111,7 +115,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $this->authorize('delete', $user);
+        $this->authorize('user-delete');
 
         $user->delete();
 
