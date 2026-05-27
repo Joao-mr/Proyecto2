@@ -1,9 +1,18 @@
 <template>
   <section class="ranking-section">
+
     <div class="container-home">
-      <h2 class="ranking-title">Mejores Jugadores</h2>
+
+      <h2 class="ranking-title">
+        Mejores Jugadores
+      </h2>
+
+      <button class="ranking-order-btn" @click="toggleOrder">
+        Orden: {{ order === 'asc' ? 'ASC' : 'DESC' }}
+      </button>
 
       <div class="ranking-card">
+
         <div class="ranking-head">
           <div>Jugador</div>
           <div>ELO</div>
@@ -11,36 +20,15 @@
           <div>Título</div>
         </div>
 
-        <div class="ranking-body" v-if="currentRows.length">
-          <div
-            v-for="(player, index) in currentRows"
-            :key="`${mode}-${player.name}-${index}`"
-            class="ranking-row"
-            :class="getRankClass(index)"
-          >
-            <div class="ranking-player">
-              <span class="ranking-pos">{{ index + 1 }}.</span>
-              <span class="ranking-avatar">👤</span>
-              <span class="ranking-name">{{ player.name }}</span>
-            </div>
-
-            <div class="ranking-elo">
-              <span class="ranking-dot"></span>
-              {{ formatElo(player.elo) }}
-            </div>
-
-            <div>{{ player.matches }}</div>
-            <div class="ranking-rank">{{ player.title }}</div>
-          </div>
-        </div>
-
-        <div class="ranking-body" v-else>
-          <div class="ranking-row">
-            <div>{{ loading ? 'Cargando ranking...' : (error || 'Sin datos de ranking.') }}</div>
-            <div>-</div>
-            <div>-</div>
-            <div>-</div>
-          </div>
+        <div
+          v-for="(player, index) in topPlayers"
+          :key="player.id ?? index"
+          class="ranking-row"
+        >
+          <div class="ranking-player">{{ index + 1 }}. {{ player.name }}</div>
+          <div class="ranking-elo">{{ player.elo ?? 0 }}</div>
+          <div>{{ player.matches ?? 0 }}</div>
+          <div>{{ player.title ?? '' }}</div>
         </div>
       </div>
     </div>
@@ -48,25 +36,35 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { useRanking } from '../../composables/useRanking'
+import { computed, onMounted } from 'vue'
+import { useRanking } from '@/composables/useRanking'
 
-const {
-  mode,
-  currentRows,
-  loading,
-  error,
-  fetchRanking,
-  setMode,
-  getRankClass,
-  formatElo
-} = useRanking()
+const { sortedPlayers, getRanking, order, toggleOrder } = useRanking()
 
-onMounted(async () => {
-  await fetchRanking('individual')
+onMounted(() => {
+  getRanking()
 })
 
-const changeMode = async (value) => {
-  await setMode(value)
-}
+const topPlayers = computed(() => {
+  return (sortedPlayers.value || []).slice(0, 5)
+})
 </script>
+
+<style scoped>
+.ranking-order-btn {
+  margin: 0 auto 20px; 
+  background: #ff7b54;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.ranking-order-btn:hover {
+  transform: scale(1.03);
+  background: #ff6a3d;
+}
+</style>
