@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Http\Controllers\Api\AdminStatsController;
 use App\Http\Controllers\Api\CategoriaController;
@@ -30,12 +30,14 @@ Route::prefix('public')->name('public.')->middleware('throttle:api')->group(func
 });
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
-    Route::post('admin/player-stats/reset', [AdminStatsController::class, 'resetAll']);
+    Route::post('admin/player-stats/reset', [AdminStatsController::class, 'resetAll'])
+        ->middleware('role:admin');
 
     Route::apiResource('users', UserController::class);
     Route::post('users/updateimg', [UserController::class, 'updateimg']);
 
-    Route::apiResource('categorias', CategoriaController::class);
+    Route::apiResource('categorias', CategoriaController::class)
+        ->middlewareFor(['store', 'update', 'destroy'], 'role:admin');
     Route::get('categorias-list', [CategoriaController::class, 'getList']);
 
     Route::apiResource('salas', SalaController::class);
