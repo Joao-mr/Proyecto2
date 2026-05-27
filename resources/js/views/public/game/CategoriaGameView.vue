@@ -97,8 +97,7 @@ import PlayerPanel from '@/components/game/PlayerPanel.vue'
 import AnswerInput from '@/components/game/AnswerInput.vue'
 import { buildGameRounds, useGameSession } from '@/composables/useGameSession'
 import useImagen from '@/composables/useImagen'
-import useCategorias from '@/composables/categorias'
-
+import { usePublicCategories } from '@/composables/useCategories'
 const route = useRoute()
 const router = useRouter()
 const auth = authStore()
@@ -106,13 +105,28 @@ const totalTime = ref(30)
 const pageLoading = ref(true)
 
 const { imagenes, getImagenes } = useImagen()
-const { categorias, getCategorias } = useCategorias()
 
-const categoriaId = computed(() => route.params.id)
-const categoriaName = computed(() => {
-  const cat = categorias.value.find((c) => String(c.id) === String(categoriaId.value))
-  return cat?.nombre ?? 'Categoria'
-})
+const {
+  categories,
+  fetchCategories
+} = usePublicCategories()
+
+const routeCategoryId = computed(() => route.params.id)
+
+const currentCategory = computed(() =>
+  categories.value.find(
+    (c) => String(c.id) === String(routeCategoryId.value)
+  )
+)
+
+const categoriaId = computed(() =>
+  currentCategory.value?.id ?? null
+)
+
+const categoriaName = computed(() =>
+  currentCategory.value?.name ?? 'Categoria'
+)
+
 const playerName = computed(() => auth.user?.name ?? 'Jugador')
 const loadError = ref('')
 
@@ -154,17 +168,40 @@ function handleExit() {
 }
 
 onMounted(async () => {
-  try {
-    await Promise.all([
-      getImagenes({ categoria_id: categoriaId.value, per_page: 1000, random: 1 }),
-      getCategorias(),
-    ])
 
-    await startMatch(buildGameRounds(imagenes.value))
+  try {
+
+    // 1. cargar categorías
+    await fetchCategories()
+
+    // 2. validar categoría
+    if (!categoriaId.value) {
+      throw new Error('Categoría no encontrada')
+    }
+
+    // 3. cargar imágenes
+    await getImagenes({
+      categoria_id: categoriaId.value,
+      per_page: 1000,
+      random: 1
+    })
+
+    // 4. iniciar partida
+    await startMatch(
+      buildGameRounds(imagenes.value)
+    )
+
   } catch (error) {
-    loadError.value = error?.response?.data?.message ?? 'No fue posible cargar la partida en este momento.'
+
+    loadError.value =
+      error?.response?.data?.message
+      ?? error?.message
+      ?? 'No fue posible cargar la partida.'
+
   } finally {
+
     pageLoading.value = false
+
   }
 })
 </script>
