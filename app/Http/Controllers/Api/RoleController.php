@@ -22,7 +22,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $this->authorize('role-list');
+        $this->authorize('roles-ver');
 
         $roles = $this->applyIndexFilters(Role::query())
             ->get();
@@ -38,7 +38,7 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        $this->authorize('role-create');
+        $this->authorize('roles-crear');
 
         $role = new Role;
         $role->name = $request->name;
@@ -56,7 +56,7 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $this->authorize('role-edit');
+        $this->authorize('roles-editar');
 
         return new RoleResource($role);
     }
@@ -70,7 +70,7 @@ class RoleController extends Controller
      */
     public function update(Role $role, StoreRoleRequest $request)
     {
-        $this->authorize('role-edit');
+        $this->authorize('roles-editar');
 
         $role->name = $request->name;
         $role->save();
@@ -86,7 +86,7 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        $this->authorize('role-delete');
+        $this->authorize('roles-eliminar');
         $role->delete();
 
         return response()->noContent();
@@ -94,7 +94,7 @@ class RoleController extends Controller
 
     public function getList()
     {
-        $this->authorize('role-list');
+        $this->authorize('roles-ver');
 
         return RoleResource::collection(Role::all());
     }

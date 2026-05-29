@@ -34,8 +34,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::apiResource('users', UserController::class);
     Route::post('users/updateimg', [UserController::class, 'updateimg']);
 
-    Route::apiResource('categorias', CategoriaController::class)
-        ->middlewareFor(['store', 'update', 'destroy'], 'role:admin');
+    Route::apiResource('categorias', CategoriaController::class);
     Route::get('categorias-list', [CategoriaController::class, 'getList']);
 
     Route::apiResource('salas', SalaController::class);
@@ -54,7 +53,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
-    Route::get('role-list', [RoleController::class, 'getList']);
+    Route::get('roles-list', [RoleController::class, 'getList']);
     Route::get('role-permissions/{id}', [PermissionController::class, 'getRolePermissions'])
         ->whereNumber('id');
 

@@ -14,7 +14,7 @@
                         @click="refreshUsers" 
                     />
                     <Button 
-                        v-if="can('user-create')"
+                        v-if="can('usuarios-crear')"
                         label="Nuevo Usuario" 
                         icon="pi pi-plus" 
                         size="small" 
@@ -119,7 +119,7 @@
                         <Skeleton v-if="loading" width="4rem" height="2rem" />
                         <div v-else class="d-flex gap-2">
                             <Button
-                                v-if="can('user-edit')"
+                                v-if="can('usuarios-editar')"
                                 v-tooltip.top="'Editar usuario'"
                                 icon="pi pi-pencil"
                                 rounded
@@ -129,7 +129,7 @@
                                 @click="router.push({ name: 'users.edit', params: { id: slotProps.data.id } })"
                             />
                             <Button
-                                v-if="can('user-delete')"
+                                v-if="can('usuarios-eliminar')"
                                 v-tooltip.top="'Eliminar usuario'"
                                 icon="pi pi-trash"
                                 rounded

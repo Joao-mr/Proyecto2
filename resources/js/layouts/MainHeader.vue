@@ -118,7 +118,7 @@ const user = computed(() => auth.user);
 const canAccessDashboard = computed(() => {
     return user.value?.roles?.some((role) => {
         const roleName = role?.name?.toLowerCase() || '';
-        return roleName.includes('admin') || roleName === 'docent';
+        return roleName === 'admin';
     }) || false;
 });
 

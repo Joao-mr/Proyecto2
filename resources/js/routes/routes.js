@@ -18,7 +18,7 @@ async function requireLogin(to, from, next) {
 const hasDashboardAccess = (roles = []) =>
     roles.some((role) => {
         const roleName = role?.name?.toLowerCase() || '';
-        return roleName.includes('admin') || roleName === 'docent';
+        return roleName === 'admin';
     });
 
 async function guest(to, from, next) {

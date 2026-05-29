@@ -15,7 +15,7 @@ class ModelHasRolesTableSeeder extends Seeder
 
         $assignments = [
             ['email' => 'admin@demo.com', 'role' => 'admin'],
-            ['email' => 'user@demo.com', 'role' => 'user'],
+            ['email' => 'user@demo.com', 'role' => 'player'],
         ];
 
         foreach ($assignments as $assignment) {

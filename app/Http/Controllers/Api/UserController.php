@@ -22,7 +22,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $this->authorize('user-list');
+        $this->authorize('usuarios-ver');
 
         $users = $this->applyIndexFilters(User::query())
             ->paginate(500);
@@ -32,7 +32,7 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $this->authorize('user-create');
+        $this->authorize('usuarios-crear');
 
         $role = Role::find($request->role_id);
         $user = new User;
@@ -54,7 +54,7 @@ class UserController extends Controller
 
     public function show(Request $request, User $user)
     {
-        if ($request->user()->id !== $user->id && ! $request->user()->checkPermissionTo('user-list')) {
+        if ($request->user()->id !== $user->id && ! $request->user()->checkPermissionTo('usuarios-ver')) {
             abort(403);
         }
 
@@ -65,7 +65,7 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
-        $this->authorize('user-edit');
+        $this->authorize('usuarios-editar');
 
         $role = Role::find($request->role_id);
 
@@ -99,7 +99,7 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($request->id);
-        if ($request->user()->id !== $user->id && ! $request->user()->checkPermissionTo('user-edit')) {
+        if ($request->user()->id !== $user->id && ! $request->user()->checkPermissionTo('usuarios-editar')) {
             abort(403);
         }
 
@@ -115,7 +115,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $this->authorize('user-delete');
+        $this->authorize('usuarios-eliminar');
 
         $user->delete();
 

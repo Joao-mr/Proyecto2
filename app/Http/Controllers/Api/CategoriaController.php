@@ -5,16 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoriaRequest;
 use App\Http\Requests\UpdateCategoriaRequest;
-use Illuminate\Http\Request;
 use App\Models\Categoria;
+use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
-    public function __construct()
-    {
-        $this->authorizeResource(\App\Models\Categoria::class, 'categoria');
-    }
-
     public function index(Request $request)
     {
         $query = Categoria::with('salas');
@@ -47,7 +42,8 @@ class CategoriaController extends Controller
 
     public function store(StoreCategoriaRequest $request)
     {
-        $this->authorize('create', Categoria::class);
+        $this->authorize('categorias-crear');
+
         $categoria = Categoria::create($request->validated());
         return response()->json($categoria, 201);
     }
@@ -60,14 +56,16 @@ class CategoriaController extends Controller
 
     public function update(UpdateCategoriaRequest $request, Categoria $categoria)
     {
-        $this->authorize('update', $categoria);
+        $this->authorize('categorias-editar');
+
         $categoria->update($request->validated());
         return response()->json($categoria);
     }
 
     public function destroy(Categoria $categoria)
     {
-        $this->authorize('delete', $categoria);
+        $this->authorize('categorias-eliminar');
+
         $categoria->delete();
         return response()->json(null, 204);
     }

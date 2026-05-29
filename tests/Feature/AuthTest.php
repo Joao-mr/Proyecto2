@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\RolesTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -68,5 +69,26 @@ class AuthTest extends TestCase
 
         $response->assertStatus(422); // Or 401 depending on controller logic, usually 422 for validation or 401 for auth failure
         $this->assertGuest();
+    }
+
+    public function test_registered_user_gets_player_role(): void
+    {
+        $this->seed(RolesTableSeeder::class);
+
+        $response = $this->postJson('/register', [
+            'name' => 'Registered Player',
+            'surname1' => 'Feature',
+            'surname2' => 'Suite',
+            'email' => 'registered-player@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertCreated();
+
+        $user = User::where('email', 'registered-player@example.com')->firstOrFail();
+
+        $this->assertTrue($user->hasRole('player'));
+        $this->assertFalse($user->hasRole('user'));
     }
 }

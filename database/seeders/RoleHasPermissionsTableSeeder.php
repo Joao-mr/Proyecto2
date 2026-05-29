@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
+use Spatie\Permission\PermissionRegistrar;
 
 class RoleHasPermissionsTableSeeder extends Seeder
 {
@@ -25,19 +26,24 @@ class RoleHasPermissionsTableSeeder extends Seeder
             ->all();
 
         $permissionNames = [
-            'role-list',
-            'role-create',
-            'role-edit',
-            'role-delete',
-            'permission-list',
-            'permission-create',
-            'permission-edit',
-            'permission-delete',
-            'user-list',
-            'user-create',
-            'user-edit',
-            'user-delete',
-            'admin-stats-reset',
+            'categorias-crear',
+            'categorias-editar',
+            'categorias-eliminar',
+            'salas-editar',
+            'salas-eliminar',
+            'roles-ver',
+            'roles-crear',
+            'roles-editar',
+            'roles-eliminar',
+            'permisos-ver',
+            'permisos-crear',
+            'permisos-editar',
+            'permisos-eliminar',
+            'usuarios-ver',
+            'usuarios-crear',
+            'usuarios-editar',
+            'usuarios-eliminar',
+            'jugadores-estadisticas-reiniciar',
         ];
 
         foreach ($permissionNames as $permissionName) {
@@ -52,5 +58,7 @@ class RoleHasPermissionsTableSeeder extends Seeder
                 []
             );
         }
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

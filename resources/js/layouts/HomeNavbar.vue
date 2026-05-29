@@ -217,8 +217,8 @@ const navItems = [
 
 const userPanelRoute = computed(() => {
   const roles = store.user?.roles ?? [];
-  const isAdmin = roles.some(role => role?.name?.toLowerCase().includes('admin'));
-  return isAdmin ? 'admin.index' : 'app.profile';
+  const canAccessDashboard = roles.some(role => role?.name?.toLowerCase() === 'admin');
+  return canAccessDashboard ? 'admin.index' : 'app.profile';
 });
 
 const openDropdown = (label) => { activeDropdown.value = label; };

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Models\Sala;
 use App\Models\User;
+use Database\Seeders\FoundationSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -39,7 +41,7 @@ class ApiSecurityTest extends TestCase
 
     public function test_user_cannot_view_another_user_without_user_list_permission(): void
     {
-        Permission::findOrCreate('user-list', 'web');
+        Permission::findOrCreate('usuarios-ver', 'web');
         $user = $this->createUser('viewer');
         $otherUser = $this->createUser('other');
 
@@ -51,7 +53,7 @@ class ApiSecurityTest extends TestCase
     public function test_user_with_user_list_permission_can_list_users(): void
     {
         $user = $this->createUser('admin-viewer');
-        $this->givePermission($user, 'user-list');
+        $this->givePermission($user, 'usuarios-ver');
 
         $this->actingAs($user, 'sanctum');
 
@@ -70,7 +72,8 @@ class ApiSecurityTest extends TestCase
         ])->assertForbidden();
 
         $admin = $this->createUser('category-admin');
-        Role::findOrCreate('admin', 'web');
+        $adminRole = Role::findOrCreate('admin', 'web');
+        $adminRole->givePermissionTo(Permission::findOrCreate('categorias-crear', 'web'));
         $admin->assignRole('admin');
 
         $this->actingAs($admin, 'sanctum');
@@ -78,6 +81,89 @@ class ApiSecurityTest extends TestCase
         $this->postJson('/api/categorias', [
             'nombre' => 'Categoria permitida',
         ])->assertCreated();
+    }
+
+    public function test_foundation_seeder_uses_project_roles_instead_of_template_roles(): void
+    {
+        $this->seed(FoundationSeeder::class);
+
+        $this->assertDatabaseHas('roles', ['name' => 'admin', 'guard_name' => 'web']);
+        $this->assertDatabaseHas('roles', ['name' => 'player', 'guard_name' => 'web']);
+        $this->assertDatabaseMissing('roles', ['name' => 'user', 'guard_name' => 'web']);
+        $this->assertDatabaseHas('permissions', ['name' => 'usuarios-ver', 'guard_name' => 'web']);
+        $this->assertDatabaseHas('permissions', ['name' => 'categorias-crear', 'guard_name' => 'web']);
+        $this->assertDatabaseHas('permissions', ['name' => 'jugadores-estadisticas-reiniciar', 'guard_name' => 'web']);
+        $this->assertDatabaseMissing('permissions', ['name' => 'user-list', 'guard_name' => 'web']);
+        $this->assertDatabaseMissing('permissions', ['name' => 'role-create', 'guard_name' => 'web']);
+        $this->assertDatabaseMissing('permissions', ['name' => 'admin-stats-reset', 'guard_name' => 'web']);
+    }
+
+    public function test_user_with_categoria_create_permission_can_create_categories(): void
+    {
+        $user = $this->createUser('category-permission');
+        $this->givePermission($user, 'categorias-crear');
+
+        $this->actingAs($user, 'sanctum');
+
+        $this->postJson('/api/categorias', [
+            'nombre' => 'Categoria por permiso',
+        ])->assertCreated();
+    }
+
+    public function test_sala_creator_can_update_own_sala_without_policy(): void
+    {
+        $creator = $this->createUser('sala-creator');
+        $sala = Sala::create([
+            'nombre' => 'Sala original',
+            'codigo' => 'SEC-'.strtoupper(substr(uniqid(), -6)),
+            'id_creador' => $creator->id,
+        ]);
+
+        $this->actingAs($creator, 'sanctum');
+
+        $this->putJson('/api/salas/'.$sala->id, [
+            'nombre' => 'Sala actualizada',
+        ])
+            ->assertOk()
+            ->assertJsonPath('nombre', 'Sala actualizada');
+    }
+
+    public function test_user_cannot_update_another_users_sala_without_sala_edit_permission(): void
+    {
+        Permission::findOrCreate('salas-editar', 'web');
+        $creator = $this->createUser('sala-owner');
+        $otherUser = $this->createUser('sala-blocked');
+        $sala = Sala::create([
+            'nombre' => 'Sala privada',
+            'codigo' => 'SEC-'.strtoupper(substr(uniqid(), -6)),
+            'id_creador' => $creator->id,
+        ]);
+
+        $this->actingAs($otherUser, 'sanctum');
+
+        $this->putJson('/api/salas/'.$sala->id, [
+            'nombre' => 'Intento bloqueado',
+        ])->assertForbidden();
+    }
+
+    public function test_user_with_sala_edit_permission_can_update_any_sala(): void
+    {
+        $creator = $this->createUser('sala-admin-owner');
+        $admin = $this->createUser('sala-admin');
+        $this->givePermission($admin, 'salas-editar');
+        $sala = Sala::create([
+            'nombre' => 'Sala administrable',
+            'codigo' => 'SEC-'.strtoupper(substr(uniqid(), -6)),
+            'id_creador' => $creator->id,
+        ]);
+
+        $this->actingAs($admin, 'sanctum');
+
+        $this->putJson('/api/salas/'.$sala->id, [
+            'nombre' => 'Sala administrada',
+        ])
+            ->assertOk()
+            ->assertJsonPath('nombre', 'Sala administrada');
     }
 
     private function createUser(string $suffix): User

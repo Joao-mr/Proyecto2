@@ -15,7 +15,7 @@
                             @click="getRoles"
                         />
                         <Button
-                            v-if="can('role-create')"
+                            v-if="can('roles-crear')"
                             label="Nuevo Rol"
                             icon="pi pi-plus"
                             size="small"
@@ -88,7 +88,7 @@
                             <Skeleton v-if="isLoading" width="4rem" height="2rem" />
                             <div v-else class="d-flex gap-2">
                                 <Button
-                                    v-if="can('role-edit')"
+                                    v-if="can('roles-editar')"
                                     v-tooltip.top="'Editar rol'"
                                     icon="pi pi-pencil"
                                     rounded
@@ -98,7 +98,7 @@
                                     @click="goToEdit(slotProps.data)"
                                 />
                                 <Button
-                                    v-if="can('role-delete')"
+                                    v-if="can('roles-eliminar')"
                                     v-tooltip.top="'Eliminar rol'"
                                     icon="pi pi-trash"
                                     rounded

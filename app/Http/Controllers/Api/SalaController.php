@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSalaRequest;
 use App\Http\Requests\UpdateSalaRequest;
 use App\Models\Sala;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
@@ -14,7 +13,6 @@ class SalaController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Sala::class);
         $requestedSort = (string) $request->get('sort', 'created_at');
         $direction = strtolower((string) $request->get('direction', 'desc')) === 'asc' ? 'asc' : 'desc';
         $sort = Schema::hasColumn('salas', $requestedSort) ? $requestedSort : 'id';
@@ -34,12 +32,11 @@ class SalaController extends Controller
 
     public function store(StoreSalaRequest $request)
     {
-        $this->authorize('create', Sala::class);
         $data = $request->validated();
         $categorias = $data['categorias'] ?? [];
         unset($data['categorias']);
 
-        $data['id_creador'] = Auth::id();
+        $data['id_creador'] = $request->user()->id;
 
         $sala = Sala::create($data);
         $sala->categorias()->sync($categorias);
@@ -50,14 +47,14 @@ class SalaController extends Controller
 
     public function show(Sala $sala)
     {
-        $this->authorize('view', $sala);
         $sala->load('categorias');
         return response()->json($sala);
     }
 
     public function update(UpdateSalaRequest $request, Sala $sala)
     {
-        $this->authorize('update', $sala);
+        $this->authorizeSalaChange($request, $sala, 'salas-editar');
+
         $data = $request->validated();
         $categorias = $data['categorias'] ?? null;
         unset($data['categorias']);
@@ -75,10 +72,20 @@ class SalaController extends Controller
         return response()->json($sala);
     }
 
-    public function destroy(Sala $sala)
+    public function destroy(Request $request, Sala $sala)
     {
-        $this->authorize('delete', $sala);
+        $this->authorizeSalaChange($request, $sala, 'salas-eliminar');
+
         $sala->delete();
         return response()->json(null, 204);
+    }
+
+    private function authorizeSalaChange(Request $request, Sala $sala, string $permission): void
+    {
+        if ($request->user()->id === $sala->id_creador) {
+            return;
+        }
+
+        $this->authorize($permission);
     }
 }

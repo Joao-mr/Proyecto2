@@ -11,11 +11,7 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @var array<class-string, class-string>
      */
-    protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
-        'App\Models\Categoria' => 'App\Policies\CategoriaPolicy',
-        'App\Models\Sala' => 'App\Policies\SalaPolicy',
-    ];
+    protected $policies = [];
 
     /**
      * Register any authentication / authorization services.

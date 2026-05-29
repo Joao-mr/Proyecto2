@@ -23,7 +23,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $this->authorize('permission-list');
+        $this->authorize('permisos-ver');
 
         $permissions = $this->applyIndexFilters(Permission::query())
             ->get();
@@ -40,7 +40,7 @@ class PermissionController extends Controller
      */
     public function store(StorePermissionRequest $request)
     {
-        $this->authorize('permission-create');
+        $this->authorize('permisos-crear');
 
         $permission = new Permission;
         $permission->name = $request->name;
@@ -58,7 +58,7 @@ class PermissionController extends Controller
      */
     public function show(Permission $permission)
     {
-        $this->authorize('permission-edit');
+        $this->authorize('permisos-editar');
 
         return new PermissionResource($permission);
     }
@@ -72,7 +72,7 @@ class PermissionController extends Controller
      */
     public function update(Permission $permission, StorePermissionRequest $request)
     {
-        $this->authorize('permission-edit');
+        $this->authorize('permisos-editar');
 
         $permission->name = $request->name;
         $permission->save();
@@ -88,7 +88,7 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        $this->authorize('permission-delete');
+        $this->authorize('permisos-eliminar');
         $permission->delete();
 
         return response()->noContent();
@@ -96,7 +96,7 @@ class PermissionController extends Controller
 
     public function getRolePermissions($id)
     {
-        $this->authorize('role-edit');
+        $this->authorize('roles-editar');
 
         $permissions = Role::findById($id, 'web')->permissions;
 
@@ -105,7 +105,7 @@ class PermissionController extends Controller
 
     public function updateRolePermissions(Request $request)
     {
-        $this->authorize('role-edit');
+        $this->authorize('roles-editar');
 
         $permissions = json_decode($request->permissions, true);
         $permissions_where = Permission::whereIn('id', $permissions)->get();

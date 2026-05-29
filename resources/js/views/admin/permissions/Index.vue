@@ -15,7 +15,7 @@
                             @click="getPermissions"
                         />
                         <Button
-                            v-if="can('permission-create')"
+                            v-if="can('permisos-crear')"
                             label="Nuevo Permiso"
                             icon="pi pi-plus"
                             size="small"
@@ -107,7 +107,7 @@
                             <Skeleton v-if="isLoading" width="4rem" height="2rem" />
                             <div v-else class="d-flex gap-2">
                                 <Button
-                                    v-if="can('permission-edit')"
+                                    v-if="can('permisos-editar')"
                                     v-tooltip.top="'Editar permiso'"
                                     icon="pi pi-pencil"
                                     rounded
@@ -117,7 +117,7 @@
                                     @click="openEditDialog(slotProps.data)"
                                 />
                                 <Button
-                                    v-if="can('permission-delete')"
+                                    v-if="can('permisos-eliminar')"
                                     v-tooltip.top="'Eliminar permiso'"
                                     icon="pi pi-trash"
                                     rounded
