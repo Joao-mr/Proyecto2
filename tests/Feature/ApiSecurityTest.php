@@ -98,6 +98,17 @@ class ApiSecurityTest extends TestCase
         $this->assertDatabaseMissing('permissions', ['name' => 'admin-stats-reset', 'guard_name' => 'web']);
     }
 
+    public function test_seeded_player_cannot_list_users(): void
+    {
+        $this->seed(FoundationSeeder::class);
+
+        $player = User::where('email', 'user@demo.com')->firstOrFail();
+
+        $this->actingAs($player, 'sanctum');
+
+        $this->getJson('/api/users')->assertForbidden();
+    }
+
     public function test_user_with_categoria_create_permission_can_create_categories(): void
     {
         $user = $this->createUser('category-permission');

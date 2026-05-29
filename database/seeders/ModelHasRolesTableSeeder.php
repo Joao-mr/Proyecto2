@@ -26,6 +26,11 @@ class ModelHasRolesTableSeeder extends Seeder
                 throw new RuntimeException('ModelHasRolesTableSeeder: user or role not found for assignment.');
             }
 
+            DB::table('model_has_roles')
+                ->where('model_type', 'App\\Models\\User')
+                ->where('model_id', $modelId)
+                ->delete();
+
             DB::table('model_has_roles')->updateOrInsert(
                 [
                     'role_id' => $roleId,

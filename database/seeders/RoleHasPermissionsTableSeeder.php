@@ -25,6 +25,16 @@ class RoleHasPermissionsTableSeeder extends Seeder
             ->pluck('id', 'name')
             ->all();
 
+        $projectRoleIds = DB::table('roles')
+            ->where('guard_name', 'web')
+            ->whereIn('name', ['admin', 'player'])
+            ->pluck('id')
+            ->all();
+
+        DB::table('role_has_permissions')
+            ->whereIn('role_id', $projectRoleIds)
+            ->delete();
+
         $permissionNames = [
             'categorias-crear',
             'categorias-editar',
